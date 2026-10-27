@@ -20,6 +20,9 @@
    2. 到素材庫找對應子資料夾，讀所有檔案。找不到素材或內容不夠做遊戲 → 不要硬做，改成通知 pi 缺什麼。
    3. 用 `course-game-maker` skill 做遊戲，關卡依 E 欄構想和〈關卡建議〉。
    4. 用 `add-to-game-lobby` skill 的規則做成 Netlify 版本，放進 `遊戲/G<年級><學期><科目>:<名稱>小遊戲/index.html`，並在 `遊戲/index.html` 的遊戲清單加一筆、`遊戲/admin.html` 的 #which 選單加一個選項。
+   4b. **需要插圖時（例如「看圖選成語」）**：先檢查 pi 的 Chrome 有沒有連上（載入 claude-in-chrome 工具，呼叫 tabs_context_mcp）。
+      - 連得上：照 `gpt-image-slides` skill 的做法，開新分頁到 chatgpt.com，請 ChatGPT 用同一個畫風畫每張圖（國小生友善、無文字），下載後放進遊戲資料夾的 `images/`，遊戲用相對路徑 `./images/xxx.png` 引用。不要動 pi 原本開著的分頁。
+      - 連不上（pi 電腦沒開、Chrome 沒開）：先用內嵌 SVG 插圖做完，PR 說明和給 pi 的訊息寫「目前是 SVG 暫代圖，開著電腦和 Chrome 時在這個對話串回覆『補圖』，就會改用 ChatGPT 畫圖」。
    5. 寫排行榜 SQL 到 `automation/sql/<table>.sql`（照 `automation/sql/` 裡最新那份的格式：新資料表 + submit_xxx 函式，並把新表加進 reset_leaderboards() 的清單、admin_reset_game() 的 case）。
    6. 用 Supabase Management API 執行 SQL：
       `POST https://api.supabase.com/v1/projects/wbxpqyrkgdaqvtsmijoe/database/query`，
