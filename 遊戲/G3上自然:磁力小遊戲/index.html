@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+<title>力量大冒險</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+/* 版面：磁鐵紅藍兩色的冒險地圖，四個世界卡片；遊戲畫面上方實驗台、下方題目卡 */
+:root{
+  --sky:#EDEFF8; --paper:#FFFFFF; --ink:#1B2140; --soft:#5D6788;
+  --sea:#3557C9; --sea-l:#C9D3F2; --leaf:#2F9E5F; --sun:#F2AE2E; --coral:#D9443A;
+  --line:#D5DBEE; --air:#F6F7FC;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--sky);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--sea);color:#fff;box-shadow:0 3px 0 #22398A;transition:transform .08s}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #22398A}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button.ghost{background:var(--paper);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--coral);box-shadow:0 3px 0 #9E3727}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--sea)}
+.chip{font-family:var(--display);background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--paper);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:block}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.players button{font-size:15px;padding:4px 12px;box-shadow:none;background:var(--sky);color:var(--ink)}
+.players button.on{background:var(--sun);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:44px;height:44px}}
+.world{position:relative;text-align:left;background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:var(--sun);letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--coral)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead h2{font-size:24px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--sea);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);width:0;transition:width .3s}
+.stage{background:var(--paper);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{width:100%;height:auto;max-height:360px;display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--sky);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts button.sel{background:var(--sun)}
+.opts button.ok{background:var(--leaf);color:#fff;box-shadow:0 3px 0 #1E6B40}
+.opts button.bad{background:var(--coral);color:#fff;box-shadow:0 3px 0 #9E3727}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px}
+.fb.ok{background:#E3F5EA;color:#1E6B40}
+.fb.bad{background:#FCE8E4;color:#9E3727}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sent{font-family:var(--display);font-size:22px;line-height:2.1}
+.sent button{font-size:22px;padding:2px 8px;margin:2px;background:var(--sky);color:var(--ink);box-shadow:0 2px 0 var(--line);border-radius:10px}
+.sent button.ok{background:var(--leaf);color:#fff}
+.sent button.bad{background:var(--coral);color:#fff}
+.sent button.hint{background:var(--sun)}
+.meter{position:relative;height:22px;border-radius:99px;background:linear-gradient(90deg,#D7EEF8,#7CC6E6,#1C8DB7);border:2px solid var(--line);overflow:hidden;flex:1 1 200px}
+.meter i{position:absolute;top:0;bottom:0;width:6px;background:var(--ink);border-radius:3px;left:0}
+.big{font-size:22px;padding:14px 26px}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:var(--sun);letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;background:var(--sky);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--sea);color:#fff}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-family:var(--display);font-weight:400;color:var(--soft)}
+td.n{text-align:right;font-family:var(--display);font-size:19px}
+tr.me td{background:#FFF5DD}
+.card{border:3px dashed var(--sea);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--air)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--sea)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.small{font-size:14px;color:var(--soft)}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+</style>
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+const NS='http://www.w3.org/2000/svg';
+function svg(viewBox,inner){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',viewBox);s.innerHTML=inner;return s}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function tween(ms,fn){return new Promise(res=>{const t0=performance.now();const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;function f(now){let p=reduce?1:Math.min(1,(now-t0)/ms);fn(p);if(p<1)requestAnimationFrame(f);else res()}requestAnimationFrame(f)})}
+const ease=p=>1-Math.pow(1-p,3);
+
+/* ---------- 紀錄（存在這台裝置） ---------- */
+const KEY='force_v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:[0,0,0,0],stars:[0,0,0,0],plays:0};const p=DB.players[n];if(!p.time)p.time=[0,0,0,0];return p}
+/* 名次規則：分數高的在前；同分時，秒數少的在前 */
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase 設定（和水生植物、第 1 單元同一個專案，資料存在 force_scores 表） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"; /* anon / publishable key，可以公開 */
+const WKEY=['w1','w2','w3','w4'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+/* 換裝置時，從資料庫把自己的進度接回來 */
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/force_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+/* 送出這一關和總分，回傳這一關的名次 */
+async function pushScore(i,secs,stars){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_force',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_force',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/force_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];
+  return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 世界設定 ---------- */
+const WORLDS=[
+ {name:'力的現象',sub:'調方向、控力道把球踢進門，再捏捏看哪些東西會變回原狀',color:'#FDE7B8',ico:'<circle cx="22" cy="42" r="12" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M34 34 L50 18" stroke="#F2AE2E" stroke-width="5" stroke-linecap="round"/><path d="M56 12 l-13 3 l9 9z" fill="#F2AE2E"/>',run:forceWorld},
+ {name:'磁鐵實驗室',sub:'拖著磁鐵清掃桌面、比比看哪裡磁力最強、把磁鐵火車接起來',color:'#F6D3CF',ico:'<path d="M16 22 V36 a16 16 0 0 0 32 0 V22 H38 V36 a6 6 0 0 1 -12 0 V22Z" fill="#8A93A8"/><rect x="16" y="8" width="10" height="14" fill="#3557C9"/><rect x="38" y="8" width="10" height="14" fill="#D9443A"/>',run:magnetWorld},
+ {name:'浮力工廠',sub:'把黏土捏成船讓它浮起來，再挑戰限時快答：這是哪一種力',color:'#CFE6F5',ico:'<rect x="6" y="34" width="52" height="24" rx="4" fill="#7CC6E6"/><path d="M12 28 L52 28 L44 42 L20 42Z" fill="#C8673C"/>',run:floatWorld},
+ {name:'磁浮列車任務',sub:'排好 N 極、S 極，讓磁浮列車浮起來、往前衝',color:'#DCDDF5',ico:'<rect x="8" y="18" width="48" height="20" rx="10" fill="#fff" stroke="#1B2140" stroke-width="3"/><rect x="6" y="50" width="52" height="6" fill="#1B2140"/><path d="M20 41 v6 M32 41 v6 M44 41 v6" stroke="#D9443A" stroke-width="3"/>',run:maglevWorld}
+];
+
+/* ---------- 畫面：首頁 ---------- */
+function header(){
+  const p=DB.current;
+  return el('div',{class:'top'},
+    el('div',{class:'logo'},el('span',{html:'<svg width="40" height="40" viewBox="0 0 40 40"><path d="M6 14 V24 a14 14 0 0 0 28 0 V14 H25 V24 a5 5 0 0 1 -10 0 V14Z" fill="#8A93A8"/><rect x="6" y="4" width="9" height="10" fill="#3557C9"/><rect x="25" y="4" width="9" height="10" fill="#D9443A"/></svg>'}),el('h1',{},'力量大冒險')),
+    p?el('span',{class:'chip'},'玩家：'+p):null);
+}
+function home(){
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';
+  app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'三上自然 第 2 單元：生活中的力'),
+      el('p',{},'四個世界，答對拿分數和星星，每關都會計時。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v){input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);input.focus();return}DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      (names.length&&!bzN)?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null
+    )));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(unlocked?'':' locked'),onclick:()=>{if(!pl){input.focus();input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);return}if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="0 0 64 64">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},'世界 '+(i+1)+'　'+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b);
+  });
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));
+    try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}
+    app.innerHTML='';app.append(header());}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[0,0,0,0];return tab===0
+      ?{n,v:p.best.reduce((a,b)=>a+b,0),t:tm.reduce((a,b,i)=>a+(p.best[i]>0?(b||0):0),0)}
+      :{n,v:p.best[tab-1],t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'力量大冒險 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:'世界 '+(i+1)+' '+w.name+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / 12'),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];
+  app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');
+  const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');
+  const stage=el('div',{class:'stage'});
+  const t0=Date.now();
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},'世界 '+(i+1)+'　'+w.name),tm,sc),el('div',{class:'bar'},bar),stage);
+  const token={};CUR=token;
+  const ctx={stage,score:0,alive:()=>CUR===token,add(n){this.score+=n;sc.textContent=this.score+' 分'},prog(k,n){bar.style.width=(k/n*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(max=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();const st=starsFor(score,max);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?'過關了！下一個世界已經打開。':'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs,st).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--sea)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,
+    up,
+    el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<3&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一個世界'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+
+/* 題目卡：單選 / 複選，回傳是否答對 */
+function ask(parent,{q,opts,ans,explain,multi=false,tag,onAnswer}){
+  return new Promise(res=>{
+    const box=el('div',{style:'display:flex;flex-direction:column;gap:10px'});
+    if(tag)box.append(el('div',{class:'tag'},tag));
+    box.append(el('div',{class:'q'},q));
+    const order=multi?shuffle(opts.map((_,i)=>i)):opts.map((_,i)=>i);
+    const wrap=el('div',{class:'opts'});const sel=new Set();let done=false;
+    const btns={};
+    const good=multi?new Set(ans):new Set([ans]);
+    function judge(){
+      done=true;
+      const ok=multi?(sel.size===good.size&&[...sel].every(x=>good.has(x))):sel.has(ans);
+      Object.entries(btns).forEach(([k,b])=>{k=+k;b.disabled=true;b.style.opacity=1;b.classList.remove('sel');if(good.has(k))b.classList.add('ok');else if(sel.has(k))b.classList.add('bad')});
+      sfx(ok);if(onAnswer)onAnswer(ok);
+      box.append(el('div',{class:'fb '+(ok?'ok':'bad')},(ok?'答對了！':'差一點！')+(explain?' '+explain:'')));
+      const nx=el('button',{onclick:()=>{box.remove();res(ok)}},'下一步 →');
+      if(okBtn)okBtn.remove();
+      box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true});
+    }
+    order.forEach(i=>{const b=el('button',{onclick:()=>{if(done)return;if(multi){sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle('sel')}else{sel.add(i);judge()}}},(multi?'□ ':'')+opts[i]);btns[i]=b;wrap.append(b)});
+    box.append(wrap);
+    let okBtn=null;
+    if(multi){box.insertBefore(el('div',{class:'small'},'可以選很多個，選好按「確定」'),wrap);okBtn=el('button',{onclick:()=>{if(!sel.size)return;judge()}},'確定');box.append(okBtn)}
+    parent.append(box);
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+}
+function waitBtn(parent,label,cls=''){return new Promise(r=>{const b=el('button',{class:'big '+cls,onclick:()=>{b.remove();r()}},label);parent.append(b)})}
+
+/* ---------- 共用：按住蓄力、SVG 座標 ---------- */
+function chargeOnce(btn,meter,onTick){
+  return new Promise(res=>{
+    let v=0,dir=1,on=false,raf;const nd=meter.firstChild;btn.disabled=false;
+    const tick=()=>{if(on){v+=dir*.012;if(v>=1){v=1;dir=-1}if(v<=0){v=0;dir=1}nd.style.left='calc('+(v*100)+'% - 3px)';onTick&&onTick(v);raf=requestAnimationFrame(tick)}};
+    const down=e=>{e.preventDefault();if(on)return;on=true;v=0;dir=1;raf=requestAnimationFrame(tick)};
+    const up=()=>{if(!on)return;on=false;cancelAnimationFrame(raf);cleanup();btn.disabled=true;res(v)};
+    const kd=e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat)down(e)};
+    function cleanup(){btn.removeEventListener('pointerdown',down);btn.removeEventListener('pointerup',up);btn.removeEventListener('pointerleave',up);btn.removeEventListener('keydown',kd);btn.removeEventListener('keyup',up)}
+    btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointerleave',up);btn.addEventListener('keydown',kd);btn.addEventListener('keyup',up);
+  });
+}
+function svgPt(s,e){const p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(s.getScreenCTM().inverse())}
+
+/* 小圖示（中心在 0,0） */
+const ICONS={
+  clip:'<path d="M-6 14 V-10 a6 6 0 0 1 12 0 V10 a4 4 0 0 1 -8 0 V-6" fill="none" stroke="#7D879C" stroke-width="2.5"/>',
+  pin:'<line y1="0" y2="15" stroke="#7D879C" stroke-width="2.5"/><circle cy="-5" r="8" fill="#D9443A"/>',
+  nail:'<rect x="-8" y="-14" width="16" height="4" rx="1" fill="#7D879C"/><path d="M-2 -10 L2 -10 L1 12 L0 16 L-1 12Z" fill="#7D879C"/>',
+  binder:'<path d="M-8 -4 Q-11 -17 -2 -15 M8 -4 Q11 -17 2 -15" stroke="#7D879C" stroke-width="2" fill="none"/><path d="M-12 8 L-8 -4 L8 -4 L12 8Z" fill="#1B2140"/>',
+  ironruler:'<rect x="-20" y="-4" width="40" height="8" fill="#A3ABBC" stroke="#5D6788"/><path d="M-16 -4v4M-10 -4v3M-4 -4v4M2 -4v3M8 -4v4M14 -4v3" stroke="#5D6788"/>',
+  pencil:'<g transform="rotate(-30)"><rect x="-4" y="-16" width="8" height="26" fill="#F2AE2E"/><path d="M-4 10 L4 10 L0 18Z" fill="#E8C9A0"/></g>',
+  eraser:'<rect x="-14" y="-7" width="28" height="14" rx="3" fill="#fff" stroke="#1B2140"/><rect x="-14" y="-7" width="10" height="14" rx="2" fill="#3557C9"/>',
+  coin:'<circle r="11" fill="#D8B45A" stroke="#A88A3A" stroke-width="2"/><text y="4" text-anchor="middle" font-size="10" fill="#6E5518">10</text>',
+  can:'<rect x="-8" y="-14" width="16" height="28" rx="3" fill="#C9D3E6" stroke="#7D879C"/><rect x="-8" y="-6" width="16" height="8" fill="#3557C9" opacity=".6"/>',
+  plasticruler:'<rect x="-20" y="-5" width="40" height="10" fill="#BFE4F3" stroke="#5D6788"/>',
+  paper:'<rect x="-12" y="-12" width="24" height="24" fill="#2F9E5F"/><rect x="-8" y="-8" width="24" height="24" fill="#D9443A" opacity=".8"/>',
+  pingpong:'<circle r="11" fill="#F7A23B" stroke="#C47A1A" stroke-width="2"/>',
+  cup:'<path d="M-11 -13 L11 -13 L8 14 L-8 14Z" fill="#fff" stroke="#1B2140" stroke-width="2"/>',
+  magnet:'<rect x="-18" y="-6" width="18" height="12" fill="#3557C9"/><rect x="0" y="-6" width="18" height="12" fill="#D9443A"/>',
+  scissors:'<circle cx="-7" cy="8" r="5" fill="none" stroke="#D9443A" stroke-width="3"/><circle cx="7" cy="8" r="5" fill="none" stroke="#D9443A" stroke-width="3"/><path d="M-4 4 L6 -14 M4 4 L-6 -14" stroke="#7D879C" stroke-width="3"/>',
+  ring:'<circle r="13" fill="none" stroke="#D9443A" stroke-width="7"/><path d="M0 -13 v4 M13 0 h-4 M0 13 v-4 M-13 0 h4" stroke="#fff" stroke-width="7"/>',
+  bowl:'<path d="M-15 -6 Q0 18 15 -6Z" fill="#fff" stroke="#1B2140" stroke-width="2"/>',
+  board:'<rect x="-18" y="-7" width="36" height="14" rx="6" fill="#3557C9"/>'
+};
+const ico=(k,x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${ICONS[k]}</g>`;
+
+/* ================= 世界 1：力的現象 ================= */
+async function forceWorld(ctx){
+  const S=ctx.stage;let max=0,step=0;const TOTAL=16;const pg=()=>ctx.prog(++step,TOTAL);
+  const Q=async(parent,o,pts=10)=>{max+=pts;const ok=await ask(parent,o);if(ok)ctx.add(pts);pg();return ok};
+
+  /* ---- A：踢球（力的方向與大小） ---- */
+  const TASKS=[
+    {title:'傳球給隊友',tip:'方向要對準，力道也要剛好，球才會停在隊友腳邊。',type:'pass',tx:130,ty:200,tr:30},
+    {title:'繞過防守員射門',tip:'防守員擋在正前方，換個方向，力氣也要夠大。',type:'goal',def:[220,230,20]},
+    {title:'輕輕推進旗子圈',tip:'這次力氣太大會跑過頭。',type:'pass',tx:260,ty:250,tr:30,flag:true}
+  ];
+  for(const T of TASKS){
+    if(!ctx.alive())return max;
+    max+=20;S.innerHTML='';
+    S.append(el('div',{class:'tag'},T.title+'　'+T.tip));
+    const s=svg('0 0 400 420','');S.append(s);
+    let ang=0,pw=0,ball=[200,380],moving=false;
+    const draw=()=>{
+      let h='<rect width="400" height="420" fill="#7DC47F"/>'+[0,1,2,3,4,5].map(i=>`<rect y="${i*70}" width="400" height="35" fill="#88CD8A"/>`).join('')+'<rect x="10" y="10" width="380" height="400" fill="none" stroke="#fff" stroke-width="3"/>';
+      if(T.type==='goal')h+='<rect x="130" y="12" width="140" height="28" fill="#fff" opacity=".35" stroke="#fff" stroke-width="3"/><line x1="10" y1="40" x2="390" y2="40" stroke="#fff" stroke-width="3"/><text x="200" y="31" text-anchor="middle" font-size="14" fill="#1B2140">球門</text>';
+      if(T.def)h+=`<circle cx="${T.def[0]}" cy="${T.def[1]}" r="${T.def[2]}" fill="#D9443A" stroke="#fff" stroke-width="3"/><text x="${T.def[0]}" y="${T.def[1]+5}" text-anchor="middle" font-size="14" fill="#fff">防</text>`;
+      if(T.type==='pass'&&!T.flag)h+=`<circle cx="${T.tx}" cy="${T.ty}" r="${T.tr}" fill="#fff" opacity=".3"/><circle cx="${T.tx}" cy="${T.ty}" r="17" fill="#3557C9" stroke="#fff" stroke-width="3"/><text x="${T.tx}" y="${T.ty+5}" text-anchor="middle" font-size="12" fill="#fff">隊友</text>`;
+      if(T.flag)h+=`<circle cx="${T.tx}" cy="${T.ty}" r="${T.tr}" fill="#F2AE2E" opacity=".45" stroke="#fff" stroke-width="2" stroke-dasharray="5 4"/><path d="M${T.tx} ${T.ty} v-34 l18 6 l-18 6" fill="#D9443A" stroke="#1B2140" stroke-width="2"/>`;
+      if(!moving){
+        const L=24+pw*120,r=ang*Math.PI/180,sx=Math.sin(r),cy=-Math.cos(r);
+        const ex=ball[0]+L*sx,ey=ball[1]+L*cy,px=-cy,py=sx;
+        h+=`<line x1="${ball[0]}" y1="${ball[1]}" x2="${ex-sx*8}" y2="${ey-cy*8}" stroke="#F2AE2E" stroke-width="6" stroke-linecap="round"/>`+
+           `<path d="M${ex+sx*6} ${ey+cy*6} L${ex-sx*10+px*9} ${ey-cy*10+py*9} L${ex-sx*10-px*9} ${ey-cy*10-py*9}Z" fill="#F2AE2E"/>`;
+      }
+      h+=`<circle cx="${ball[0]}" cy="${ball[1]}" r="9" fill="#fff" stroke="#1B2140" stroke-width="2"/>`;
+      s.innerHTML=h;
+    };
+    draw();
+    const slider=el('input',{type:'range',min:'-40',max:'40',step:'1',value:'0',id:'dir',style:'flex:1 1 200px;accent-color:#F2AE2E'});
+    slider.addEventListener('input',()=>{ang=+slider.value;draw()});
+    const meter=el('div',{class:'meter'},el('i'));
+    const btn=el('button',{class:'big'},'⚽ 按住蓄力');
+    const info=el('div',{class:'small'},'先拉滑桿調「方向」，再按住按鈕決定「力的大小」，放開就踢。箭頭的方向＝力的方向，箭頭愈長＝力愈大。');
+    const tries=el('span',{class:'tag'},'剩 3 次機會');
+    S.append(el('div',{class:'ctrl'},el('span',{class:'tag'},'方向'),slider,tries),el('div',{class:'ctrl'},btn,meter),info);
+    let left=3,got=0;
+    while(left>0&&ctx.alive()){
+      const p=await chargeOnce(btn,meter,v=>{pw=v;draw()});
+      slider.disabled=true;
+      const r=ang*Math.PI/180,dx=Math.sin(r),dy=-Math.cos(r);
+      let d=40+p*360,blocked=false;
+      if(T.def){const [cx,cy,cr]=T.def;for(let t=0;t<=d;t+=2){const x=200+dx*t,y=380+dy*t;if(Math.hypot(x-cx,y-cy)<cr+9){d=Math.max(0,t-4);blocked=true;break}}}
+      let out=false;for(let t=0;t<=d;t+=2){const x=200+dx*t,y=380+dy*t;if(x<12||x>388||y<(T.type==='goal'?14:12)){d=t;out=true;break}}
+      moving=true;
+      await tween(900,q=>{const t=d*ease(q);ball=[200+dx*t,380+dy*t];draw()});
+      left--;
+      let hit=false,msg='';
+      if(T.type==='pass'){
+        const dist=Math.hypot(ball[0]-T.tx,ball[1]-T.ty);hit=dist<=T.tr;
+        if(!hit){const need=Math.hypot(T.tx-200,T.ty-380),angNeed=Math.atan2(T.tx-200,380-T.ty)*180/Math.PI;
+          msg=Math.abs(angNeed-ang)>8?'方向偏了，滑桿往'+(angNeed<ang?'左':'右')+'調一點。':(d<need?'力太小了，再大一點。':'力太大，跑過頭了。')}
+      }else{
+        const t40=(380-40)/(-dy)||1e9,xAt=200+dx*t40;
+        hit=!blocked&&ball[1]<=41&&xAt>=130&&xAt<=270;
+        if(!hit)msg=blocked?'被防守員擋下來了！換個方向。':(ball[1]>41&&!out)?'力太小，球沒到球門。':'方向偏了，球沒進門。';
+      }
+      if(hit){got=[20,10,5][2-left];sfx(true);info.textContent='成功！得到 '+got+' 分。';break}
+      sfx(false);info.textContent=msg;tries.textContent='剩 '+left+' 次機會';
+      if(left>0){await sleep(900);ball=[200,380];moving=false;pw=0;slider.disabled=false;draw()}
+    }
+    if(!ctx.alive())return max;
+    ctx.add(got);pg();
+    if(!got)info.textContent='這關沒成功，沒關係，繼續下一關！';
+    const qa=el('div');S.append(qa);await waitBtn(qa,'下一關 →');
+  }
+  S.innerHTML='';const qa=el('div');S.append(qa);
+  await Q(qa,{tag:'想一想',q:'剛剛踢球時，黃色箭頭「愈長」代表什麼？',opts:['力愈大','力的方向往右','球愈重'],ans:0,explain:'力的大小用線段的長短表示，方向用箭頭表示。'});
+  await Q(qa,{tag:'想一想',q:'下面哪一個「不是」力的三要素？',opts:['起始點','力的大小','力的方向','作用點'],ans:0,explain:'力的三要素是大小、方向和作用點。'});
+
+  /* ---- B：用力之後放開 ---- */
+  const OBJ=shuffle([
+    {n:'橡皮筋',v:'拉',k:0,draw:d=>`<ellipse cx="150" cy="80" rx="${50+60*d}" ry="${22-12*d}" fill="none" stroke="#E07B39" stroke-width="7"/>`},
+    {n:'黏土',v:'捏',k:1,draw:d=>`<ellipse cx="150" cy="${85+12*d}" rx="${45+28*d}" ry="${35-17*d}" fill="#C8673C"/>`},
+    {n:'鐵塊',v:'捏',k:2,draw:d=>`<rect x="${110+(d?Math.random()*4-2:0)}" y="55" width="80" height="50" rx="4" fill="#A3ABBC" stroke="#5D6788" stroke-width="3"/>`},
+    {n:'毛巾',v:'擰',k:0,draw:d=>`<g transform="translate(150 80) skewX(${30*d}) scale(${1-.35*d} 1)"><rect x="-60" y="-25" width="120" height="50" rx="6" fill="#F2C94C"/>${[-40,-20,0,20,40].map(x=>`<line x1="${x}" y1="-25" x2="${x}" y2="25" stroke="#E0A92E" stroke-width="3"/>`).join('')}</g>`},
+    {n:'飲料罐',v:'踩',k:1,draw:d=>{const h=90-55*d;return `<rect x="125" y="${125-h}" width="50" height="${h}" rx="6" fill="#C9D3E6" stroke="#7D879C" stroke-width="3"/>`+(d>.3?`<path d="M125 ${125-h/2} l10 -6 l10 6 l10 -6 l10 6 l10 -6" stroke="#7D879C" stroke-width="2" fill="none"/>`:'')}},
+    {n:'皮球',v:'輕壓',k:0,draw:d=>`<ellipse cx="150" cy="${85+14*d}" rx="${40+14*d}" ry="${40-14*d}" fill="#D9443A"/><ellipse cx="${138}" cy="${72+10*d}" rx="10" ry="6" fill="#fff" opacity=".4"/>`}
+  ]).slice(0,5);
+  const RES=['恢復原來的形狀','保持被改變的形狀','形狀幾乎沒有改變'];
+  for(const o of OBJ){
+    if(!ctx.alive())return max;
+    S.innerHTML='';S.append(el('div',{class:'tag'},'捏捏看　用力'+o.v+'「'+o.n+'」，再放開'));
+    const s=svg('0 0 300 150','');S.append(s);
+    const draw=d=>{s.innerHTML='<rect x="20" y="126" width="260" height="8" rx="4" fill="#D5DBEE"/>'+o.draw(d)};draw(0);
+    const cap=el('div',{class:'small'},' ');S.append(cap);
+    const box=el('div');S.append(box);
+    await Q(box,{q:'用力'+o.v+o.n+'，放開手之後會怎樣？',opts:RES,ans:o.k,onAnswer:async()=>{
+      cap.textContent='用力'+o.v+'中…';await tween(600,q=>draw(o.k===2?(q<1?1:0):ease(q)));
+      await sleep(350);cap.textContent='放開！';
+      if(o.k===0)await tween(600,q=>draw(1-ease(q)));else if(o.k===1)draw(1);else draw(0);
+      cap.textContent=['它恢復成原來的形狀了。','形狀改變了，沒辦法恢復。','用力捏也幾乎沒有改變。'][o.k];
+    }});
+  }
+
+  /* ---- C：運動狀態 ---- */
+  S.innerHTML='';const qc=el('div');S.append(qc);
+  await Q(qc,{tag:'運動狀態',q:'雙手接住飛過來的籃球，球的運動狀態會怎樣？',opts:['變快','變慢','停止'],ans:2,explain:'物體受力時，運動狀態可能變快、變慢或停止。'});
+  await Q(qc,{tag:'運動狀態',q:'朝著球滾動的方向，再輕輕踢一腳，球會？',opts:['變快','變慢','停止'],ans:0});
+  await Q(qc,{tag:'運動狀態',q:'投籃時，球還沒碰到籃框就掉下來了，可能是因為？',opts:['投籃的力氣太小','投籃的力氣太大','籃框太低'],ans:0});
+  await Q(qc,{tag:'找找看',q:'下面哪一個「不是」力的現象？',opts:['把飲料罐壓扁','擠出牙膏','乒乓球彈跳','安靜的睡著了'],ans:3,explain:'睡著了沒有施力讓物體的形狀或運動狀態改變。'});
+  return max;
+}
+
+/* ================= 世界 2：磁鐵實驗室 ================= */
+async function magnetWorld(ctx){
+  const S=ctx.stage;let max=0,step=0;const TOTAL=11;const pg=()=>ctx.prog(++step,TOTAL);
+  const Q=async(parent,o,pts=10)=>{max+=pts;const ok=await ask(parent,o);if(ok)ctx.add(pts);pg();return ok};
+
+  /* ---- A：磁鐵清掃（限時） ---- */
+  max+=34;
+  S.innerHTML='';S.append(el('div',{class:'tag'},'磁鐵清掃　拖著磁鐵在桌面上移動，把會被吸住的東西全部吸起來！'));
+  const ITEMS=shuffle([['clip','迴紋針',1],['clip','迴紋針',1],['pin','圖釘',1],['pin','圖釘',1],['nail','鐵釘',1],['nail','鐵釘',1],['binder','長尾夾',1],['ironruler','鐵尺',1],
+    ['pencil','鉛筆',0],['eraser','橡皮擦',0],['coin','十元硬幣',0],['can','鋁罐',0],['plasticruler','塑膠尺',0],['paper','色紙',0]]);
+  const items=ITEMS.map((it,i)=>{const c=i%5,r=Math.floor(i/5);return{k:it[0],n:it[1],iron:it[2],x:44+c*78+Math.random()*16-8,y:70+r*92+Math.random()*14-7,att:false,ox:0,oy:0,tried:false}});
+  const s=svg('0 0 420 330','');s.style.touchAction='none';s.style.cursor='grab';S.append(s);
+  const hud=el('div',{class:'ctrl'});const timeEl=el('span',{class:'score'},'⏱ 30');const cntEl=el('span',{class:'tag'},'吸起 0 / 8');hud.append(timeEl,cntEl);S.append(hud);
+  const note=el('div',{class:'small'},'手機：手指按在桌面上拖動。電腦：滑鼠移過去就可以。');S.append(note);
+  let m={x:210,y:30},drag=false,got=0,pops=[];
+  const drawSweep=()=>{
+    let h='<rect width="420" height="330" rx="14" fill="#E9D7B8"/><rect x="8" y="8" width="404" height="314" rx="10" fill="none" stroke="#D3BC94" stroke-width="2"/>';
+    items.forEach(it=>{if(it.att)return;h+=ico(it.k,it.x,it.y,1.3)+`<text x="${it.x}" y="${it.y+34}" text-anchor="middle" font-size="12" fill="#5D4A2E">${it.n}</text>`});
+    pops.forEach(p=>{h+=`<text x="${p.x}" y="${p.y-26}" text-anchor="middle" font-size="13" fill="#D9443A" font-weight="700">吸不起來</text>`});
+    items.forEach(it=>{if(it.att)h+=ico(it.k,m.x+it.ox,m.y+40+it.oy,1.1)});
+    h+=`<g transform="translate(${m.x} ${m.y})"><path d="M-22 -14 V8 a22 22 0 0 0 44 0 V-14 H10 V8 a10 10 0 0 1 -20 0 V-14Z" fill="#8A93A8"/><rect x="-22" y="-30" width="12" height="18" fill="#3557C9"/><rect x="10" y="-30" width="12" height="18" fill="#D9443A"/><text x="-16" y="-17" font-size="11" fill="#fff" text-anchor="middle">S</text><text x="16" y="-17" font-size="11" fill="#fff" text-anchor="middle">N</text></g>`;
+    s.innerHTML=h;
+  };
+  drawSweep();
+  const move=e=>{const p=svgPt(s,e);m={x:Math.max(24,Math.min(396,p.x)),y:Math.max(30,Math.min(300,p.y-30))};
+    items.forEach(it=>{if(it.att)return;const d=Math.hypot(it.x-m.x,it.y-(m.y+30));
+      if(d<48){if(it.iron){it.att=true;got++;const k=got-1;it.ox=(k%4-1.5)*12;it.oy=Math.floor(k/4)*14;sfx(true);cntEl.textContent='吸起 '+got+' / 8'}
+        else if(!it.tried){it.tried=true;pops.push(it);setTimeout(()=>{pops=pops.filter(p=>p!==it)},1200)}}});
+  };
+  s.addEventListener('pointerdown',e=>{drag=true;try{s.setPointerCapture(e.pointerId)}catch(_){}move(e)});
+  s.addEventListener('pointermove',e=>{if(drag||e.pointerType==='mouse')move(e)});
+  s.addEventListener('pointerup',()=>{drag=false});s.addEventListener('pointercancel',()=>{drag=false});
+  const t0=Date.now();let leftT=30;
+  await new Promise(res=>{(function loop(){if(!ctx.alive())return res();leftT=Math.max(0,30-(Date.now()-t0)/1000);timeEl.textContent='⏱ '+Math.ceil(leftT);drawSweep();
+    if(got>=8||leftT<=0)return res();requestAnimationFrame(loop)})()});
+  if(!ctx.alive())return max;
+  const bonus=got>=8?Math.min(10,Math.floor(leftT/2)):0;ctx.add(got*3+bonus);pg();
+  note.textContent=got>=8?'全部吸起來了！還剩 '+Math.ceil(leftT)+' 秒，時間加分 '+bonus+' 分。':'時間到！吸起 '+got+' 個鐵製品。';
+  sfx(got>=8);
+  const qa=el('div');S.append(qa);
+  await Q(qa,{tag:'想一想',q:'為什麼十元硬幣和鋁罐吸不起來？',opts:['它們不是鐵製品','它們太重了','磁鐵沒電了'],ans:0,explain:'磁鐵只能吸住鐵製品，這種吸引的力量叫做磁力。'});
+  await Q(qa,{tag:'想一想',q:'「金屬做的東西，都會被磁鐵吸住。」這句話對嗎？',opts:['○ 對','× 錯'],ans:1,explain:'鋁罐、十元硬幣也是金屬，但不是鐵製品，所以吸不起來。'});
+
+  /* ---- B：迴紋針掛哪裡 ---- */
+  S.innerHTML='';S.append(el('div',{class:'tag'},'磁力強弱　在長條形磁鐵不同的地方，掛上迴紋針'));
+  const ms=svg('0 0 400 250','');S.append(ms);
+  const POS=[70,130,200,270,330],CNT=[5,2,0,2,5],hung=[0,0,0,0,0];
+  const drawBar=()=>{let h=`<rect x="50" y="40" width="150" height="34" fill="#D9443A"/><rect x="200" y="40" width="150" height="34" fill="#3557C9"/><text x="64" y="63" fill="#fff" font-size="18">N</text><text x="328" y="63" fill="#fff" font-size="18">S</text>`;
+    POS.forEach((x,i)=>{for(let k=0;k<hung[i];k++)h+=`<g transform="translate(${x} ${92+k*28}) rotate(90)">${ICONS.clip}</g>`;
+      h+=`<circle cx="${x}" cy="57" r="9" fill="#fff" opacity="${hung[i]?0.2:0.9}" stroke="#1B2140" stroke-width="2"/>`});
+    ms.innerHTML=h};drawBar();
+  const qb=el('div');S.append(qb);
+  await Q(qb,{tag:'先猜猜看',q:'長條形磁鐵的哪裡，可以吸住最多迴紋針？',opts:['兩端','中間','每個地方都一樣'],ans:0});
+  const bb=el('div',{class:'ctrl'});const tip=el('span',{class:'small'},'點下面的按鈕，把迴紋針掛上去（五個位置都要試）');
+  const names=['N 極端','靠近 N','正中間','靠近 S','S 極端'];let tested=0;
+  S.insertBefore(bb,qb);S.insertBefore(tip,qb);
+  await new Promise(res=>{names.forEach((n,i)=>{const b=el('button',{class:'ghost',onclick:async()=>{b.disabled=true;
+    for(let k=1;k<=CNT[i];k++){hung[i]=k;drawBar();await sleep(160)}if(!CNT[i]){tip.textContent='正中間一個都吸不起來！'}tested++;if(tested===5)res()}},n);bb.append(b)})});
+  await Q(qb,{tag:'看結果',q:'長條形磁鐵哪裡的磁力最弱？',opts:['中間','N 極','S 極'],ans:0,explain:'磁鐵兩端（磁極）的磁力最強，中間最弱。吸住的迴紋針愈多，表示磁力愈強。'});
+  await Q(qb,{tag:'延伸',q:'U 形磁鐵哪個部位，吸起的迴紋針會最少？',opts:['彎曲的地方','N 極那一端','S 極那一端'],ans:0});
+
+  /* ---- C：磁鐵火車 ---- */
+  for(const n of [3,4,5]){
+    if(!ctx.alive())return max;
+    max+=15;S.innerHTML='';
+    S.append(el('div',{class:'tag'},'磁鐵火車（'+n+' 節車廂）　點車廂可以把它轉過來。讓每一節都吸在一起！'));
+    let o=[];do{o=Array.from({length:n},()=>Math.random()<.5?0:1)}while(o.every(v=>v===o[0]));
+    const minMoves=Math.min(o.filter(v=>v===0).length,o.filter(v=>v===1).length);
+    const row=el('div',{style:'display:flex;align-items:center;justify-content:center;padding-block:28px;overflow-x:auto'});
+    const msg=el('div',{class:'small'},'紅色是 N 極，藍色是 S 極。');
+    let moves=0,done=false;
+    await new Promise(res=>{
+      const render=()=>{row.innerHTML='';
+        o.forEach((v,i)=>{
+          const L=v?'S':'N',R=v?'N':'S';
+          const car=el('button',{style:'display:grid;grid-template-columns:1fr 1fr;padding:0;overflow:hidden;min-width:0;flex:0 1 72px;height:54px;box-shadow:0 3px 0 #1B2140;border-radius:10px;font-size:18px',onclick:()=>{if(done)return;o[i]=1-o[i];moves++;render();check()}},
+            el('span',{style:'display:grid;place-items:center;background:'+(L==='N'?'#D9443A':'#3557C9')},L),el('span',{style:'display:grid;place-items:center;background:'+(R==='N'?'#D9443A':'#3557C9')},R));
+          row.append(car);
+          if(i<n-1){const att=(v===o[i+1]);row.append(el('span',{style:'flex:0 0 auto;width:'+(att?'6px':'26px')+';text-align:center;color:'+(att?'#2F9E5F':'#D9443A')+';font-size:14px;transition:width .2s'},att?'':'↔'))}
+        })};
+      const check=()=>{if(o.every(v=>v===o[0])){done=true;const pts=moves<=minMoves?15:moves<=minMoves+2?10:5;ctx.add(pts);sfx(true);msg.textContent='火車接起來了！用了 '+moves+' 步，得到 '+pts+' 分。';pg();res()}};
+      render();S.append(row,msg);
+    });
+    if(!ctx.alive())return max;
+    await waitBtn(S,'下一關 →');
+  }
+  S.innerHTML='';const qc=el('div');S.append(qc);
+  await Q(qc,{tag:'想一想',q:'磁鐵火車的車廂能吸在一起，是因為？',opts:['異極相吸','同極相吸','磁鐵吸住木頭'],ans:0,explain:'N 極和 S 極靠近會互相吸引；N 和 N、S 和 S 會互相排斥。'});
+  await Q(qc,{tag:'生活素養',q:'鱷魚玩具的嘴巴上、下各放一塊磁鐵，兩塊都是 S 極相對時，嘴巴會？',opts:['張開','閉合'],ans:0,explain:'同極相斥，所以嘴巴會被推開；換成 N 極對 S 極就會閉合。'});
+  return max;
+}
+
+/* ================= 世界 3：浮力工廠 ================= */
+async function floatWorld(ctx){
+  const S=ctx.stage;let max=0,step=0;const TOTAL=15;const pg=()=>ctx.prog(++step,TOTAL);
+  const Q=async(parent,o,pts=10)=>{max+=pts;const ok=await ask(parent,o);if(ok)ctx.add(pts);pg();return ok};
+  const tank=(objSvg,y)=>`<rect x="40" y="20" width="320" height="200" fill="none" stroke="#1B2140" stroke-width="3"/><rect x="42" y="90" width="316" height="128" fill="#7CC6E6" opacity=".75"/><line x1="42" y1="90" x2="358" y2="90" stroke="#fff" stroke-width="2"/><g transform="translate(200 ${y})">${objSvg}</g>`;
+
+  /* ---- A：黏土船 ---- */
+  max+=20;
+  S.innerHTML='';S.append(el('div',{class:'tag'},'黏土船　一樣重的黏土，捏成什麼形狀才能浮在水面上？'));
+  const CLAY={'球形':['<circle r="18" fill="#C8673C"/>',0],'長條':['<rect x="-34" y="-9" width="68" height="18" rx="9" fill="#C8673C"/>',0],'方塊':['<rect x="-16" y="-16" width="32" height="32" rx="4" fill="#C8673C"/>',0],'碗形':['<path d="M-30 -10 Q0 26 30 -10 L24 -10 Q0 16 -24 -10Z" fill="#C8673C"/>',1],'船形':['<path d="M-40 -12 L40 -12 L28 10 L-28 10Z" fill="#C8673C"/><path d="M-34 -12 L34 -12 L26 4 L-26 4Z" fill="#E9A07A"/>',1]};
+  const cs=svg('0 0 400 240','');S.append(cs);cs.innerHTML=tank(CLAY['球形'][0],50);
+  const info=el('div',{class:'small'},'選一個形狀，丟進水裡試試看。只有 3 次機會！');
+  const row=el('div',{class:'tabs'});S.append(row,info);
+  let left=3,got=0;
+  await new Promise(res=>{Object.entries(CLAY).forEach(([n,[g,fl]])=>{const b=el('button',{onclick:async()=>{
+      if(left<=0||got)return;[...row.children].forEach(x=>x.disabled=true);left--;
+      cs.innerHTML=tank(g,50);await tween(500,q=>{cs.innerHTML=tank(g,50+40*ease(q))});
+      if(fl){await tween(300,q=>{cs.innerHTML=tank(g,90+Math.sin(q*6)*3)});got=[20,10,5][2-left];ctx.add(got);sfx(true);info.textContent=n+'的黏土浮起來了！得到 '+got+' 分。';pg();return res()}
+      await tween(900,q=>{cs.innerHTML=tank(g,90+110*ease(q))});sfx(false);
+      if(left<=0){info.textContent='沒有成功。答案是：捏成碗形或船形（像容器的形狀）就能浮起來。';pg();return res()}
+      info.textContent=n+'的黏土沉下去了。還剩 '+left+' 次機會。';[...row.children].forEach(x=>{if(!x.dataset.used)x.disabled=false});b.dataset.used=1;b.disabled=true;
+    }},n);row.append(b)})});
+  if(!ctx.alive())return max;
+  const qa=el('div');S.append(qa);
+  await Q(qa,{tag:'想一想',q:'本來會沉下去的黏土，改成什麼形狀比較容易浮在水面上？',opts:['像容器的形狀（碗形、船形）','愈圓愈好','愈小塊愈好'],ans:0,explain:'改成容器的形狀，比較容易浮在水面上。'});
+
+  /* ---- B：會浮還是會沉 ---- */
+  const FL=shuffle([['pingpong','乒乓球',1],['cup','紙杯',1],['ring','游泳圈',1],['bowl','紙碗',1],['board','浮板',1],
+    ['eraser','橡皮擦',0],['binder','長尾夾',0],['clip','迴紋針',0],['magnet','磁鐵',0],['scissors','剪刀',0],['coin','十元硬幣',0]]);
+  const pick=shuffle(FL.filter(f=>f[2]).slice(0,3).concat(FL.filter(f=>!f[2]).slice(0,3)));
+  for(const [k,n,f] of pick){
+    if(!ctx.alive())return max;
+    S.innerHTML='';S.append(el('div',{class:'tag'},'會浮還是會沉？'));
+    const fs=svg('0 0 400 240','');S.append(fs);const g=`<g transform="scale(2)">${ICONS[k]}</g>`;fs.innerHTML=tank(g,45);
+    const box=el('div');S.append(box);
+    await Q(box,{q:'把「'+n+'」放進水裡，它會？',opts:['浮起來','沉下去'],ans:f?0:1,onAnswer:async()=>{
+      await tween(500,q=>{fs.innerHTML=tank(g,45+45*ease(q))});
+      if(f)await tween(400,q=>{fs.innerHTML=tank(g,90+Math.sin(q*6)*4)});else await tween(800,q=>{fs.innerHTML=tank(g,90+100*ease(q))});
+    }},5);
+  }
+
+  /* ---- C：限時快答：這是哪一種力？ ---- */
+  const FORCES=['風力','水力','彈力','磁力','浮力'];
+  const QS=shuffle([['橡皮筋綁住一把鉛筆',2],['原子筆按一下，筆心縮回去',2],['風車轉個不停',0],['風箏飛上天',0],['帆船在海上前進',0],['紙飛機在空中飛行',0],
+    ['水車取水灌溉',1],['用水柱沖走地上的髒汙',1],['水槍射倒空罐',1],['郵輪浮在海面上',4],['游泳圈讓人浮在水面',4],['馬桶水箱裡的浮球浮起來',4],
+    ['門擋把門固定住',3],['鉛筆盒蓋子緊緊吸住',3],['釣魚玩具把小魚釣起來',3],['磁鐵把白板上的紙固定住',3]]).slice(0,8);
+  S.innerHTML='';S.append(el('div',{class:'tag'},'限時快答　每題 8 秒，愈快答對分數愈高！'));
+  const area=el('div',{style:'display:flex;flex-direction:column;gap:12px'});S.append(area);
+  await waitBtn(area,'開始！');
+  for(let i=0;i<QS.length;i++){
+    if(!ctx.alive())return max;
+    max+=13;const [q,a]=QS[i];
+    area.innerHTML='';
+    const bar=el('div',{class:'bar'},el('i',{style:'width:100%;background:var(--sun)'}));
+    const qt=el('div',{class:'q'},(i+1)+'. '+q);
+    const ops=el('div',{class:'tabs',style:'gap:8px'});const fb=el('div',{class:'small'},' ');
+    area.append(bar,qt,ops,fb);
+    const t0=Date.now();let done=false,timer;
+    await new Promise(res=>{
+      const finish=(k)=>{if(done)return;done=true;clearInterval(timer);const left=Math.max(0,8-(Date.now()-t0)/1000);
+        [...ops.children].forEach((b,j)=>{b.disabled=true;b.style.opacity=1;if(j===a)b.style.background='var(--leaf)';else if(j===k)b.style.background='var(--coral)'});
+        if(k===a){const pts=5+Math.ceil(left);ctx.add(pts);sfx(true);fb.textContent='答對！+'+pts+' 分'}else{sfx(false);fb.textContent=(k<0?'時間到！':'')+'答案是「'+FORCES[a]+'」。'}
+        pg();setTimeout(res,1100)};
+      FORCES.forEach((f,j)=>ops.append(el('button',{style:'font-size:20px;padding:12px 16px',onclick:()=>finish(j)},f)));
+      timer=setInterval(()=>{const left=8-(Date.now()-t0)/1000;bar.firstChild.style.width=Math.max(0,left/8*100)+'%';if(left<=0)finish(-1)},100);
+    });
+  }
+  return max;
+}
+
+/* ================= 世界 4：磁浮列車任務 ================= */
+async function maglevWorld(ctx){
+  const S=ctx.stage;let max=0,step=0;const TOTAL=7;const pg=()=>ctx.prog(++step,TOTAL);
+  const Q=async(parent,o,pts=10)=>{max+=pts;const ok=await ask(parent,o);if(ok)ctx.add(pts);pg();return ok};
+  const col=p=>p==='N'?'#D9443A':'#3557C9';
+  const LV=[
+    {t:'任務 1　讓列車浮起來',tip:'軌道上的磁鐵朝上的都是 N 極。列車底下的磁鐵要設成什麼極，才會被推起來？',track:['N','N','N'],mode:'lift'},
+    {t:'任務 2　不一樣的軌道',tip:'這段軌道的磁極不一樣，列車底下的三塊磁鐵要一塊一塊對好。',track:['S','N','S'],mode:'lift'},
+    {t:'任務 3　讓列車前進',tip:'列車車頭和車尾都是 N 極。前方軌道要「拉」、後方軌道要「推」，列車才會往前跑。',mode:'go'}
+  ];
+  for(const L of LV){
+    if(!ctx.alive())return max;
+    max+=20;S.innerHTML='';
+    S.append(el('div',{class:'tag'},L.t),el('div',{class:'small'},L.tip));
+    const s=svg('0 0 400 200','');S.append(s);
+    let set=L.mode==='lift'?['S','S','S']:['N','S'];
+    const draw=(lift=0,tilt=0,dx=0)=>{
+      let h='<rect x="0" y="170" width="400" height="30" fill="#D5DBEE"/>';
+      if(L.mode==='lift'){
+        L.track.forEach((p,i)=>{const x=110+i*90;h+=`<rect x="${x-30}" y="150" width="60" height="20" fill="${col(p)}"/><text x="${x}" y="165" text-anchor="middle" fill="#fff" font-size="15">${p}</text>`});
+        h+=`<g transform="translate(${dx} ${-lift}) rotate(${tilt} 200 120)"><rect x="60" y="80" width="280" height="44" rx="20" fill="#fff" stroke="#1B2140" stroke-width="3"/><rect x="82" y="90" width="60" height="16" rx="4" fill="#BFE4F3"/><rect x="160" y="90" width="60" height="16" rx="4" fill="#BFE4F3"/><rect x="238" y="90" width="60" height="16" rx="4" fill="#BFE4F3"/>`;
+        set.forEach((p,i)=>{const x=110+i*90;h+=`<rect x="${x-30}" y="124" width="60" height="20" fill="${col(p)}"/><text x="${x}" y="139" text-anchor="middle" fill="#fff" font-size="15">${p}</text>`});
+        h+='</g>';
+      }else{
+        h+=`<rect x="20" y="150" width="360" height="12" fill="#A3ABBC"/>`;
+        h+=`<rect x="30" y="96" width="34" height="40" fill="${col(set[1])}"/><text x="47" y="122" text-anchor="middle" fill="#fff" font-size="15">${set[1]}</text><text x="47" y="88" text-anchor="middle" font-size="12" fill="#5D6788">後方</text>`;
+        h+=`<rect x="336" y="96" width="34" height="40" fill="${col(set[0])}"/><text x="353" y="122" text-anchor="middle" fill="#fff" font-size="15">${set[0]}</text><text x="353" y="88" text-anchor="middle" font-size="12" fill="#5D6788">前方</text>`;
+        h+=`<g transform="translate(${dx} 0)"><rect x="110" y="96" width="180" height="44" rx="20" fill="#fff" stroke="#1B2140" stroke-width="3"/><rect x="110" y="104" width="16" height="28" fill="#D9443A"/><rect x="274" y="104" width="16" height="28" fill="#D9443A"/><text x="118" y="123" text-anchor="middle" fill="#fff" font-size="12">N</text><text x="282" y="123" text-anchor="middle" fill="#fff" font-size="12">N</text><text x="200" y="124" text-anchor="middle" font-size="14" fill="#1B2140">→ 前進方向</text></g>`;
+      }
+      s.innerHTML=h;
+    };
+    draw();
+    const sel=el('div',{class:'ctrl'});
+    const labels=L.mode==='lift'?['左','中','右'].map(x=>'列車底部・'+x):['前方軌道','後方軌道'];
+    const btns=labels.map((lab,i)=>el('button',{style:'background:'+col(set[i]),onclick:()=>{set[i]=set[i]==='N'?'S':'N';btns[i].textContent=lab+'：'+set[i];btns[i].style.background=col(set[i]);draw()}},lab+'：'+set[i]));
+    sel.append(...btns);S.append(sel);
+    const info=el('div',{class:'small'},'點按鈕切換 N / S，設定好按「通電出發」。');const tries=el('span',{class:'tag'},'剩 3 次機會');
+    const go=el('button',{class:'big'},'⚡ 通電出發');S.append(el('div',{class:'ctrl'},go,tries),info);
+    let left=3,got=0;
+    while(left>0&&ctx.alive()){
+      await new Promise(r=>{go.onclick=r});go.disabled=true;btns.forEach(b=>b.disabled=true);left--;
+      let ok=false;
+      if(L.mode==='lift'){
+        const rep=set.map((p,i)=>p===L.track[i]);
+        if(rep.every(Boolean)){ok=true;await tween(700,q=>draw(26*ease(q)));await tween(900,q=>draw(26,0,160*q));info.textContent='同極相斥，列車浮起來往前衝！'}
+        else if(rep.every(x=>!x)){await tween(400,q=>draw(-6*ease(q)));info.textContent='異極相吸，列車被軌道吸住了！'}
+        else{const t=rep[0]?-6:6;await tween(500,q=>draw(10*ease(q),t*ease(q)));info.textContent='有的地方推、有的地方吸，列車歪掉了！再檢查每一塊。'}
+      }else{
+        ok=set[0]==='S'&&set[1]==='N';
+        if(ok){await tween(1200,q=>draw(0,0,120*ease(q)));info.textContent='前方 S 極把車頭 N 極吸過去，後方 N 極把車尾推出去，列車前進了！'}
+        else{await tween(300,q=>draw(0,0,Math.sin(q*12)*4));info.textContent=(set[0]==='N'?'前方是 N 極，會把車頭推回來。':'')+(set[1]==='S'?'後方是 S 極，會把車尾吸回去。':'')}
+      }
+      if(ok){got=[20,10,5][2-left];ctx.add(got);sfx(true);info.textContent+=' 得到 '+got+' 分。';break}
+      sfx(false);tries.textContent='剩 '+left+' 次機會';
+      if(left>0){await sleep(800);draw();go.disabled=false;btns.forEach(b=>b.disabled=false)}
+    }
+    if(!ctx.alive())return max;
+    pg();if(!got)info.textContent+=' 這關沒成功，繼續下一關！';
+    await waitBtn(S,'下一關 →');
+  }
+  /* ---- 閱讀素養 ---- */
+  S.innerHTML='';
+  S.append(el('div',{class:'tag'},'閱讀任務　讀完再回答'),el('div',{class:'panel',style:'background:var(--air);line-height:1.9'},
+    '磁浮列車是利用磁鐵「同極相斥、異極相吸」的特性來設計的交通工具。一般的火車，車輪會接觸軌道，產生摩擦力；磁浮列車卻是浮在軌道上方，前進時不碰到地面，主要只受到空氣阻力，所以可以跑得非常快，理論上時速可以超過 600 公里。不過，磁浮列車的造價十分昂貴，所以目前還沒有在世界各地普遍使用。'));
+  const qa=el('div');S.append(qa);
+  await Q(qa,{q:'磁浮列車是利用磁鐵的哪一種特性設計的？',opts:['同極相斥、異極相吸','同極相吸、異極相斥','磁鐵會吸引銅製品'],ans:0});
+  await Q(qa,{q:'磁浮列車浮在軌道上，所以不太會受到哪一種力的影響？',opts:['摩擦力','空氣阻力','磁力'],ans:0,explain:'兩個物體互相接觸時會產生摩擦力，磁浮列車沒有碰到地面。'});
+  await Q(qa,{q:'根據文章，下面哪一句是正確的？',opts:['磁浮列車目前還沒有在世界各地普遍使用','磁浮列車造價很便宜','磁浮列車跑得很慢'],ans:0});
+  await Q(qa,{q:'理論上，磁浮列車的時速可以達到多少？',opts:['600 公里以上','60 公里','6 公里'],ans:0});
+  return max;
+}
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body>
+</html>

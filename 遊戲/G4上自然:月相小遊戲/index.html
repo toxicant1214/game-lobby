@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>追月小偵探</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+/* 版面：深夜星空底，月亮金黃當主角；上方舞台（會動的夜空、觀測日記），下方題目卡 */
+:root{
+  --night:#111734; --panel:#1B2350; --panel2:#243066; --ink:#F4EFDF; --soft:#AEB6DA;
+  --moon:#F6E3A0; --gold:#F2C14E; --gold-d:#B48A1F; --sky:#7FB0FF; --leaf:#47C08A; --coral:#F07A6A;
+  --line:#34407C; --moondark:#2B3566; --paper:#FBF5E3; --pink:#1F1E35;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--night);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;
+  background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff8 50%,transparent 51%),radial-gradient(1px 1px at 72% 9%,#fff9 50%,transparent 51%),radial-gradient(1.5px 1.5px at 88% 34%,#fff6 50%,transparent 51%),radial-gradient(1px 1px at 33% 62%,#fff7 50%,transparent 51%),radial-gradient(1px 1px at 55% 86%,#fff6 50%,transparent 51%),radial-gradient(ellipse at 50% -10%,#24306A,var(--night) 60%);background-attachment:fixed}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+b{color:var(--gold);font-weight:700}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--gold);color:#1E1A0C;box-shadow:0 3px 0 var(--gold-d);transition:transform .08s;min-height:48px}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--gold-d)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+button.ghost{background:var(--panel);color:var(--ink);box-shadow:0 3px 0 #0B0F26;border:2px solid var(--line)}
+button.warn{background:var(--coral);color:#fff;box-shadow:0 3px 0 #A3463A}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--moon)}
+.chip{font-family:var(--display);background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--panel);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:grid;grid-template-columns:1fr 110px;gap:14px;align-items:center}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--night);color:var(--ink);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.players button{font-size:15px;padding:4px 12px;min-height:36px;box-shadow:none;background:var(--panel2);color:var(--ink)}
+.players button.on{background:var(--gold);color:#1E1A0C}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.worlds .boss{grid-column:1/-1}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.hero{grid-template-columns:1fr 70px}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:44px;height:44px}}
+.world{position:relative;text-align:left;background:var(--panel);color:var(--ink);box-shadow:0 4px 0 #0B0F26;border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world.boss{border-color:#7A4A86;background:linear-gradient(120deg,var(--panel),#2E2350)}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:var(--gold);letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.5}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--coral)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead h2{font-size:23px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--gold);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--moon);width:0;transition:width .3s}
+.stage{background:var(--panel);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.qbox{display:flex;flex-direction:column;gap:10px}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 #0B0F26;text-align:left;font-size:18px}
+.opts.imgs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.opts.imgs button{text-align:center;padding:8px}
+.opts.imgs button svg{width:100%;max-width:90px;height:auto;margin:auto}
+@media (max-width:520px){.opts.imgs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.opts button.ok,.mover.ok,.bin.ok{background:var(--leaf)!important;color:#fff;box-shadow:0 3px 0 #227552;opacity:1}
+.opts button.bad,.mover.bad,.bin.bad{background:var(--coral)!important;color:#fff;box-shadow:0 3px 0 #A3463A}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px;line-height:1.55}
+.fb.ok{background:#1E4A3A;color:#C9F2DD;border:2px solid #2F7A58}
+.fb.bad{background:#4A2530;color:#FFD9D2;border:2px solid #8A4048}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.big{font-size:22px;padding:14px 26px}
+.small{font-size:14px;color:var(--soft)}
+.bigmoon{display:flex;justify-content:center}
+.bigmoon svg{width:120px;height:120px}
+/* 會動的夜空 */
+.sky{position:relative;height:260px;border-radius:16px;overflow:hidden;background:radial-gradient(1px 1px at 20% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 70% 60%,#fffa 50%,transparent 51%),radial-gradient(1.5px 1.5px at 45% 80%,#fff8 50%,transparent 51%),linear-gradient(#0A0F28,#1A2253);border:2px solid var(--line);touch-action:manipulation}
+.mover{position:absolute;left:0;top:0;width:88px;height:88px;padding:6px;border-radius:50%;background:#ffffff10;border:2px solid #ffffff30;box-shadow:0 0 18px #F6E3A033;color:var(--ink);display:grid;place-items:center;will-change:transform}
+.mover svg{width:100%;height:100%}
+.mover .mtxt{font-family:var(--display);font-size:17px;line-height:1.25;color:var(--moon)}
+.meteor .mover::before{content:"";position:absolute;right:88%;top:50%;width:80px;height:5px;margin-top:-2.5px;border-radius:3px;background:linear-gradient(90deg,transparent,#F6E3A099);pointer-events:none}
+.mover.bad::before{display:none}
+/* 天燈 */
+.lantern{position:absolute;left:50%;top:0;width:108px;margin-left:-54px;text-align:center;will-change:transform;pointer-events:none}
+.lantern .body{background:radial-gradient(circle at 50% 40%,#FFD27A,#E8743B 75%);border-radius:44% 44% 32% 32%;padding:20px 6px 16px;font-family:var(--display);font-size:20px;color:#3A1606;box-shadow:0 0 30px #FFB25888}
+.lantern .fire{width:12px;height:14px;margin:2px auto 0;background:#FFE58A;border-radius:50% 50% 40% 40%}
+.bins{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.bins{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.bin{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 #0B0F26;padding:6px;display:grid;place-items:center;font-size:15px;line-height:1.3}
+.bin svg{width:100%;max-width:70px;height:auto}
+.bin.none{font-size:15px;border:2px dashed var(--soft)}
+/* 分類快答 */
+.flash{font-family:var(--display);font-size:34px;text-align:center;padding:26px 10px;background:var(--paper);color:#2A2440;border-radius:18px;transition:transform .15s}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two button{font-size:24px;padding:18px}
+.two .lunar{background:#E9A23B;box-shadow:0 3px 0 #9C6A1D}
+.two .solar{background:var(--sky);box-shadow:0 3px 0 #4B74B8}
+/* 觀測日記 */
+.diary{background:var(--paper);color:#2A2440;border-radius:16px;padding:14px;background-image:repeating-linear-gradient(transparent 0 31px,#E7DCBD 31px 32px);font-family:var(--display)}
+.diary h3{font-size:20px;color:#5A3E8C}
+.diary .hd{display:flex;flex-wrap:wrap;gap:4px 12px;margin:6px 0}
+.dtable{overflow-x:auto}
+.diary table{border-collapse:collapse;width:100%;min-width:420px}
+.diary th{font-weight:400;color:#7A6E8C;font-size:14px;text-align:center;padding:4px}
+.diary td{text-align:center;padding:2px;border-top:1px dashed #D9CBA6}
+.cell{background:transparent;color:#2A2440;box-shadow:none;border:2px solid transparent;padding:4px 6px;min-height:40px;font-size:16px;border-radius:10px;font-family:var(--display)}
+.cell:hover{border-color:#C9B98E}
+.cell svg{width:40px;height:40px;display:block;margin:auto}
+.cell.found{border-color:var(--coral);background:#FCE1DA}
+.cell.fixed{border-color:var(--leaf);background:#DDF3E7}
+.cell.glow{animation:glow 1s 3}
+@keyframes glow{50%{box-shadow:0 0 0 4px var(--gold)}}
+.stmt{display:flex;flex-direction:column;gap:6px}
+.stmt .cell{text-align:left;font-size:18px;width:100%}
+/* 列車、配對 */
+.train{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;padding:10px;border-radius:14px;background:#0C1230;border-bottom:6px solid #5D667F}
+.car{width:72px;height:86px;border-radius:12px 12px 6px 6px;background:#3B4A8F;border:2px solid #5D6CB5;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;color:var(--soft);font-family:var(--display)}
+.car svg{width:52px;height:52px}
+.car.next{border-color:var(--gold);box-shadow:0 0 0 3px #F2C14E55}
+.tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tray button{width:84px;height:84px;padding:6px;background:var(--panel2);box-shadow:0 3px 0 #0B0F26}
+.tray button svg{width:100%;height:100%}
+.tray button.sel{outline:3px solid var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chips button{background:var(--paper);color:#2A2440;box-shadow:0 3px 0 #BFAF84}
+.pairtag{display:block;font-size:13px;color:var(--moon);font-family:var(--display)}
+/* 魔王 */
+.hp{height:16px;border-radius:99px;background:#3A2340;overflow:hidden;border:2px solid #7A4A86}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,#F07A6A,#C94E8A);transition:width .3s}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:var(--gold);letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;min-height:40px;background:var(--panel2);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--gold);color:#1E1A0C}
+table.lb{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.lb td,.lb th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.lb th{font-family:var(--display);font-weight:400;color:var(--soft)}
+.lb td.n{text-align:right;font-family:var(--display);font-size:19px}
+.lb tr.me td{background:#3A3560}
+.card{border:3px dashed var(--gold);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--panel2)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--gold)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+input[type=range]{accent-color:var(--gold);width:100%;height:36px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+</style>
+</head><body style="margin:0">
+<a class="bz-back"  href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.random()*a.length|0];
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function shake(e){e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake')}
+
+/* ---------- 月亮 ---------- */
+const NUM='一二三四五六七八九十';
+function cn(d){if(d<=10)return '初'+NUM[d-1];if(d<20)return '十'+NUM[d-11];if(d===20)return '二十';if(d<30)return '二十'+NUM[d-21];return '三十'}
+/* 北半球（臺灣）：農曆十五以前亮面在右（西）邊，十五以後在左（東）邊 */
+function moonInner(d,cx=50,cy=50,r=42){
+  const ring=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--moondark)" stroke="#7783BE" stroke-width="2" stroke-dasharray="5 4"/>`;
+  if(d<=1||d>=30)return ring;
+  const f=(d-.5)/29.5,k=Math.cos(2*Math.PI*f),rx=(Math.abs(k)*r).toFixed(2),wax=f<.5;
+  const T=`${cx} ${cy-r}`,B=`${cx} ${cy+r}`;
+  const p=wax?`M${T} A${r} ${r} 0 0 1 ${B} A${rx} ${r} 0 0 ${k>0?0:1} ${T}Z`:`M${T} A${r} ${r} 0 0 0 ${B} A${rx} ${r} 0 0 ${k>0?1:0} ${T}Z`;
+  return ring+`<path d="${p}" fill="var(--moon)"/>`;
+}
+const moon=(d,extra='')=>`<svg viewBox="0 0 100 100" ${extra} aria-hidden="true">${moonInner(d)}</svg>`;
+const PH=[
+ {k:'new',full:'朔（新月）',rep:1,days:[1],shape:'看不到月亮'},
+ {k:'cre',full:'眉月（眉形新月）',rep:3,days:[3],shape:'只有右邊一點點亮，彎彎的像眉毛',paint:['R1']},
+ {k:'fq',full:'上弦月',rep:8,days:[7,8],shape:'右半邊亮',paint:['R1','R2']},
+ {k:'wxg',full:'盈凸月（上凸月）',rep:12,days:[12],shape:'比一半多一點，右半邊凸出來',paint:['R1','R2','L2']},
+ {k:'full',full:'滿月（望）',rep:15,days:[15,16],shape:'整個圓圓的都亮',paint:['R1','R2','L2','L1']},
+ {k:'wng',full:'虧凸月（下凸月）',rep:20,days:[20],shape:'比一半多一點，左半邊凸出來',paint:['L1','L2','R2']},
+ {k:'tq',full:'下弦月',rep:22,days:[22,23],shape:'左半邊亮',paint:['L1','L2']},
+ {k:'old',full:'殘月（眉形殘月）',rep:27,days:[27,28],shape:'只剩左邊一點點亮，彎彎的像眉毛',paint:['L1']}
+];
+PH[0].paint=[];
+const daysTxt=p=>p.days.map(d=>cn(d)).join('或');
+const ANCHOR='記住四個好朋友：初一看不到、初八右半邊亮、十五圓圓的、二十二左半邊亮，其他日子就在它們中間慢慢變化。';
+function sideHint(d){if(d<=1)return '農曆初一是一個月的開始，月亮和太陽在同一邊，看得到嗎？';if(d<15)return '農曆'+cn(d)+'在十五以前：亮面在右邊，亮的部分會愈來愈多。';if(d<=16)return '農曆十五、十六在一個月的正中間。';return '農曆'+cn(d)+'在十五以後：亮面在左邊，亮的部分會愈來愈少。'}
+
+/* ---------- 紀錄 ---------- */
+const KEY='moon_v1',NW=5;
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:Array(NW).fill(0),stars:Array(NW).fill(0),time:Array(NW).fill(0),plays:0};const p=DB.players[n];['best','stars','time'].forEach(k=>{while(p[k].length<NW)p[k].push(0)});return p}
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase（和其他遊戲同一個專案，資料存在 moon_scores 表；建表前先保持 false） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+const WKEY=['w1','w2','w3','w4','w5'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/moon_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4,w5)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+async function pushScore(i,secs){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_moon',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_moon',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/moon_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 世界 ---------- */
+const WORLDS=[
+ {name:'月相知識站',sub:'射流星、轉月亮、幫月亮塗亮面',color:'#2B3566',ico:'<circle cx="34" cy="30" r="20" fill="#2B3566" stroke="#7783BE" stroke-width="2" stroke-dasharray="4 3"/><path d="M34 10 A20 20 0 0 1 34 50 A8 20 0 0 0 34 10Z" fill="#F6E3A0"/><path d="M6 56 L22 46" stroke="#F6E3A0" stroke-width="3" stroke-linecap="round"/>',run:w1},
+ {name:'節慶天燈',sub:'天燈飛上來，送它到對的月亮；國曆節慶要小心',color:'#5A2E2A',ico:'<path d="M18 14 Q32 4 46 14 Q50 34 42 46 L22 46 Q14 34 18 14Z" fill="#E8743B"/><rect x="26" y="46" width="12" height="6" rx="2" fill="#FFE58A"/><circle cx="52" cy="12" r="6" fill="#F6E3A0"/>',run:w2},
+ {name:'觀測偵探社',sub:'疊拳頭量高度角，再抓出觀測日記裡的錯誤',color:'#3A3260',ico:'<rect x="10" y="10" width="34" height="42" rx="4" fill="#FBF5E3"/><path d="M16 22h22M16 30h22M16 38h14" stroke="#B9A97C" stroke-width="2"/><circle cx="44" cy="42" r="9" fill="none" stroke="#F2C14E" stroke-width="4"/><path d="M50 48l8 8" stroke="#F2C14E" stroke-width="5" stroke-linecap="round"/>',run:w3},
+ {name:'月亮列車',sub:'把月亮車廂照順序接好，找出缺了誰',color:'#22406A',ico:'<rect x="6" y="22" width="16" height="18" rx="3" fill="#3B4A8F"/><rect x="24" y="22" width="16" height="18" rx="3" fill="#3B4A8F"/><rect x="42" y="22" width="16" height="18" rx="3" fill="#3B4A8F"/><circle cx="14" cy="31" r="5" fill="#F6E3A0"/><path d="M32 26a5 5 0 0 1 0 10z" fill="#F6E3A0"/><path d="M50 26a5 5 0 0 0 0 10z" fill="#F6E3A0"/><rect x="4" y="44" width="56" height="4" fill="#5D667F"/>',run:w4},
+ {name:'魔王關：雲霧怪',sub:'雲霧怪把月亮遮住了！限時快答，打倒牠把月亮救回來',color:'#4A2D5C',ico:'<circle cx="40" cy="24" r="12" fill="#F6E3A0"/><path d="M8 44 Q8 30 20 32 Q24 20 36 28 Q48 26 50 38 Q58 40 56 50 L10 50 Q4 50 8 44Z" fill="#8A7FB0"/><circle cx="24" cy="40" r="3" fill="#1B2350"/><circle cx="38" cy="40" r="3" fill="#1B2350"/><path d="M26 46 q5 -3 10 0" stroke="#1B2350" stroke-width="2" fill="none"/>',run:w5,boss:true}
+];
+
+/* ---------- 首頁 ---------- */
+function header(){const p=DB.current;
+  return el('div',{class:'top'},el('div',{class:'logo'},el('span',{html:'<svg width="40" height="40" viewBox="0 0 100 100">'+moonInner(12)+'</svg>'}),el('h1',{},'追月小偵探')),p?el('span',{class:'chip'},'玩家：'+p):null)}
+function shakeInput(i){i.focus();shake(i)}
+function home(){
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'四上自然 第 1 單元：月亮與月相'),
+      el('p',{},'四個世界加一個魔王關，答對拿分數和星星，每關都會計時。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v)return shakeInput(input);DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      names.length&&!bzN?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null),
+    el('div',{html:'<svg viewBox="0 0 100 100" style="width:100%;height:auto">'+moonInner(15)+'</svg>'})));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(w.boss?' boss':'')+(unlocked?'':' locked'),onclick:()=>{if(!pl)return shakeInput(input);if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="0 0 64 64">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b)});
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.boss?'魔王關':w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}app.innerHTML='';app.append(header())}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[];const b=p.best;return tab===0?{n,v:b.reduce((a,c)=>a+c,0),t:tm.reduce((a,c,i)=>a+(b[i]>0?(c||0):0),0)}:{n,v:b[tab-1]||0,t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{class:'lb'},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'追月小偵探 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:(w.boss?'魔王關':'世界 '+(i+1)+' '+w.name)+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / '+(NW*3)),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');const stage=el('div',{class:'stage'});const t0=Date.now();
+  const token={};CUR=token;
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),tm,sc),el('div',{class:'bar'},bar),stage);
+  const ctx={stage,score:0,max:0,step:0,N:1,alive:()=>CUR===token,
+    add(n){this.score+=n;sc.textContent=this.score+' 分'},
+    tick(got,pts){this.max+=pts;this.add(got);bar.style.width=(++this.step/this.N*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(()=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,ctx.max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();score=Math.max(0,score);let st=starsFor(score,max||1);if(WORLDS[i].boss&&score<max)st=Math.min(st,2);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?(i<NW-1?'過關了！下一關已經打開。':'過關了！月亮救回來了！'):'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--gold)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,up,el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<NW-1&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一關'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+function waitBtn(parent,label){return new Promise(r=>{const b=el('button',{class:'big'},label);b.onclick=()=>{b.remove();r()};parent.append(b);b.focus({preventScroll:true})})}
+const ptsFor=(pts,wrong)=>[pts,Math.round(pts*.6),Math.round(pts*.3)][wrong]||0;
+const lab=o=>o.label||String(o.html||o).replace(/<[^>]+>/g,'');
+
+/* 答錯不給答案：第 1、2 次錯給提示並可重答（得分遞減），第 3 次才揭曉 */
+function tiered(fb,{hints=[],explain=''}){
+  let wrong=0;
+  return{
+    get wrong(){return wrong},
+    bad(why){wrong++;sfx(false);fb.hidden=false;fb.className='fb bad';
+      if(wrong>=3)return true;
+      fb.innerHTML=(why?why+'<br>':'')+'💡 提示：'+(hints[Math.min(wrong-1,hints.length-1)]||'再想一想！')+' 再試一次！';return false},
+    good(){sfx(true);fb.hidden=false;fb.className='fb ok';fb.innerHTML='答對了！'+(explain?' '+explain:'')},
+    reveal(ans){fb.className='fb bad';fb.innerHTML='答案是「'+ans+'」。'+(explain?' '+explain:'')}
+  }
+}
+/* 一般選擇題 */
+function pick(parent,{q,tag,opts,ans=0,hints,explain,pts=10,img=false}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(tag)box.append(el('div',{class:'tag'},tag));if(q)box.append(el('div',{class:'q',html:q}));
+    const wrap=el('div',{class:'opts'+(img?' imgs':'')});const fb=el('div',{class:'fb',hidden:''});
+    const T=tiered(fb,{hints,explain});const btns=[];let done=false;
+    const end=got=>{done=true;btns.forEach(b=>b.disabled=true);btns[ans].classList.add('ok');btns[ans].disabled=false;
+      const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})};
+    shuffle(opts.map((_,i)=>i)).forEach(i=>{const o=opts[i];
+      const b=el('button',{html:o.html||o},);b.onclick=()=>{if(done||b.disabled)return;
+        if(i===ans){b.classList.add('ok');T.good();end(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');b.disabled=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));end(0)}}};
+      btns[i]=b;wrap.append(b)});
+    box.append(wrap,fb);parent.append(box);
+  });
+}
+/* 會飛來飛去的選項（流星、泡泡） */
+function chase(parent,ctx,{q,qhtml,opts,ans=0,hints,explain,pts=10,kind='meteor'}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});
+    if(qhtml)box.append(el('div',{class:'bigmoon',html:qhtml}));
+    box.append(el('div',{class:'q',html:q}));
+    const sky=el('div',{class:'sky '+kind});const fb=el('div',{class:'fb',hidden:''});
+    box.append(sky,fb);parent.append(box);
+    const T=tiered(fb,{hints,explain});let done=false;const S=88;
+    const W=()=>Math.max(200,sky.clientWidth),H=260;
+    const ms=shuffle(opts.map((_,i)=>i)).map((i,k,arr)=>{const o=opts[i];
+      const b=el('button',{class:'mover',html:o.html||o});sky.append(b);
+      const lane=(H-S)/(arr.length-1||1);
+      const m={b,i,x:kind==='meteor'?k*(W()/arr.length)-S/2:Math.random()*(W()-S),y:kind==='meteor'?k*lane:Math.random()*(H-S),
+        vx:kind==='meteor'?55+Math.random()*35:(Math.random()<.5?-1:1)*(35+Math.random()*30),vy:kind==='meteor'?0:(Math.random()<.5?-1:1)*(30+Math.random()*25),dead:false};
+      if(REDUCE){m.x=(k%2)*(W()/2)+20;m.y=(k>>1)*(H/2)+20}
+      b.onclick=()=>{if(done||m.dead)return;
+        if(i===ans){b.classList.add('ok');T.good();finish(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');m.dead=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));ms.find(z=>z.i===ans).b.classList.add('ok');finish(0)}}};
+      return m});
+    let last=performance.now();
+    const place=m=>{m.b.style.transform=`translate(${m.x}px,${m.y}px)`};ms.forEach(place);
+    function loop(now){if(done||!ctx.alive())return;const dt=Math.min(.05,(now-last)/1000);last=now;const w=W();
+      ms.forEach(m=>{if(m.dead)return;m.x+=m.vx*dt;m.y+=m.vy*dt;
+        if(kind==='meteor'){if(m.x>w+20){m.x=-S-20;}}
+        else{if(m.x<0){m.x=0;m.vx*=-1}if(m.x>w-S){m.x=w-S;m.vx*=-1}if(m.y<0){m.y=0;m.vy*=-1}if(m.y>H-S){m.y=H-S;m.vy*=-1}}
+        place(m)});requestAnimationFrame(loop)}
+    if(!REDUCE)requestAnimationFrame(loop);
+    function finish(got){done=true;const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})}
+  });
+}
+const tagLine=(S,t)=>S.append(el('div',{class:'tag'},t));
+
+/* ================= 世界 1：月相知識站 ================= */
+const W1Q=[
+ {q:'月相變化的週期大約是幾天？',opts:['大約 29～30 天','大約 7 天','大約 15 天','大約 365 天'],hints:['從這次滿月，到下一次又看到滿月，要等多久？','古人把月相變化一次的時間，訂為農曆的「一個月」。'],explain:'月相由缺到圓、再由圓到缺，大約 29～30 天一次。'},
+ {q:'月亮會自己發光嗎？',opts:['不會，我們看到的月光是反射太陽的光','會，月亮自己會發光','只有滿月的時候會自己發光'],hints:['會自己發光、發熱的天體叫做恆星，像太陽。','月亮是不會自己發光的天體，它把誰的光反射過來？'],explain:'月亮本身不會發光，月光是反射太陽的光。'},
+ {q:'農曆十五以前，月亮的亮面會怎麼變？',opts:['在右邊，亮的部分愈來愈多','在左邊，亮的部分愈來愈多','在右邊，亮的部分愈來愈少'],hints:['初三是眉月、初八是上弦月，它們亮在哪一邊？','從初一到十五，月亮由缺到圓。'],explain:'十五以前，缺口朝左、亮面在右，亮的面積漸漸增加到滿月。'},
+ {q:'農曆十五以後，月亮的亮面會怎麼變？',opts:['在左邊，亮的部分愈來愈少','在右邊，亮的部分愈來愈少','在左邊，亮的部分愈來愈多'],hints:['二十二是下弦月，它亮在哪一邊？','從十五到月底，月亮由圓到缺。'],explain:'十五以後，缺口朝右、亮面在左，亮的面積漸漸縮減。'},
+ {q:'「月相」指的是什麼？',opts:['月亮看起來的形狀','月亮的照片','月亮在天空的高度'],hints:['眉月、上弦月、滿月……這些名稱在描述月亮的什麼？','月亮各種圓缺變化的形狀，就叫做……'],explain:'月亮各種圓缺變化的形狀，稱為月相。'},
+ {q:'農曆哪一天看不到月亮？',opts:['初一（朔）','十五（望）','初八'],hints:['十五是滿月，最圓最亮。','一個月的第一天，月亮從「看不到」開始變圓。'],explain:'農曆初一叫做「朔」，看不到月亮。'},
+ {q:'農曆的大月有幾天？',opts:['30 天','29 天','31 天'],hints:['月相週期大約是 29 或 30 天。','大月比小月多一天，小月是 29 天。'],explain:'農曆大月 30 天，小月 29 天。'},
+ {q:'下面哪一個方法「不能」知道今天的月相？',opts:['用溫度計量氣溫','每天實際觀測和記錄','查中央氣象署網站','用月相模擬軟體查詢'],hints:['想知道月亮的形狀，要看得到或查得到月亮。','溫度計是用來量什麼的？'],explain:'實際觀測、模擬軟體、中央氣象署網站都能知道月相；溫度計只能量溫度。'}
+];
+async function w1(ctx){
+  const S=ctx.stage;ctx.N=11;
+  /* A 流星射手 */
+  const types=shuffle(['f','f','r','r']);const used=shuffle(PH.slice());
+  for(let r=0;r<4;r++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'流星射手 '+(r+1)+'/4　點中正確的那顆流星！');
+    const ph=used[r];const others=shuffle(PH.filter(p=>p!==ph)).slice(0,3);const all=[ph,...others];let spec;
+    if(types[r]==='f'){const d=rnd(ph.days);
+      spec={q:'農曆<b>'+cn(d)+'</b>（'+d+'日）的月亮長怎樣？',ans:0,
+        opts:all.map(p=>({html:moon(p===ph?d:p.rep),label:p.full,why:p===ph?'':'那是'+p.full+'，大約在農曆'+daysTxt(p)+'。'})),
+        hints:[sideHint(d),ANCHOR],explain:'農曆'+cn(d)+'是'+ph.full+'：'+ph.shape+'。'}}
+    else{spec={qhtml:moon(ph.rep),q:'上面這個月亮，最可能是農曆哪一天？',ans:0,
+        opts:all.map(p=>({html:'<span class="mtxt">農曆<br>'+cn(p.rep)+'</span>',label:'農曆'+cn(p.rep),why:p===ph?'':'農曆'+cn(p.rep)+'是'+p.full+'，'+p.shape+'。'})),
+        hints:['看亮面在右邊還是左邊：右邊亮是十五以前，左邊亮是十五以後。',ANCHOR],explain:'這是'+ph.full+'（'+ph.shape+'），大約在農曆'+daysTxt(ph)+'。'}}
+    ctx.tick(await chase(S,ctx,{...spec,kind:'meteor'}),10)}
+  /* B 月亮變臉（滑桿） */
+  const tg=shuffle(PH.filter(p=>p.k!=='new')).slice(0,2);
+  for(const ph of tg){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'月亮變臉　拖動滑桿改變農曆日期');
+    S.append(el('div',{class:'q',html:'把月亮變成「<b>'+ph.full+'</b>」，再按確定。'}));
+    const pic=el('div',{class:'bigmoon'});const dl=el('div',{class:'q',style:'text-align:center'});
+    const sl=el('input',{type:'range',min:'1',max:'30',step:'1',value:'1',id:'day'});
+    const upd=()=>{const v=+sl.value;pic.innerHTML=moon(v);dl.textContent='農曆 '+cn(v)+'（'+v+'日）'};upd();sl.addEventListener('input',upd);
+    const fb=el('div',{class:'fb',hidden:''});const okb=el('button',{class:'big'},'確定');
+    S.append(pic,dl,sl,el('div',{class:'ctrl'},okb),fb);
+    const right=ph.days[0]<15;
+    const T=tiered(fb,{hints:[(right?'「'+ph.full+'」亮面在右邊，要往十五以前（月初）找。':'「'+ph.full+'」亮面在左邊，要往十五以後（月底）找。'),ANCHOR],explain:ph.full+'在農曆'+daysTxt(ph)+'：'+ph.shape+'。'});
+    const got=await new Promise(r=>{okb.onclick=()=>{const v=+sl.value;
+      if(ph.days.includes(v)){T.good();r(ptsFor(10,T.wrong))}
+      else if(T.bad('你停在農曆'+cn(v)+'，'+(v<=1?'這天看不到月亮。':v<15?'亮面在右邊。':v<=16?'是滿月。':'亮面在左邊。'))){sl.value=ph.days[0];upd();T.reveal('農曆'+daysTxt(ph));r(0)}}});
+    okb.remove();sl.disabled=true;ctx.tick(got,10);await waitBtn(S,'下一步 →')}
+  /* C 幫月亮塗亮面 */
+  const pt=shuffle(PH.filter(p=>p.k!=='new'&&p.k!=='full')).slice(0,2);
+  const R=42,c=50,hr=21,T0=`${c} ${c-R}`,B0=`${c} ${c+R}`;
+  const REG={R1:`M${T0} A${R} ${R} 0 0 1 ${B0} A${hr} ${R} 0 0 0 ${T0}Z`,R2:`M${T0} A${hr} ${R} 0 0 1 ${B0} Z`,L2:`M${T0} A${hr} ${R} 0 0 0 ${B0} Z`,L1:`M${T0} A${R} ${R} 0 0 0 ${B0} A${hr} ${R} 0 0 1 ${T0}Z`};
+  for(const ph of pt){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'幫月亮塗亮面　點月亮的區塊，亮起來或變暗');
+    const d=rnd(ph.days);S.append(el('div',{class:'q',html:'把月亮塗成農曆<b>'+cn(d)+'</b>的樣子。'}));
+    const on=new Set();const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 100 100');s.style.cssText='width:220px;max-width:70%;margin:auto;touch-action:manipulation';
+    const draw=()=>{s.innerHTML=`<circle cx="50" cy="50" r="42" fill="var(--moondark)"/>`+Object.entries(REG).map(([k,p])=>`<path data-k="${k}" d="${p}" fill="${on.has(k)?'var(--moon)':'var(--moondark)'}" stroke="#7783BE" stroke-width=".8" stroke-dasharray="2 2" style="cursor:pointer"/>`).join('')+`<circle cx="50" cy="50" r="42" fill="none" stroke="#7783BE" stroke-width="1.5"/>`};draw();
+    s.addEventListener('click',e=>{const k=e.target.getAttribute&&e.target.getAttribute('data-k');if(!k||locked)return;on.has(k)?on.delete(k):on.add(k);draw()});
+    let locked=false;const fb=el('div',{class:'fb',hidden:''});const okb=el('button',{class:'big'},'塗好了');
+    S.append(s,el('div',{class:'small',style:'text-align:center'},'月亮分成 4 塊，左右外側是彎彎的細邊。'),el('div',{class:'ctrl'},okb),fb);
+    const T=tiered(fb,{hints:[sideHint(d),'農曆'+cn(d)+'是'+ph.full+'，'+ph.shape+'。'],explain:'農曆'+cn(d)+'是'+ph.full+'：'+ph.shape+'。'});
+    const goal=new Set(ph.paint);
+    const got=await new Promise(r=>{okb.onclick=()=>{const same=on.size===goal.size&&[...on].every(k=>goal.has(k));
+      if(same){T.good();r(ptsFor(10,T.wrong))}
+      else{const lr=[...on].some(k=>k[0]==='R'),ll=[...on].some(k=>k[0]==='L');const gr=ph.paint.some(k=>k[0]==='R'),gl=ph.paint.some(k=>k[0]==='L');
+        const why=!on.size?'月亮還是全暗的喔。':(gr&&!gl&&ll)?'這天的亮面只在右邊。':(gl&&!gr&&lr)?'這天的亮面只在左邊。':'亮的面積大小還不對。';
+        if(T.bad(why)){on.clear();ph.paint.forEach(k=>on.add(k));draw();T.reveal(ph.full);r(0)}}}});
+    locked=true;okb.remove();ctx.tick(got,10);await waitBtn(S,'下一步 →')}
+  /* D 知識快問 */
+  S.innerHTML='';const qa=el('div');S.append(qa);
+  for(const q of shuffle(W1Q).slice(0,3)){if(!ctx.alive())return;ctx.tick(await pick(qa,{tag:'知識快問',q:q.q,opts:q.opts,ans:0,hints:q.hints,explain:q.explain}),10)}
+}
+
+/* ================= 世界 2：節慶天燈 ================= */
+const FEST=[
+ {n:'春節',date:'農曆正月初一',d:1},{n:'元宵節',date:'農曆正月十五',d:15},{n:'端午節',date:'農曆五月初五',d:5},
+ {n:'七夕',date:'農曆七月初七',d:7},{n:'中元節',date:'農曆七月十五',d:15},{n:'中秋節',date:'農曆八月十五',d:15},
+ {n:'重陽節',date:'農曆九月初九',d:9},{n:'臘八',date:'農曆十二月初八',d:8},{n:'尾牙',date:'農曆十二月十六',d:16},{n:'除夕',date:'農曆十二月的最後一天（廿九或三十）',d:30},
+ {n:'元旦',date:'國曆1月1日'},{n:'和平紀念日',date:'國曆2月28日'},{n:'兒童節',date:'國曆4月4日'},{n:'清明節',date:'每年國曆4月4日或5日左右，是依國曆計算的節氣'},
+ {n:'母親節',date:'國曆5月的第二個星期日'},{n:'父親節',date:'國曆8月8日'},{n:'教師節',date:'國曆9月28日'},{n:'國慶日',date:'國曆10月10日'},
+ {n:'冬至',date:'每年國曆12月21日或22日左右，是依國曆計算的節氣'},{n:'聖誕節',date:'國曆12月25日'}
+];
+const FDESC={1:'初一是朔，看不到月亮',30:'除夕是一個月的最後一天，隔天就是初一，月亮幾乎看不到',5:'初五在十五以前，亮面在右邊，比上弦月少一點',7:'初七是上弦月，右半邊亮',8:'初八是上弦月，右半邊亮',9:'初九剛過上弦月，右邊亮、比一半多一點點',15:'十五是滿月（望），圓圓的',16:'十六也是滿月（望），圓圓的'};
+const ring=(a,b)=>{const x=Math.abs(a-b);return Math.min(x,30-x)};
+async function w2(ctx){
+  const S=ctx.stage;ctx.N=9;
+  const lun=shuffle(FEST.filter(f=>f.d)).slice(0,5),sol=shuffle(FEST.filter(f=>!f.d)).slice(0,3);
+  const list=shuffle([...lun,...sol]);
+  for(let r=0;r<list.length;r++){if(!ctx.alive())return;const F=list[r];
+    S.innerHTML='';tagLine(S,'節慶天燈 '+(r+1)+'/'+list.length+'　這個節慶的晚上，月亮長什麼樣子？點下面的格子把天燈送過去');
+    const sky=el('div',{class:'sky',style:'height:220px'});const lan=el('div',{class:'lantern',html:'<div class="body">'+F.n+'</div><div class="fire"></div>'});sky.append(lan);
+    const dd=F.d?(F.d===30?1:F.d):0;
+    const pool=PH.map(p=>p.rep).filter(x=>!dd||ring(x,dd)>=4);const dis=[];
+    for(const x of shuffle(pool)){if(dis.every(y=>ring(x,y)>=4))dis.push(x);if(dis.length===(dd?3:4))break}
+    const opts=dd?[{d:dd},...dis.map(x=>({d:x}))]:dis.map(x=>({d:x}));
+    const bins=el('div',{class:'bins'});const fb=el('div',{class:'fb',hidden:''});
+    const hints=F.d?[F.n+'是'+F.date+'。',F.d<=16?sideHint(F.d===16?15:F.d)+(F.d===5||F.d===9?' 初八是上弦月，想想看比它多還是少？':''):'一個月的最後一天，再過一天就是初一。']:[F.n+'是'+F.date+'。','國曆日期每年對到的農曆都不一樣，月亮的樣子會一樣嗎？'];
+    const explain=F.d?F.n+'是'+F.date+'，'+FDESC[F.d]+'。':F.n+'是'+F.date+'，每年對到的農曆日期不同，所以沒有固定的月相。';
+    const T=tiered(fb,{hints,explain});let done=false;
+    const all=shuffle(opts.map((o,k)=>({...o,k}))).concat([{none:true}]);
+    const btns=all.map(o=>{const b=el('button',{class:'bin'+(o.none?' none':''),html:o.none?'沒有固定<br>月相':moon(o.d)});
+      b.onclick=()=>{if(done||b.disabled)return;const ok=o.none?!F.d:(F.d&&o.d===dd);
+        if(ok){b.classList.add('ok');T.good();fin(ptsFor(10,T.wrong))}
+        else{b.classList.add('bad');b.disabled=true;const why=o.none?F.n+'是農曆節慶，農曆日期固定，月相也固定喔！':F.d?'':F.n+'是國曆節慶，不是農曆喔！';
+          if(T.bad(why)){btns[all.findIndex(z=>z.none?!F.d:z.d===dd)].classList.add('ok');T.reveal(F.d?FDESC[F.d]:'沒有固定月相');fin(0)}}};
+      bins.append(b);return b});
+    S.append(sky,bins,fb);
+    let y=220,t0=performance.now();
+    (function fly(now){if(done||!ctx.alive())return;y=220-((now-t0)/1000*28)%330;if(y<-110)y+=330;lan.style.transform=`translateY(${REDUCE?50:y}px) translateX(${REDUCE?0:Math.sin(now/700)*14}px)`;requestAnimationFrame(fly)})(t0);
+    let fin;const got=await new Promise(res=>{fin=g=>{done=true;btns.forEach(b=>b.disabled=true);res(g)}});
+    ctx.tick(got,10);await waitBtn(S,'下一步 →')}
+  /* B 農曆還是國曆（限時） */
+  if(!ctx.alive())return;
+  S.innerHTML='';tagLine(S,'快手分類　40 秒內，判斷是「農曆」還是「國曆」節慶！答對一題 3 分，最多 12 題');
+  const deck=shuffle(FEST);let k=0,right=0,ans=0;const MAXC=12;
+  const tEl=el('span',{class:'score'},'⏱ 40');const cEl=el('span',{class:'tag'},'答對 0');
+  const card=el('div',{class:'flash'});const fb=el('div',{class:'fb',hidden:''});
+  const lb=el('button',{class:'lunar'},'農曆'),sb2=el('button',{class:'solar'},'國曆');
+  S.append(el('div',{class:'ctrl'},tEl,cEl),card,el('div',{class:'two'},lb,sb2),fb);
+  await waitBtn(S,'準備好了，開始！');
+  const show=()=>{card.textContent=deck[k%deck.length].n};show();
+  const t0=Date.now();let busy=false;
+  await new Promise(res=>{
+    const tick=setInterval(()=>{if(!ctx.alive()){clearInterval(tick);return res()}const left=Math.max(0,40-(Date.now()-t0)/1000);tEl.textContent='⏱ '+Math.ceil(left);if(left<=0){clearInterval(tick);res()}},200);
+    const choose=lunar=>{if(busy)return;const F=deck[k%deck.length];const ok=!!F.d===lunar;ans++;
+      if(ok){right++;sfx(true);fb.hidden=false;fb.className='fb ok';fb.textContent='✔ '+F.n+'：'+F.date;cEl.textContent='答對 '+right}
+      else{sfx(false);shake(card);fb.hidden=false;fb.className='fb bad';fb.textContent='✘ '+F.n+'是'+F.date+'，所以是'+(F.d?'農曆':'國曆')+'。';busy=true;setTimeout(()=>busy=false,900)}
+      k++;if(ans>=MAXC){clearInterval(tick);return res()}show()};
+    lb.onclick=()=>choose(true);sb2.onclick=()=>choose(false)});
+  lb.disabled=sb2.disabled=true;card.textContent='時間到！答對 '+right+' 題';
+  ctx.tick(Math.min(right,MAXC)*3,MAXC*3);await waitBtn(S,'看成績 →');
+}
+
+/* ================= 世界 3：觀測偵探社 ================= */
+const STMT=[
+ {ok:'用拳頭量高度角，拳頭數愈多，高度角愈大。',bad:'用拳頭量高度角，拳頭數愈多，高度角愈小。',alt:'用拳頭量高度角，拳頭數和高度角沒有關係。',hints:['拳頭一個一個往上疊，是往天頂的方向還是往地面？','愈往上，離地平線的角度愈大。']},
+ {ok:'一個拳頭大約是 10°。',bad:'一個拳頭大約是 30°。',alt:'一個拳頭大約是 90°。',hints:['地平線到天頂是 90°。','從地平線疊到天頂，大約要 9 個拳頭。']},
+ {ok:'高度角觀測器測得比拳頭準確。',bad:'拳頭測得比高度角觀測器準確。',alt:'拳頭和高度角觀測器一樣準確。',hints:['拳頭能量出 1° 的差別嗎？','每個人的拳頭大小不同，手也可能會移動。']},
+ {ok:'量旗桿時，站得離旗桿愈近，測得的高度角愈大。',bad:'量旗桿時，站得離旗桿愈近，測得的高度角愈小。',alt:'量旗桿時，站在哪裡測得的高度角都一樣。',hints:['站在旗桿正下方往上看，頭要抬多高？','距離物體愈近，要抬頭抬得愈高。']},
+ {ok:'同一座城市不同地方量月亮，高度角幾乎相同。',bad:'同一座城市不同地方量月亮，高度角差很多。',alt:'同一座城市不同地方量月亮，只有學校量得到。',hints:['月亮離我們非常遠，比遠山還遠。','遠的物體，換位置測量，高度角變化不大。']},
+ {ok:'地平線到天頂的角度是 90°。',bad:'地平線到天頂的角度是 180°。',alt:'地平線到天頂的角度是 45°。',hints:['天頂在頭頂正上方，和地平線形成什麼角？','直角是幾度？']},
+ {ok:'觀測月亮時，面向南方比較容易看到月亮。',bad:'觀測月亮時，面向北方比較容易看到月亮。',alt:'觀測月亮時，只能面向東方。',hints:['臺灣在北半球，月亮升起後會偏向哪一邊運行？','課本說觀測時要面向哪一方的天空？']},
+ {ok:'月亮本身不會發光，是反射太陽的光。',bad:'月亮本身會發光，所以晚上很亮。',alt:'月亮的光是反射星星的光。',hints:['會自己發光的天體叫恆星，例如太陽。','月光是反射誰的光？']},
+ {ok:'觀測月亮的位置，要記錄方位和高度角。',bad:'觀測月亮的位置，只要記錄月亮的顏色。',alt:'觀測月亮的位置，只要記錄天氣。',hints:['描述月亮在天空中的位置，要用哪兩個資料？','指北針找什麼？高度角觀測器量什麼？']}
+];
+/* 找錯引擎：btns 是 key→按鈕，errs 是 key→題目 */
+function hunt(ctx,S,btns,errs){
+  return new Promise(res=>{
+    const keys=Object.keys(errs);let found=0,mis=0,busy=false,pts=0;
+    const status=el('span',{class:'tag'},'這份紀錄藏了 '+keys.length+' 個錯誤，找出來！');
+    const hb=el('button',{class:'ghost',style:'font-size:15px'},'🔍 提示位置（扣 2 分）');
+    const fb=el('div',{class:'fb',hidden:''});const qa=el('div');
+    S.append(el('div',{class:'ctrl'},status,hb),fb,qa);
+    hb.onclick=()=>{if(busy)return;const k=keys.find(k=>!errs[k].done);if(!k)return;pts-=2;const b=btns[k];b.classList.remove('glow');void b.offsetWidth;b.classList.add('glow');b.scrollIntoView({block:'nearest',behavior:'smooth'})};
+    Object.entries(btns).forEach(([k,b])=>b.addEventListener('click',async()=>{
+      if(busy||!ctx.alive())return;const e=errs[k];
+      if(!e){if(b.classList.contains('fixed'))return;mis++;sfx(false);shake(b);fb.hidden=false;fb.className='fb bad';fb.textContent='這裡沒有錯，再仔細找找看。（找錯一次扣 1 分）';return}
+      if(e.done)return;busy=true;fb.hidden=true;e.done=true;b.classList.add('found');sfx(true);
+      const got=await pick(qa,{tag:'找到了！這裡應該改成什麼？',q:e.q,opts:e.opts,ans:0,hints:e.hints,explain:e.explain,pts:6});
+      pts+=4+got;found++;if(e.fix)b.innerHTML=e.fix;b.classList.remove('found');b.classList.add('fixed');
+      status.textContent=found<keys.length?'還剩 '+(keys.length-found)+' 個錯誤':'全部找到了！';busy=false;
+      if(found===keys.length){hb.remove();res(Math.max(0,pts-mis))}}));
+  });
+}
+function diaryTable(cols,rows){
+  const btns={};
+  const tb=el('table',{},el('tr',{},cols.map(c=>el('th',{},c))));
+  rows.forEach((r,ri)=>tb.append(el('tr',{},r.map((c,ci)=>{const b=el('button',{class:'cell',html:c});btns['r'+ri+'c'+ci]=b;return el('td',{},b)}))));
+  return{node:el('div',{class:'dtable'},tb),btns}}
+const cm=d=>moon(d);
+async function diaryA(ctx,S){
+  const rows=[['19:00','東','10°（1 個拳頭）','學校操場',cm(15)],['20:00','東南','20°（2 個拳頭）','學校操場',cm(15)],['21:00','東南','30°（3 個拳頭）','學校操場',cm(15)]];
+  let concl='月亮由東向西移動，高度角愈來愈大，形狀都一樣。';
+  const ri=rnd([1,2]);
+  const POOL=[
+   {at:'r'+ri+'c4',val:cm(8),fix:cm(15),q:'同一天晚上，這個時間的月亮應該長怎樣？',opts:['跟其他時間一樣，是圓圓的滿月','右半邊亮的上弦月','左半邊亮的下弦月'],hints:['同一天晚上，月亮的形狀會改變嗎？','農曆十五是什麼月相？'],explain:'同一天的月亮形狀幾乎相同，農曆十五是滿月。'},
+   {at:'r2c2',val:'5°（半個拳頭）',fix:'30°（3 個拳頭）',q:'21:00 的高度角應該怎麼改？',opts:['要比 20° 大，例如 30°','要比 20° 更小','要跟 20° 一樣'],hints:['月亮剛從東方升起，接下來會愈爬愈高還是愈低？','一天中，月亮的高度角由小變大，再由大變小。'],explain:'晚上剛升起的月亮，高度角會愈來愈大。'},
+   {at:'r1c2',val:'50°（2 個拳頭）',fix:'20°（2 個拳頭）',q:'2 個拳頭，高度角大約是幾度？',opts:['大約 20°','大約 50°','大約 2°'],hints:['一個拳頭大約是幾度？','地平線到天頂 90°，大約是 9 個拳頭。'],explain:'一個拳頭大約 10°，2 個拳頭大約 20°。'},
+   {at:'r2c1',val:'西',fix:'東南',q:'21:00 的方位應該怎麼改？',opts:['東南方（前一次的附近）','西方','北方'],hints:['月亮從東方升起，才 2 小時就會跑到西邊落下嗎？','月亮是慢慢由東向西移動的，每小時只移動一點點。'],explain:'月亮剛升起不久，還在東南方附近，要到快天亮才會到西方。'},
+   {at:'r2c3',val:'家裡陽台',fix:'學校操場',q:'第三次觀測的地點應該怎麼改？',opts:['跟前兩次一樣，在學校操場','哪裡都可以','換到更高的大樓'],hints:['連續觀測時，地點要一樣還是不一樣？','換了地點，參考景物就不同，記錄會沒辦法比較。'],explain:'每次觀測都要在相同的地點。'},
+   {at:'concl',val:'月亮由西向東移動，高度角愈來愈大，形狀都一樣。',fix:concl,q:'結論哪裡要改？',opts:['月亮是「由東向西」移動','月亮是「由北向南」移動','月亮不會移動'],hints:['太陽和月亮都是東升＿＿。','月亮從東方升起，從西方落下。'],explain:'月亮和太陽一樣，東升西落，由東向西移動。'},
+   {at:'concl',val:'月亮由東向西移動，高度角愈來愈大，形狀愈來愈圓。',fix:concl,q:'結論哪裡要改？',opts:['同一天晚上，月亮的形狀都一樣','月亮的形狀愈來愈缺','月亮先變圓再變缺'],hints:['看看表格最右邊的月亮。','月相要隔好幾天才會明顯改變。'],explain:'同一天晚上，月亮的形狀幾乎相同。'}
+  ];
+  const errs={};for(const e of shuffle(POOL)){if(errs[e.at])continue;errs[e.at]=e;if(Object.keys(errs).length===3)break}
+  Object.values(errs).forEach(e=>{if(e.at==='concl')concl=e.val;else{const[,r,c]=e.at.match(/r(\d)c(\d)/);rows[r][c]=e.val}});
+  const {node,btns}=diaryTable(['時間','方位','高度角','地點','形狀'],rows);
+  const cb=el('button',{class:'cell',style:'text-align:left;width:100%'},'結論：'+concl);btns.concl=cb;
+  Object.values(errs).forEach(e=>{if(e.at==='concl')e.fix='結論：'+e.fix});
+  S.append(el('div',{class:'diary'},el('h3',{},'月亮觀測紀錄表（一）'),el('div',{class:'hd'},el('span',{},'國曆：9月17日'),el('span',{},'農曆：八月十五'),el('span',{},'記錄者：小如')),node,cb));
+  return hunt(ctx,S,btns,errs);
+}
+async function diaryB(ctx,S){
+  const rows=[['八月初八','20:00','學校',cm(8),'西南方 40°'],['八月十五','20:00','學校',cm(15),'東南方 25°'],['八月二十二','20:00','學校','—','沒觀測到']];
+  let concl='不同日期的相同時間，月亮的形狀和位置都不一樣，也不一定看得到月亮。';
+  const POOL=[
+   {at:'r0c3',val:cm(22),fix:cm(8),q:'農曆初八的月亮應該長怎樣？',opts:['右半邊亮（上弦月）','左半邊亮（下弦月）','圓圓的滿月'],hints:['初八在十五以前還是以後？','十五以前，亮面在右邊。'],explain:'初七、初八是上弦月，右半邊亮。'},
+   {at:'r1c3',val:cm(8),fix:cm(15),q:'農曆十五的月亮應該長怎樣？',opts:['圓圓的滿月','右半邊亮','左半邊亮'],hints:['十五在一個月的正中間。','農曆十五叫做「望」。'],explain:'農曆十五、十六是滿月（望）。'},
+   {at:'r1c1',val:'21:30',fix:'20:00',q:'這次觀測的時間應該怎麼改？',opts:['20:00，跟其他天一樣','什麼時間都可以','愈晚愈好'],hints:['這份紀錄要比較「不同日期」的月亮。','要比較不同日期，其他條件要怎麼樣？'],explain:'比較不同日期時，要在相同的時間、相同的地點觀測。'},
+   {at:'r0c4',val:'西南方 100°',fix:'西南方 40°',q:'「100°」哪裡不對？',opts:['高度角最大只有 90°（天頂）','沒有不對','應該寫 180°'],hints:['地平線到天頂是幾度？','高度角是從 0° 到 90°。'],explain:'高度角從地平線 0° 到天頂 90°，不會超過 90°。'},
+   {at:'r2c2',val:'阿嬤家',fix:'學校',q:'第三次的地點應該怎麼改？',opts:['跟前兩次一樣，在學校','哪裡都可以','換到海邊'],hints:['要比較的話，地點要一樣還是不一樣？','地點不同，參考景物就不同。'],explain:'每次觀測要在相同的地點。'},
+   {at:'concl',val:'不同日期的相同時間，月亮的形狀都一樣，而且每天都看得到。',fix:concl,q:'結論應該怎麼改？',opts:['形狀和位置都不一樣，也不一定看得到月亮','形狀都一樣，每天都看得到','形狀都是圓的'],hints:['看看表格裡三天的月亮。','第三天有看到月亮嗎？'],explain:'不同日期的相同時間，月亮形狀、位置都不同，也不一定看得到。'}
+  ];
+  const errs={};for(const e of shuffle(POOL)){errs[e.at]=e;if(Object.keys(errs).length===2)break}
+  Object.values(errs).forEach(e=>{if(e.at==='concl'){concl=e.val;e.fix='結論：'+e.fix}else{const[,r,c]=e.at.match(/r(\d)c(\d)/);rows[r][c]=e.val}});
+  const {node,btns}=diaryTable(['農曆','時間','地點','形狀','方位和高度角'],rows);
+  const cb=el('button',{class:'cell',style:'text-align:left;width:100%'},'結論：'+concl);btns.concl=cb;
+  S.append(el('div',{class:'diary'},el('h3',{},'月亮觀測紀錄表（二）連續三週'),el('div',{class:'hd'},el('span',{},'觀測者：小真')),node,cb));
+  return hunt(ctx,S,btns,errs);
+}
+async function notebook(ctx,S){
+  const pickS=shuffle(STMT).slice(0,5);const wrongIdx=new Set(shuffle([0,1,2,3,4]).slice(0,2));
+  const btns={},errs={};const list=el('div',{class:'stmt'});
+  pickS.forEach((s,i)=>{const w=wrongIdx.has(i);const b=el('button',{class:'cell'},(i+1)+'. '+(w?s.bad:s.ok));btns['s'+i]=b;list.append(b);
+    if(w)errs['s'+i]={q:'正確的說法是？',opts:[s.ok,s.alt],hints:s.hints,explain:s.ok,fix:(i+1)+'. '+s.ok}});
+  S.append(el('div',{class:'diary'},el('h3',{},'小明的自然筆記'),list));
+  return hunt(ctx,S,btns,errs);
+}
+function fistGame(ctx,S,theta){
+  return new Promise(res=>{
+    tagLine(S,'拳頭疊疊樂　一個拳頭大約 10°，一直疊到剛好遮住月亮');
+    const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 400 290');s.style.cssText='width:100%;max-height:340px';
+    const ex=70,ey=240,D=110,MR=235;let n=0;
+    const P=(a,r)=>[ex+r*Math.cos(a*Math.PI/180),ey-r*Math.sin(a*Math.PI/180)];
+    const draw=(showLine)=>{const[mx,my]=P(theta,MR);
+      let h=`<rect width="400" height="290" fill="#0E1433"/><rect y="${ey}" width="400" height="50" fill="#22402F"/><line x1="0" y1="${ey}" x2="400" y2="${ey}" stroke="#6FAE7E" stroke-width="2"/><text x="392" y="${ey-6}" text-anchor="end" font-size="13" fill="#AEB6DA">地平線 0°</text><line x1="${ex}" y1="${ey}" x2="${ex}" y2="10" stroke="#AEB6DA" stroke-dasharray="4 5"/><text x="${ex+6}" y="20" font-size="13" fill="#AEB6DA">天頂 90°</text>`;
+      h+=`<g transform="translate(${mx-16} ${my-16}) scale(.32)">${moonInner(15)}</g>`;
+      if(showLine)h+=`<line x1="${ex}" y1="${ey}" x2="${mx}" y2="${my}" stroke="#F2C14E" stroke-dasharray="5 4"/>`;
+      for(let k=1;k<=n;k++){const a=10*k-5;const[fx,fy]=P(a,D);h+=`<g transform="translate(${fx} ${fy}) rotate(${-a})"><rect x="-13" y="-9.6" width="26" height="19.2" rx="7" fill="#F2C9A0" stroke="#A9744A" stroke-width="1.5"/><text x="0" y="5" font-size="11" text-anchor="middle" fill="#6A4020">${k}</text></g>`}
+      h+=`<circle cx="${ex-16}" cy="${ey-6}" r="20" fill="#F2C9A0"/><circle cx="${ex-2}" cy="${ey-1}" r="3" fill="#1B2350"/><path d="M${ex-36} ${ey-14} q20 -28 40 -6" fill="#3A2A1A"/>`;
+      s.innerHTML=h};draw(false);
+    const info=el('div',{class:'q'},'已經疊了 0 個拳頭');const fb=el('div',{class:'fb',hidden:''});
+    const add=el('button',{class:'big'},'✊ 疊一個拳頭'),sub=el('button',{class:'ghost'},'拿掉一個'),done=el('button',{class:'ghost'},'遮住月亮了！');
+    S.append(s,info,el('div',{class:'ctrl'},add,sub,done),fb);
+    const upd=()=>{draw(false);info.textContent='已經疊了 '+n+' 個拳頭'};
+    add.onclick=()=>{if(n<9){n++;upd()}};sub.onclick=()=>{if(n>0){n--;upd()}};
+    let tries=0;
+    done.onclick=async()=>{const ok=n*10===theta;tries++;
+      if(!ok&&tries<3){sfx(false);fb.hidden=false;fb.className='fb bad';fb.textContent=n*10<theta?'拳頭還沒遮住月亮，再往上疊！':'疊太多了，拳頭已經超過月亮，拿掉一點。';return}
+      add.disabled=sub.disabled=done.disabled=true;
+      if(!ok){n=theta/10;upd()}
+      draw(true);sfx(ok);fb.hidden=false;fb.className='fb '+(ok?'ok':'bad');fb.textContent=(ok?'剛好遮住！':'正確是 '+theta/10+' 個拳頭。')+'一共 '+theta/10+' 個拳頭。';
+      const qa=el('div');S.append(qa);
+      const g=await pick(qa,{q:theta/10+' 個拳頭，月亮的高度角大約是幾度？',opts:[theta+'°',theta/10+'°',(theta+30)+'°'],hints:['一個拳頭大約是 10°。','把拳頭數乘以 10。'],explain:'一個拳頭大約 10°，'+theta/10+' 個拳頭大約 '+theta+'°。',pts:6});
+      res((ok?[4,3,2][tries-1]:0)+g)};
+  });
+}
+function pathGame(ctx,S,type){
+  return new Promise(res=>{
+    tagLine(S,'月亮走錯路　這是農曆十五晚上的月亮路線，有一個月亮畫錯了，把它找出來！');
+    const T=['19時','21時','23時','24時','2時','4時'],X=[60,140,220,290,370,450],A=[12,42,66,70,44,12];
+    const bad=type==='alt'?rnd([1,4]):rnd([0,1,2,3,4,5]);const alt=A.slice();if(type==='alt')alt[bad]=bad===1?4:84;
+    const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 520 270');s.style.cssText='width:100%';
+    let h=`<rect width="520" height="270" rx="12" fill="#0E1433"/><rect y="228" width="520" height="42" fill="#1E3326"/><text x="16" y="256" font-size="18" fill="#F4EFDF">東</text><text x="490" y="256" font-size="18" fill="#F4EFDF">西</text>`;
+    X.forEach((x,i)=>{const y=225-alt[i]*2.5;h+=`<g data-i="${i}" style="cursor:pointer" role="button" tabindex="0"><circle cx="${x}" cy="${y}" r="26" fill="#ffffff08"/><g transform="translate(${x-15} ${y-15}) scale(.3)">${moonInner(type==='shape'&&i===bad?8:15)}</g><text x="${x}" y="${y+32}" text-anchor="middle" font-size="13" fill="#AEB6DA">${T[i]}</text></g>`});
+    s.innerHTML=h;const fb=el('div',{class:'fb',hidden:''});S.append(s,fb);
+    const hints=type==='alt'?['月亮一個晚上的路線像什麼形狀？','高度角由小變大，再由大變小，像一座拱橋。']:['看看每一個月亮的形狀。','同一天晚上，月亮的形狀會改變嗎？'];
+    const Tq=tiered(fb,{hints,explain:type==='alt'?T[bad]+'的月亮高度畫錯了：一個晚上月亮由東向西，高度角先變大再變小。':T[bad]+'的月亮形狀畫錯了：同一天晚上，月亮形狀幾乎相同。'});let done=false;
+    s.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-i]');if(!g||done)return;const i=+g.getAttribute('data-i');
+      if(i===bad){Tq.good();g.querySelector('circle').setAttribute('fill','#47C08A66');end(ptsFor(10,Tq.wrong))}
+      else{g.querySelector('circle').setAttribute('fill','#F07A6A55');if(Tq.bad('')){Tq.reveal(T[bad]+'的月亮');s.querySelector(`[data-i="${bad}"] circle`).setAttribute('fill','#47C08A66');end(0)}}});
+    function end(g){done=true;waitBtn(S,'下一步 →').then(()=>res(g))}
+  });
+}
+async function w3(ctx){
+  const S=ctx.stage;ctx.N=11;
+  const th=shuffle([20,30,40,50,60,70]).slice(0,2);
+  for(const t of th){if(!ctx.alive())return;S.innerHTML='';ctx.tick(await fistGame(ctx,S,t),10)}
+  for(const ty of shuffle(['alt','shape'])){if(!ctx.alive())return;S.innerHTML='';ctx.tick(await pathGame(ctx,S,ty),10)}
+  for(const [fn,n] of [[diaryA,3],[diaryB,2],[notebook,2]]){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'偵探任務　點出寫錯的地方，再選出正確的答案');
+    const g=await fn(ctx,S);ctx.max+=n*10;ctx.add(g);ctx.step+=n-1;ctx.tick(0,0);if(!ctx.alive())return;await waitBtn(S,'下一份 →')}
+}
+
+/* ================= 世界 4：月亮列車 ================= */
+function train(ctx,S,seq,title){
+  return new Promise(res=>{
+    S.append(el('div',{class:'q',html:title}));
+    const tr=el('div',{class:'train'});const cars=seq.map(()=>{const c=el('div',{class:'car'},'?');tr.append(c);return c});
+    const tray=el('div',{class:'tray'});const fb=el('div',{class:'fb',hidden:''});S.append(tr,el('div',{class:'small'},'依照順序，點下面的月亮放進車廂。'),tray,fb);
+    let pos=0,mis=0;cars[0].classList.add('next');
+    shuffle(seq).forEach(ph=>{const b=el('button',{html:moon(ph.rep)});tray.append(b);
+      b.onclick=()=>{if(pos>=seq.length)return;const need=seq[pos];
+        if(ph===need){sfx(true);cars[pos].innerHTML=moon(ph.rep)+'<span>'+cn(ph.rep)+'</span>';cars[pos].classList.remove('next');b.remove();pos++;fb.hidden=true;
+          if(pos<seq.length)cars[pos].classList.add('next');else{fb.hidden=false;fb.className='fb ok';fb.textContent='列車接好了！月相照農曆順序變化：由缺到圓，再由圓到缺。';waitBtn(S,'下一步 →').then(()=>res(Math.max(2,10-2*mis)))}}
+        else{mis++;sfx(false);shake(b);fb.hidden=false;fb.className='fb bad';const prev=pos?seq[pos-1]:null;
+          fb.textContent='這節車廂還不是它。'+(prev?'前一節是農曆'+cn(prev.rep)+'，':'')+(mis>=2?(need.rep===1?'下一個是看不到月亮的朔。':need.rep<15?'下一個在十五以前：亮面在右邊，比前一個更亮。':need.rep<=16?'下一個是最圓的時候。':'下一個在十五以後：亮面在左邊，比前一個更缺。'):'想想看接下來月亮會變圓還是變缺？')}}});
+  });
+}
+async function w4(ctx){
+  const S=ctx.stage;ctx.N=7;
+  const sorted=a=>a.slice().sort((x,y)=>x.rep-y.rep);
+  const r1=sorted(shuffle(PH).slice(0,4)),r2=sorted(shuffle(PH).slice(0,6));
+  const fi=PH.findIndex(p=>p.k==='full');const r3=[...PH.slice(fi),...PH.slice(0,fi)];
+  const rounds=[[r1,'從農曆月初排到月底（4 節車廂）'],[r2,'從農曆月初排到月底（6 節車廂）'],[r3,'挑戰：從<b>十五（滿月）</b>開始，繞一圈排到下個月的十二']];
+  for(const [seq,t] of rounds){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'月亮列車');ctx.tick(await train(ctx,S,seq,t),10)}
+  /* 缺了誰 */
+  const miss=shuffle(PH).slice(0,2);
+  for(const m of miss){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'缺了誰　月相圓缺變化週期圖少了一個月亮，抓住飄來飄去的正確泡泡！');
+    const cx=150,cy=140,R=105;let h=`<svg viewBox="0 0 300 290" style="width:100%;max-width:340px;margin:auto"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#F2C14E55" stroke-width="3" stroke-dasharray="6 6"/>`;
+    PH.forEach((p,i)=>{const a=(-70+i*45)*Math.PI/180;const x=cx+R*Math.cos(a),y=cy-R*Math.sin(a);
+      h+=p===m?`<circle cx="${x}" cy="${y}" r="21" fill="#2B3566" stroke="#F2C14E" stroke-width="2"/><text x="${x}" y="${y+8}" text-anchor="middle" font-size="22" fill="#F2C14E">?</text>`:`<g transform="translate(${x-21} ${y-21}) scale(.42)">${moonInner(p.rep)}</g>`;
+      h+=`<text x="${x}" y="${y+36}" text-anchor="middle" font-size="12" fill="#AEB6DA">${cn(p.rep)}</text>`});
+    h+=`<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="13" fill="#AEB6DA">逆時針前進</text></svg>`;
+    S.append(el('div',{html:h}));
+    const others=shuffle(PH.filter(p=>p!==m)).slice(0,3);
+    ctx.tick(await chase(S,ctx,{q:'問號那裡是農曆<b>'+cn(m.rep)+'</b>，應該是哪一個月亮？',kind:'bubble',ans:0,
+      opts:[m,...others].map(p=>({html:moon(p.rep),label:p.full,why:p===m?'':'那是'+p.full+'，在農曆'+daysTxt(p)+'。'})),
+      hints:[sideHint(m.rep),'看看問號兩邊的月亮，它應該介於兩者之間。'],explain:'農曆'+cn(m.rep)+'是'+m.full+'：'+m.shape+'。'}),10)}
+  /* 反推日期 */
+  for(let r=0;r<2;r++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'反推日期　先點月亮，再點它的農曆日期');
+    let set;do{set=shuffle(PH).slice(0,4)}while(set.some((p,i)=>set.some((q,j)=>i<j&&ring(p.rep,q.rep)<4)));
+    const tray=el('div',{class:'tray'}),chips=el('div',{class:'chips'}),fb=el('div',{class:'fb',hidden:''});let sel=null,mis=0,done=0;
+    S.append(tray,chips,fb);
+    const got=await new Promise(res=>{
+      const mb=shuffle(set).map(p=>{const b=el('button',{html:moon(p.rep)});b.onclick=()=>{if(b.disabled)return;mb.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sel={p,b}};tray.append(b);return b});
+      shuffle(set).forEach(p=>{const c=el('button',{},'農曆'+cn(p.rep));chips.append(c);
+        c.onclick=()=>{if(!sel){fb.hidden=false;fb.className='fb bad';fb.textContent='先點一個月亮喔！';return}
+          if(sel.p===p){sfx(true);sel.b.disabled=true;sel.b.classList.remove('sel');sel.b.style.opacity=1;sel.b.style.background='var(--leaf)';c.disabled=true;c.style.background='var(--leaf)';c.style.color='#fff';fb.hidden=false;fb.className='fb ok';fb.textContent='✔ 農曆'+cn(p.rep)+'：'+p.full;sel=null;
+            if(++done===4){const st=set.slice().sort((a,b)=>a.rep-b.rep);S.append(el('div',{class:'train'},st.map(q=>el('div',{class:'car',html:moon(q.rep)+'<span>'+cn(q.rep)+'</span>'}))),el('div',{class:'small'},'照日期排好，月亮就是這樣變化的。'));waitBtn(S,'下一步 →').then(()=>res(Math.max(0,10-3*mis)))}}
+          else{mis++;sfx(false);shake(c);fb.hidden=false;fb.className='fb bad';const q=sel.p;
+            fb.textContent='農曆'+cn(p.rep)+'不是這個月亮。💡 '+(q.rep===1?'看不到月亮是一個月的開始。':q.rep<15?'這個月亮亮在右邊，是十五以前。':q.rep<=16?'圓圓的月亮在一個月的正中間。':'這個月亮亮在左邊，是十五以後。')}}})});
+    ctx.tick(got,10)}
+}
+
+/* ================= 魔王關 ================= */
+function bossQ(){
+  const g=rnd(['day','img','fest','cal','stmt','fist']);
+  if(g==='day'){const ph=rnd(PH),d=rnd(ph.days);const o=shuffle(PH.filter(p=>p!==ph)).slice(0,3);return{q:'農曆'+cn(d)+'的月亮是？',img:true,opts:[ph,...o].map(p=>({html:moon(p===ph?d:p.rep),label:p.full})),why:'農曆'+cn(d)+'是'+ph.full+'。'}}
+  if(g==='img'){const ph=rnd(PH);const o=shuffle(PH.filter(p=>p!==ph)).slice(0,3);return{q:'<div class="bigmoon">'+moon(ph.rep)+'</div>這是什麼月相？',opts:[ph,...o].map(p=>p.full),why:'這是'+ph.full+'。'}}
+  if(g==='fest'){const F=rnd(FEST.filter(f=>!f.d||[1,7,8,15,16,30].includes(f.d)));const nm=F.d?(F.d===1||F.d===30?'朔（看不到月亮）':F.d<=8?'上弦月':'滿月（望）'):'沒有固定月相';
+    const pool=['朔（看不到月亮）','上弦月','滿月（望）','下弦月','沒有固定月相'].filter(x=>x!==nm);return{q:F.n+'的晚上，月亮是？',opts:[nm,...shuffle(pool).slice(0,3)],why:F.n+'是'+F.date+'。'}}
+  if(g==='cal'){const F=rnd(FEST);return{q:F.n+'是哪一種節慶？',opts:F.d?['農曆','國曆']:['國曆','農曆'],why:F.n+'是'+F.date+'。'}}
+  if(g==='stmt'){const s=rnd(STMT);return{q:'哪一句是正確的？',opts:[s.ok,s.bad],why:s.ok}}
+  const n=rnd([2,3,4,5,6,7]);return{q:'疊了 '+n+' 個拳頭剛好遮住月亮，高度角大約是？',opts:[n*10+'°',n+'°',(n*10+30)+'°',n*5+'°'],why:'一個拳頭大約 10°。'};
+}
+async function w5(ctx){
+  const S=ctx.stage;ctx.N=10;const HP=10,TL=90;let hp=HP;
+  const hpb=el('i',{style:'width:100%'});const tEl=el('span',{class:'score'},'⏱ '+TL);
+  const mon=el('div',{style:'display:flex;justify-content:center'});
+  const drawMon=(mood)=>{const cover=hp/HP;mon.innerHTML=`<svg viewBox="0 0 240 150" style="width:100%;max-width:300px"><g transform="translate(120 20) scale(.9)">${moonInner(15)}</g><g transform="translate(0 ${(1-cover)*70}) " opacity="${.35+.65*cover}"><path d="M30 120 Q20 80 60 80 Q70 45 110 60 Q140 35 170 62 Q215 60 212 100 Q232 108 222 130 L40 132 Q22 132 30 120Z" fill="#8A7FB0"/><circle cx="95" cy="98" r="7" fill="#1B2350"/><circle cx="140" cy="98" r="7" fill="#1B2350"/>${mood==='hit'?'<path d="M100 118 q18 -10 36 0" stroke="#1B2350" stroke-width="4" fill="none"/>':'<path d="M100 112 q18 14 36 0" stroke="#1B2350" stroke-width="4" fill="none"/>'}</g></svg>`};
+  drawMon();
+  S.append(el('div',{class:'ctrl'},el('span',{class:'tag'},'雲霧怪的血量'),tEl),el('div',{class:'hp'},hpb),mon,el('div',{class:'small'},'答對一題打掉一格血（10 分）。'+TL+' 秒內打倒牠！答錯會顯示正確答案，不扣分。'));
+  await waitBtn(S,'開戰！');
+  const qa=el('div');S.append(qa);const t0=Date.now();let over=false;
+  const tick=setInterval(()=>{const left=Math.max(0,TL-(Date.now()-t0)/1000);tEl.textContent='⏱ '+Math.ceil(left);if(left<=0||!ctx.alive()){over=true;clearInterval(tick)}},250);
+  ctx.max=HP*10;
+  while(hp>0&&!over&&ctx.alive()){
+    const Q=bossQ();qa.innerHTML='';const box=el('div',{class:'qbox'},el('div',{class:'q',html:Q.q}));const wrap=el('div',{class:'opts'+(Q.img?' imgs':'')});const fb=el('div',{class:'fb',hidden:''});box.append(wrap,fb);qa.append(box);
+    const ok=await new Promise(r=>{const order=shuffle(Q.opts.map((_,i)=>i));const bs=[];
+      order.forEach(i=>{const o=Q.opts[i];const b=el('button',{html:o.html||o});bs[i]=b;wrap.append(b);
+        b.onclick=()=>{bs.forEach(x=>x.disabled=true);if(i===0){b.classList.add('ok');r(true)}else{b.classList.add('bad');bs[0].classList.add('ok');bs[0].disabled=false;fb.hidden=false;fb.className='fb bad';fb.textContent='正確答案是「'+lab(Q.opts[0])+'」。'+Q.why;r(false)}}});
+      const iv=setInterval(()=>{if(over||!ctx.alive()){clearInterval(iv);r(null)}},200)});
+    if(ok===null)break;
+    if(ok){hp--;ctx.add(10);ctx.step++;sfx(true);hpb.style.width=(hp/HP*100)+'%';drawMon('hit');await sleep(450)}
+    else{sfx(false);drawMon();await sleep(1800)}
+  }
+  clearInterval(tick);if(!ctx.alive())return;
+  qa.innerHTML='';qa.append(el('div',{class:'fb '+(hp<=0?'ok':'bad')},hp<=0?'雲霧怪被打跑了，月亮回來了！':'時間到！雲霧怪還剩 '+hp+' 格血，再挑戰一次！'));
+  await waitBtn(S,'看成績 →');
+}
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body></html>

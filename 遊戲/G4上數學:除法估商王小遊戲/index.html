@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>除法估商王</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+[hidden]{display:none!important}
+/* 版面：數學方格本底，王冠金＋皇家紅；舞台中央是直式與天秤，下方是數字鍵盤 */
+:root{
+  --bg:#F4F6FA; --panel:#FFFFFF; --panel2:#EEF2F8; --ink:#1E2A3A; --soft:#5E6B7A;
+  --brick:#C8463D; --brick-d:#8F2E27; --grain:#E9B33B; --bamboo:#2F9E6B; --water:#4BA3D9;
+  --line:#D6DDE8; --ok:#2F9E6B; --bad:#C8463D;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;
+  background-image:linear-gradient(#DDE4EF 1px,transparent 1px),linear-gradient(90deg,#DDE4EF 1px,transparent 1px);background-size:24px 24px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+b{color:var(--brick)}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--brick);color:#fff;box-shadow:0 3px 0 var(--brick-d);transition:transform .08s;min-height:48px}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--brick-d)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+button.ghost{background:var(--panel);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--bad);box-shadow:0 3px 0 #8A3426}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--brick)}
+.chip{font-family:var(--display);background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--panel);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.players button{font-size:15px;padding:4px 12px;min-height:36px;box-shadow:none;background:var(--panel2);color:var(--ink)}
+.players button.on{background:var(--grain);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.worlds .boss{grid-column:1/-1}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-ico{display:none!important}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:46px;height:46px}}
+.world{position:relative;text-align:left;background:var(--panel);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world.boss{border-color:#E9B33B;background:linear-gradient(120deg,var(--panel),#FCEBC4)}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:#E0A526;letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead .stats{display:flex;gap:14px;margin-left:auto;white-space:nowrap}
+@media (max-width:520px){.gamehead h2{font-size:20px;flex:1 1 0}.gamehead .stats{flex:1 1 100%;justify-content:space-between}}
+.gamehead h2{font-size:23px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--brick);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bamboo);width:0;transition:width .3s}
+.stage{background:var(--panel);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.qbox{display:flex;flex-direction:column;gap:10px}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts.imgs button{text-align:center;padding:8px 4px}
+.ib{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:16px;line-height:1.3}
+.ib svg{width:64px;height:64px}
+.ib.house svg{width:100%;max-width:120px;height:auto}
+.opts button.ok,.mover.ok,.lg.ok{background:var(--ok)!important;color:#fff;box-shadow:0 3px 0 #2A5E3A;opacity:1}
+.opts button.bad,.mover.bad,.lg.bad{background:var(--bad)!important;color:#fff;box-shadow:0 3px 0 #8A3426}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px;line-height:1.55}
+.fb.ok{background:#E2F1E5;color:#2A5E3A;border:2px solid #A9D3B4}
+.fb.bad{background:#FBE5DF;color:#8A3426;border:2px solid #EAB3A6}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.big{font-size:22px;padding:14px 26px}
+.small{font-size:14px;color:var(--soft)}
+.hero-ico{display:flex;justify-content:center}
+.focus{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--display);font-size:22px}
+.focus svg{width:110px;height:110px}
+/* 時光機 */
+.sky{position:relative;height:300px;border-radius:16px;overflow:hidden;background:linear-gradient(#DCEAF2,#F6EEDC);border:2px solid var(--line)}
+.mover{position:absolute;left:0;top:0;width:96px;height:96px;padding:4px;border-radius:50%;background:#ffffffd8;border:2px solid var(--line);box-shadow:0 4px 10px #7A655333;color:var(--ink);display:grid;place-items:center;will-change:transform}
+.mover .ib{font-size:13px}
+.mover .ib svg{width:50px;height:50px}
+/* 拼圖 */
+.tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tray button{background:var(--grain);color:var(--ink);box-shadow:0 3px 0 #B9973E;touch-action:none;user-select:none;-webkit-user-select:none}
+.tray button.sel{outline:3px solid var(--brick);outline-offset:2px}
+.ghost-chip{position:fixed;z-index:50;pointer-events:none;font-family:var(--display);font-size:18px;background:var(--grain);border-radius:14px;padding:10px 18px;box-shadow:0 6px 16px #0003;transform:translate(-50%,-60%)}
+.plan{width:100%;max-width:520px;margin:auto;touch-action:manipulation}
+/* 分類快答 */
+.flash{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--display);font-size:28px;padding:18px 10px;background:#fff;border:2px solid var(--line);border-radius:18px}
+.flash svg{width:90px;height:90px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two button{font-size:22px;padding:16px}
+.two .yuan{background:var(--bamboo);box-shadow:0 3px 0 #3E6A30}
+.two .han{background:var(--brick)}
+/* 地圖 */
+.mapwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:520px){.mapwrap{grid-template-columns:1fr}}
+.mapwrap svg{width:100%;max-width:300px;margin:auto}
+.legend{display:flex;flex-direction:column;gap:8px}
+.lg{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:16px;line-height:1.35}
+.lg .no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brick);color:#fff;margin-right:6px;font-size:15px}
+.card-clue{background:#fff;border:3px dashed var(--brick);border-radius:16px;padding:12px 14px;font-family:var(--display);font-size:20px}
+/* 魔王 */
+.hp{height:16px;border-radius:99px;background:#EBD7C7;overflow:hidden;border:2px solid #C9A27A}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,#E0A526,#B5412F);transition:width .3s}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:#E0A526;letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;min-height:40px;background:var(--panel2);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--brick);color:#fff}
+table.lb{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.lb td,.lb th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.lb th{font-family:var(--display);font-weight:400;color:var(--soft)}
+.lb td.n{text-align:right;font-family:var(--display);font-size:19px}
+.lb tr.me td{background:#FFF3C4}
+.card{border:3px dashed var(--brick);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--panel2)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--brick)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:pop .4s}
+@keyframes pop{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.ldwrap{display:flex;justify-content:center;overflow-x:auto;padding:6px 0;background:#fff;border:2px solid var(--line);border-radius:16px;background-image:linear-gradient(#EEF2F8 1px,transparent 1px),linear-gradient(90deg,#EEF2F8 1px,transparent 1px);background-size:20px 20px}
+.ld{--cw:40px;font-family:var(--display);font-size:27px;display:inline-flex;flex-direction:column;padding:6px 12px}
+@media (max-width:420px){.ld{--cw:34px;font-size:23px}}
+.ldrow{display:grid;grid-template-columns:var(--dw) repeat(var(--n),var(--cw))}
+.lc{height:42px;display:grid;place-items:center;font-variant-numeric:tabular-nums;color:var(--ink)}
+.lc.dvc{justify-items:end;padding-right:10px}
+.ddrow .lc.dd{border-top:3px solid var(--ink)}
+.ddrow .lc.dd.first{border-left:3px solid var(--ink);border-top-left-radius:16px 30px}
+.lc.ul{border-bottom:2px solid var(--ink)}
+.qrow .lc.q{color:var(--brick)}
+.lc.act{background:#FFF1C2;outline:2px dashed var(--grain);outline-offset:-3px;border-radius:8px;animation:blink 1.2s infinite}
+@keyframes blink{50%{background:#FFE08A}}
+.lc.newd{color:#2B6CB0}
+.lc.tap{cursor:pointer;background:#EEF3F8;border-radius:8px;outline:2px dashed #9FB0BC;outline-offset:-4px}
+.lc.tap:hover{background:#FFF1C2}
+.lc.hi{background:#DDF2E5}
+.ldrow.tapr{cursor:pointer;border-radius:8px}
+.ldrow.tapr:hover{background:#FFF6DA}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:340px;margin:0 auto;width:100%}
+.kp button{font-size:24px;min-height:54px;background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.kp .kp-ok{background:var(--brick);color:#fff;box-shadow:0 3px 0 var(--brick-d);font-size:20px}
+.kp .kp-del{font-size:20px}
+.qr-in{display:flex;align-items:center;gap:6px;justify-content:center;font-family:var(--display);font-size:21px;flex-wrap:wrap}
+.slot{min-width:64px;min-height:50px;padding:6px 10px;background:#fff;color:var(--ink);border:2px dashed #9FB0BC;box-shadow:none;font-size:26px}
+.slot.on{border-color:var(--brick);background:#FFF1C2}
+.packs{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;font-size:24px;padding:8px;background:var(--panel2);border-radius:14px}
+.pk.left{font-size:15px;background:#FBE3DF;color:var(--brick-d);border-radius:8px;padding:4px 8px;font-family:var(--display)}
+input[type=range]{accent-color:var(--brick);width:100%;height:40px}
+.card-clue{background:#fff;border:3px dashed var(--brick);border-radius:16px;padding:12px 14px;font-family:var(--display);font-size:19px;line-height:1.6}
+@media (max-width:520px){.hero h2{font-size:19px!important}}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+</style>
+</head><body style="margin:0">
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.random()*a.length|0];
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function shake(e){e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake')}
+const NS='http://www.w3.org/2000/svg';
+function svgEl(vb,inner,css=''){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',vb);s.innerHTML=inner;if(css)s.style.cssText=css;return s}
+
+/* ---------- 除法引擎 ---------- */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const near10=d=>Math.round(d/10)*10;
+const tens=d=>d%10===5?[d-5,d+5]:[near10(d)];
+function steps(dd,dv){
+  const D=String(dd).split('').map(Number),n=D.length,S=[];
+  if(dd<dv){S.push({i:n-1,cur:dd,q:0,prod:0,r:dd,zf:true});return{D,n,S,q:0,r:dd}}
+  let k=1;while(+D.slice(0,k).join('')<dv)k++;
+  let cur=+D.slice(0,k).join('');
+  for(let i=k-1;i<n;i++){const q=Math.floor(cur/dv),prod=q*dv,r=cur-prod;S.push({i,cur,q,prod,r});if(i<n-1)cur=r*10+D[i+1]}
+  return{D,n,S,q:Math.floor(dd/dv),r:dd%dv};
+}
+const midZero=st=>st.S.some((s,j)=>j>0&&s.q===0);
+function gen(minDD,maxDD,minDV,maxDV,ok=()=>true,tries=4000){
+  for(let t=0;t<tries;t++){const dd=ri(minDD,maxDD),dv=ri(minDV,maxDV);if(dv%10===0)continue;const st=steps(dd,dv);if(ok(dd,dv,st))return{dd,dv,st}}
+  const dd=ri(minDD,maxDD),dv=ri(minDV,maxDV)||7;return{dd,dv,st:steps(dd,dv)};
+}
+/* 估商：把除數想成整十，估出的商 */
+const estQ=(cur,dv)=>dv<10?Math.min(9,Math.floor(cur/dv)):Math.min(9,Math.floor(cur/near10(dv)));
+const PLACE=['個','十','百','千','萬'];
+const placeName=(n,i)=>PLACE[n-1-i]+'位';
+
+/* 直式畫面：rows=[{text,end,under,id,cls}]，qcells=商那一列每格文字 */
+function divView({dv,D,qcells,rows,active,onRow,onQCell,hiCol}){
+  const n=D.length;const box=el('div',{class:'ld',style:`--n:${n};--dw:${String(dv).length*0.62+0.9}em`});
+  const mk=(cls)=>el('div',{class:'ldrow '+(cls||'')});
+  const cell=(t,c)=>el('div',{class:'lc '+(c||'')},t==null?'':String(t));
+  /* 商 */
+  const qr=mk('qrow');qr.append(cell('','dvc'));
+  for(let c=0;c<n;c++){const t=qcells[c]==null?'':String(qcells[c]);const cc=cell(t,'q'+(active&&active.kind==='q'&&active.col===c?' act':'')+(hiCol===c?' hi':''));
+    if(onQCell){cc.classList.add('tap');cc.onclick=()=>onQCell(c)}qr.append(cc)}
+  if(onRow){qr.classList.add('tapr');qr.onclick=()=>onRow('quot')}
+  box.append(qr);
+  /* 除數＋被除數 */
+  const dr=mk('ddrow');dr.append(cell(dv,'dvc'));D.forEach((d,c)=>dr.append(cell(d,'dd'+(c===0?' first':''))));box.append(dr);
+  rows.forEach(r=>{const row=mk(r.cls);row.append(cell('','dvc'));const s=String(r.text);const start=r.end-s.length+1;
+    for(let c=0;c<n;c++){const k=c-start;let t=(k>=0&&k<s.length)?s[k]:'';let cl='';
+      if(r.under&&c>=Math.min(start,r.uStart??start)&&c<=r.end)cl+=' ul';
+      if(r.act&&c===r.end)cl+=' act';if(r.newCol===c)cl+=' newd';row.append(cell(t,cl))}
+    if(onRow&&r.id){row.classList.add('tapr');row.onclick=()=>onRow(r.id)}
+    box.append(row)});
+  return box;
+}
+/* 依進度組出直式的各列 */
+function buildRows(st,upto,phase,buf){
+  const rows=[];const{D,n,S}=st;
+  for(let j=0;j<S.length&&j<=upto;j++){const s=S[j];
+    if(j===upto&&phase==='q')break;
+    if(s.q>0||s.zf){rows.push({text:s.prod,end:s.i,under:true,id:'p'+j,uStart:s.i-String(s.cur).length+1});
+      if(j===upto&&phase==='r'){rows.push({text:buf||'',end:s.i,act:true,id:'r'+j});break}
+      if(s.i<n-1)rows.push({text:s.r*10+D[s.i+1],end:s.i+1,id:'r'+j,newCol:s.i+1});else rows.push({text:s.r,end:s.i,id:'r'+j})}
+    else{const last=rows[rows.length-1];if(last&&s.i<n-1){last.text=s.cur*10+D[s.i+1];last.end=s.i+1;last.newCol=s.i+1}}
+  }
+  return rows;
+}
+const qcellsOf=(st,upto)=>{const a=[];st.S.forEach((s,j)=>{if(j<upto)a[s.i]=s.q});return a};
+
+/* 數字鍵盤 */
+function keypad(onKey){
+  const k=el('div',{class:'kp'});
+  ['1','2','3','4','5','6','7','8','9','⌫','0','確定'].forEach(t=>{const b=el('button',{class:t==='確定'?'kp-ok':t==='⌫'?'kp-del':''},t);b.onclick=()=>onKey(t);k.append(b)});
+  return k;
+}
+
+/* 完整直式：一步一步填；回傳得分 */
+function solveDiv(ctx,S,{dd,dv,st},{askStart=true,title='',pts=10}={}){
+  return new Promise(res=>{
+    const head=el('div',{class:'q',html:title||`算算看：<b>${dd} ÷ ${dv}</b>`});
+    const viewBox=el('div',{class:'ldwrap'});const fb=el('div',{class:'fb',hidden:''});const tip=el('div',{class:'small'});
+    const hintB=el('button',{class:'ghost',style:'font-size:15px;min-height:40px;padding:4px 12px'},'💡 估商提示');
+    S.append(head,viewBox,tip,el('div',{class:'ctrl'},hintB),fb);
+    let mis=0,j=0,phase=askStart?'start':'q',buf='';
+    const kp=keypad(key);S.append(kp);
+    const say=(t,ok)=>{fb.hidden=false;fb.className='fb '+(ok?'ok':'bad');fb.innerHTML=t};
+    function draw(){
+      viewBox.innerHTML='';const s=st.S[j];
+      const qc=qcellsOf(st,phase==='done'?st.S.length:(phase==='r'?j+1:j));
+      if(phase==='q'&&buf!=='')qc[s.i]=buf;
+      viewBox.append(divView({dv,D:st.D,qcells:qc,rows:buildRows(st,phase==='done'?st.S.length:j,phase==='start'?'q':phase,buf),
+        active:phase==='q'?{kind:'q',col:s.i}:null,onQCell:phase==='start'?pickStart:null}));
+      kp.hidden=phase==='start'||phase==='done';hintB.hidden=phase!=='q';
+      tip.textContent=phase==='start'?'先想一想：商的第一個數字要寫在哪一位的上面？點上面那一排的格子。'
+        :phase==='q'?`估商：${s.cur} 裡面有幾個 ${dv}？輸入商的這一位。`
+        :phase==='r'?`減減看：${s.cur} − ${s.prod} ＝ ？輸入剩下的數。`:'';
+    }
+    function pickStart(c){const f=st.S[0].i;
+      if(c===f){sfx(true);say(`對！${placeName(st.n,f)}開始寫，因為前面的 ${String(st.S[0].cur)} 才夠分給 ${dv}。`,true);phase='q';draw()}
+      else{mis++;sfx(false);say(c<f?`${st.D.slice(0,c+1).join('')} 比 ${dv} 小，不夠分，要再多看一位。`:`看${placeName(st.n,c-1)}以前就已經夠分了，商要更早開始寫。`)}}
+    hintB.onclick=()=>{const s=st.S[j];const R=dv<10?dv:near10(dv);
+      say(dv<10?`想想 ${dv} 的幾倍最接近 ${s.cur}，又不會超過？`:`把 ${dv} 想成 <b>${R}</b>，${s.cur} 裡面大約有幾個 ${R}？估出來以後，乘乘看再調整。`,true);fb.className='fb'};
+    function key(t){
+      if(phase!=='q'&&phase!=='r')return;
+      if(t==='⌫'){buf=buf.slice(0,-1);draw();return}
+      if(t!=='確定'){if(phase==='q'){buf=t}else if(buf.length<5){buf+=t}draw();return}
+      if(buf==='')return;const v=+buf;const s=st.S[j];
+      if(phase==='q'){
+        if(v===s.q){sfx(true);fb.hidden=true;buf='';
+          if(s.q===0&&!s.zf){say(`${s.cur} 比 ${dv} 小，不夠分，商寫 0，再往下拉一位。`,true);j++;phase=j<st.S.length?'q':'done'}
+          else phase='r';
+          if(phase==='done')finish();draw();return}
+        mis++;sfx(false);
+        if(v*dv>s.cur)say(`${dv} × ${v} ＝ ${v*dv}，比 ${s.cur} 大，<b>商太大了</b>，改小一點。`);
+        else say(`${dv} × ${v} ＝ ${v*dv}，${s.cur} − ${v*dv} ＝ ${s.cur-v*dv}，剩下的比 ${dv} 還大，<b>還能再分</b>，商改大一點。`);
+        buf='';draw();return}
+      if(phase==='r'){
+        if(v===s.r){sfx(true);fb.hidden=true;buf='';j++;
+          if(j>=st.S.length){phase='done';finish()}else{phase='q';if(s.i<st.n-1)say(`把下一位的 ${st.D[s.i+1]} 拉下來，變成 ${s.r*10+st.D[s.i+1]}。`,true)}
+          draw();return}
+        mis++;sfx(false);say(`再算一次：${s.cur} − ${s.prod} ＝ ？`);buf='';draw()}
+    }
+    function finish(){const r=st.r;
+      say(`完成！<b>${dd} ÷ ${dv} ＝ ${st.q} … ${r}</b>　檢查：餘數 ${r} ${r<dv?'比':'不比'}除數 ${dv} 小 ✔`,true);
+      waitBtn(S,'下一題 →').then(()=>res(Math.max(3,pts-2*mis)))}
+    draw();
+  });
+}
+
+/* ---------- 世界設定 ---------- */
+const CROWN='<path d="M8 46 L12 18 L24 32 L32 12 L40 32 L52 18 L56 46Z" fill="#E9B33B" stroke="#8A6516" stroke-width="2"/><circle cx="32" cy="12" r="4" fill="#C8463D"/><rect x="8" y="46" width="48" height="8" rx="2" fill="#C8463D"/>';
+const LOGO=CROWN;
+const WORLDS=[
+ {name:'分貨倉庫',sub:'四位數 ÷ 一位數：商從哪一位開始寫？哪裡要補 0？',color:'#E3ECF7',ico:'<rect x="6" y="20" width="24" height="24" fill="#C49A5C" stroke="#7A5230" stroke-width="2"/><rect x="34" y="28" width="16" height="16" fill="#D9B07A" stroke="#7A5230" stroke-width="2"/><rect x="52" y="34" width="10" height="10" fill="#E8C98E" stroke="#7A5230" stroke-width="2"/><path d="M6 52 h56" stroke="#1E2A3A" stroke-width="3"/>',run:w1},
+ {name:'估商天秤',sub:'把除數想成整十來估商，太大改小、太小改大',color:'#FBEBC8',ico:'<path d="M32 8 V50 M14 50 h36" stroke="#1E2A3A" stroke-width="3"/><path d="M8 20 H56" stroke="#1E2A3A" stroke-width="3"/><path d="M8 20 L2 34 h12Z M56 20 l-6 14 h12Z" fill="#E9B33B"/>',run:w2},
+ {name:'直式工廠',sub:'照「估、乘、減、比、拉」，一格一格完成直式',color:'#E2F1E5',ico:'<text x="8" y="40" font-size="26" fill="#1E2A3A" font-family="monospace">÷</text><path d="M26 14 h30 M26 14 q-4 14 0 28" stroke="#1E2A3A" stroke-width="3" fill="none"/><text x="32" y="36" font-size="16" fill="#C8463D">38</text>',run:w3},
+ {name:'直式偵探',sub:'同學的直式哪裡寫錯了？找出來，再用驗算檢查',color:'#F6DDD9',ico:'<rect x="8" y="8" width="34" height="44" rx="4" fill="#fff" stroke="#1E2A3A" stroke-width="2"/><path d="M14 20h22M14 30h22M14 40h14" stroke="#9AA4B0" stroke-width="2"/><circle cx="44" cy="42" r="9" fill="none" stroke="#C8463D" stroke-width="4"/><path d="M50 48l8 8" stroke="#C8463D" stroke-width="5" stroke-linecap="round"/>',run:w4},
+ {name:'生活任務',sub:'坐車、裝盒、切西瓜：剩下的要多一個，還是不算？',color:'#E5E0F5',ico:'<rect x="6" y="22" width="50" height="22" rx="6" fill="#E9B33B"/><rect x="12" y="27" width="10" height="8" fill="#fff"/><rect x="26" y="27" width="10" height="8" fill="#fff"/><rect x="40" y="27" width="10" height="8" fill="#fff"/><circle cx="18" cy="48" r="5" fill="#1E2A3A"/><circle cx="46" cy="48" r="5" fill="#1E2A3A"/>',run:w5},
+ {name:'魔王關：亂除怪',sub:'亂除怪把答案全搞亂了！限時快答，奪回估商王冠',color:'#F3D9C9',ico:CROWN,run:w6,boss:true}
+];
+
+/* ================= 世界 1：分貨倉庫 ================= */
+function warehouse(dd){const D=String(dd).split('').map(Number);const n=D.length;
+  const ic=[ (x,y)=>`<rect x="${x}" y="${y}" width="22" height="22" fill="#C49A5C" stroke="#7A5230" stroke-width="1.5"/>`,
+             (x,y)=>`<rect x="${x+3}" y="${y+6}" width="16" height="16" fill="#D9B07A" stroke="#7A5230" stroke-width="1.5"/>`,
+             (x,y)=>`<rect x="${x+6}" y="${y+11}" width="10" height="11" fill="#E8C98E" stroke="#7A5230" stroke-width="1.2"/>`,
+             (x,y)=>`<circle cx="${x+11}" cy="${y+17}" r="4.5" fill="#E9B33B" stroke="#8A6516"/>`];
+  const W=n*86;let h=`<rect width="${W}" height="170" rx="12" fill="#F2E9DA"/>`;
+  D.forEach((d,c)=>{const p=n-1-c;const x0=c*86+6;h+=`<text x="${x0+38}" y="20" font-size="14" text-anchor="middle" fill="#1E2A3A">${PLACE[p]}（${d}）</text>`;
+    for(let k=0;k<d;k++){const col=k%3,row=Math.floor(k/3);h+=ic[3-p]?ic[3-p](x0+col*25,30+row*25):''}});
+  return `<svg viewBox="0 0 ${W} 170" style="width:100%;max-width:${W+20}px;display:block;margin:auto">${h}</svg>`;
+}
+async function w1(ctx){
+  const S=ctx.stage;ctx.N=7;
+  /* A：商從哪一位開始 */
+  for(let t=0;t<3;t++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'分貨倉庫　倉庫裡的貨要平分給貨車');
+    const short=t!==1;const P=gen(1000,9999,2,9,(dd,dv,st)=>short?st.D[0]<dv:st.D[0]>=dv);
+    S.append(el('div',{class:'q',html:`倉庫有 <b>${P.dd}</b> 箱貨，平分給 <b>${P.dv}</b> 輛貨車。<br>商的第一個數字要從哪一位開始寫？`}),el('div',{html:warehouse(P.dd)}));
+    const f=P.st.S[0].i;const qa=el('div');S.append(qa);
+    const cor=placeName(P.st.n,f);ctx.tick(await pick(qa,{q:'',opts:[cor,...['千位','百位','十位'].filter(x=>x!==cor)].slice(0,3),
+      hints:[`先看千位：${P.st.D[0]} 箱夠不夠分給 ${P.dv} 輛車？`,`不夠分的話，要把千箱拆開變成百箱，一起分。`],
+      explain:P.st.D[0]<P.dv?`${P.st.D[0]} 個千不夠分給 ${P.dv} 輛車，換成 ${P.st.S[0].cur} 個百來分，所以從百位開始寫。`:`${P.st.D[0]} 個千夠分給 ${P.dv} 輛車，所以從千位開始寫。`}),10)}
+  /* B：完整直式（÷一位數），第二題一定有補 0 */
+  for(let t=0;t<2;t++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'分貨倉庫　自己算算看（不夠分的位要記 0）');
+    const P=gen(1000,9999,3,9,(dd,dv,st)=>t===1?midZero(st):st.r>0);
+    ctx.tick(await solveDiv(ctx,S,P,{askStart:false}),10)}
+  /* C：補 0 偵察 */
+  for(let t=0;t<2;t++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'補 0 偵察　哪一個商才對？想想每一位夠不夠分');
+    const P=gen(1000,9999,3,9,(dd,dv,st)=>midZero(st)&&st.q>=100);
+    const qs=String(P.st.q),no0=qs.replace(/0/g,'')||'1';const extra=qs.length<4?qs.slice(0,1)+'0'+qs.slice(1):qs+'0';
+    const opts=[`${P.st.q} … ${P.st.r}`,`${no0} … ${P.st.r}`,`${extra} … ${P.st.r}`].filter((v,i,a)=>a.indexOf(v)===i);
+    const qa=el('div');S.append(qa);
+    const zs=P.st.S.filter((s,j)=>j>0&&s.q===0)[0];
+    ctx.tick(await pick(qa,{q:`<b>${P.dd} ÷ ${P.dv}</b> ＝ ？`,opts,
+      hints:[`商應該是幾位數？從${placeName(P.st.n,P.st.S[0].i)}開始寫，一直寫到個位。`,`算到${placeName(P.st.n,zs.i)}時，${zs.cur} 比 ${P.dv} 小，不夠分，那一位要記什麼？`],
+      explain:`商從${placeName(P.st.n,P.st.S[0].i)}寫到個位，共 ${qs.length} 位；${placeName(P.st.n,zs.i)}不夠分要記 0，所以是 ${P.st.q} … ${P.st.r}。`}),10)}
+}
+
+/* ================= 世界 2：估商天秤 ================= */
+function balance(ctx,S,{dd,dv}){
+  return new Promise(res=>{
+    const q=Math.floor(dd/dv),r=dd%dv;
+    const qEl=el('div',{class:'q',html:`<b>${dd} ÷ ${dv}</b>`});S.append(qEl);
+    const fb=el('div',{class:'fb',hidden:''});
+    const step1=el('div',{class:'qbox'});S.append(step1,fb);
+    let pts=0;
+    const T1=tens(dv);
+    const cand=[...new Set([Math.floor(dv/10)*10,Math.floor(dv/10)*10+10,Math.floor(dv/10)*10-10].filter(x=>x>0))].sort((a,b)=>a-b);
+    step1.append(el('div',{class:'tag'},`第 1 步：先準備估商。除數 ${dv} 要想成哪一個整十？`));
+    const tw=el('div',{class:'opts',style:'grid-template-columns:repeat(auto-fit,minmax(150px,1fr))'});step1.append(tw);
+    let wrong1=0;
+    cand.forEach(c=>{const b=el('button',{},`把 ${dv} 想成 ${c}`);tw.append(b);b.onclick=()=>{if(b.disabled)return;
+      if(T1.includes(c)){b.classList.add('ok');[...tw.children].forEach(x=>x.disabled=true);sfx(true);pts+=[3,2,1][wrong1]||0;fb.hidden=false;fb.className='fb ok';fb.innerHTML=`對！${dv} 最接近 ${c}${T1.length>1?'（20 和 30 一樣近，兩個都可以）':''}。`;step2(c)}
+      else{wrong1++;b.classList.add('bad');b.disabled=true;sfx(false);fb.hidden=false;fb.className='fb bad';fb.innerHTML=`${dv} 離 ${c} 比較遠，要找<b>最接近</b>的整十。`}}});
+    function step2(R){
+      qEl.innerHTML=`<b>${dd} ÷ ${dv}</b>　商是多少？`;
+      const est=Math.min(9,Math.floor(dd/R));
+      const box=el('div',{class:'qbox'});S.append(box);
+      box.append(el('div',{class:'tag',html:`第 2 步：${dd} 裡面大約有幾個 ${R}？拉滑桿選商，按「秤秤看」。`}));
+      const sv=svgEl('0 0 340 170','','width:100%;max-width:420px;display:block;margin:auto');box.append(sv);
+      const sl=el('input',{type:'range',min:'0',max:'9',step:'1',value:'1',id:'qsl'});
+      const lab=el('div',{class:'q',style:'text-align:center'});
+      const go=el('button',{class:'big'},'秤秤看');
+      box.append(lab,sl,el('div',{class:'ctrl',style:'justify-content:center'},go));
+      let tries=0,done=false;
+      const draw=(v,show)=>{const p=dv*v;const ang=show?(p>dd?-12:(dd-p>=dv?8:3)):0;
+        let h=`<path d="M170 30 V150 M120 150 h100" stroke="#1E2A3A" stroke-width="4"/><g transform="rotate(${-ang} 170 40)"><path d="M40 40 H300" stroke="#1E2A3A" stroke-width="5"/>
+          <path d="M40 40 L20 80 H60Z" fill="#E3ECF7" stroke="#1E2A3A" stroke-width="2"/><text x="40" y="100" font-size="16" text-anchor="middle" fill="#1E2A3A">被除數</text><text x="40" y="120" font-size="20" text-anchor="middle" fill="#1E2A3A">${dd}</text>
+          <path d="M300 40 L280 80 H320Z" fill="#FBEBC8" stroke="#1E2A3A" stroke-width="2"/><text x="300" y="100" font-size="16" text-anchor="middle" fill="#1E2A3A">${dv} × ${v}</text><text x="300" y="120" font-size="20" text-anchor="middle" fill="#C8463D">${show?p:'?'}</text></g>`;
+        if(show&&p<=dd){const rem=dd-p,mx=Math.max(rem,dv),w1=rem/mx*240,w2=dv/mx*240;
+          h+=`<text x="10" y="148" font-size="12" fill="#5E6B76">剩下 ${rem}</text><rect x="70" y="138" width="${w1}" height="10" rx="5" fill="${rem>=dv?'#C8463D':'#2F9E6B'}"/><text x="10" y="166" font-size="12" fill="#5E6B76">除數 ${dv}</text><rect x="70" y="156" width="${w2}" height="10" rx="5" fill="#9AA4B0"/>`}
+        sv.innerHTML=h;lab.innerHTML=`商用 <b>${v}</b> 試試看`};
+      sl.value=String(est);draw(est,false);
+      sl.addEventListener('input',()=>{if(!done)draw(+sl.value,false)});
+      fb.hidden=false;fb.className='fb ok';fb.innerHTML=`把 ${dv} 想成 ${R}：${dd} ÷ ${R}，商大約是 <b>${est}</b>。滑桿已經放在 ${est}，秤秤看對不對！`;
+      go.onclick=()=>{if(done)return;const v=+sl.value;tries++;draw(v,true);const p=dv*v;
+        if(p>dd){sfx(false);fb.className='fb bad';fb.innerHTML=`${dv} × ${v} ＝ ${p}，比 ${dd} 大，天秤翹起來了！<b>商太大，改小一點。</b>`}
+        else if(dd-p>=dv){sfx(false);fb.className='fb bad';fb.innerHTML=`${dv} × ${v} ＝ ${p}，剩下 ${dd-p}，比除數 ${dv} 還大（紅色那條比較長）！<b>還能再分，商改大一點。</b>`}
+        else{done=true;sfx(true);go.remove();sl.disabled=true;fb.className='fb ok';
+          fb.innerHTML=`剛剛好！<b>${dd} ÷ ${dv} ＝ ${q} … ${r}</b>，餘數 ${r} 比除數 ${dv} 小。${v!==est?`（先估 ${est}，再調整成 ${q}，這就是估商！）`:''}`;
+          pts+=tries<=2?7:tries===3?5:3;waitBtn(S,'下一題 →').then(()=>res(pts))}};
+    }
+  });
+}
+async function w2(ctx){
+  const S=ctx.stage;ctx.N=7;
+  const kinds=shuffle(['down','down','up','up','ok','ok3']).concat(['down3']);
+  for(const k of kinds){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'估商天秤　先把除數想成整十，估一個商，再秤秤看');
+    let P;
+    if(k==='zero')P=gen(10,98,12,98,(dd,dv)=>dd<dv&&dv%10!==5&&dv<95);
+    else{const three=k==='ok3'||k==='down3';
+      P=gen(three?100:20,three?999:99,11,94,(dd,dv,st)=>{if(dd<dv||dd>=dv*10||dv%10===5)return false;const e=estQ(dd,dv);
+        return k.startsWith('down')?e>st.q:k==='up'?e<st.q:e===st.q})}
+    ctx.tick(await balance(ctx,S,P),10)}
+}
+
+/* ================= 世界 3：直式工廠 ================= */
+async function w3(ctx){
+  const S=ctx.stage;ctx.N=3;
+  const probs=[
+    gen(100,999,12,94,(dd,dv,st)=>dd<dv*10&&dd>=dv&&estQ(dd,dv)!==st.q&&st.r>0),
+    gen(200,999,11,49,(dd,dv,st)=>st.q>=10&&st.q<100&&st.r>0),
+    Math.random()<.5?gen(1000,9999,12,49,(dd,dv,st)=>midZero(st)&&st.q>=100):gen(1000,9999,13,89,(dd,dv,st)=>st.q>=10&&st.r>0&&st.S.some(s=>s.q>0&&estQ(s.cur,dv)!==s.q))
+  ];
+  for(let t=0;t<probs.length;t++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,`直式工廠 ${t+1}/3　估、乘、減、比、拉`);
+    ctx.tick(await solveDiv(ctx,S,probs[t],{askStart:true,pts:20}),20)}
+}
+
+/* ================= 世界 4：直式偵探 ================= */
+function detect(ctx,S,kind){
+  return new Promise(res=>{
+    let P,wrongRows,shownQ,rowsOverride,fix,why,hints;
+    if(kind==='zero'){P=gen(1000,9999,3,49,(dd,dv,st)=>midZero(st)&&st.q>=100);const qs=String(P.st.q);
+      const qc=[];const nz=qs.replace(/0/g,'');for(let k=0;k<nz.length;k++)qc[P.st.n-nz.length+k]=nz[k];shownQ=qc;rowsOverride=buildRows(P.st,P.st.S.length,'done','');
+      wrongRows=['quot'];fix={q:`商應該是 ${P.st.q}`,opts:[`${P.st.q}`,`${nz}`,`${nz}0`]};why=`有一位不夠分，卻沒有記 0，商少了一位。`;hints=['數數看商有幾位數？','不夠分的那一位，商要記 0。']}
+    else if(kind==='big'){P=gen(100,999,12,89,(dd,dv,st)=>dd<dv*10&&dd>=dv*2&&st.q>=2);const s=P.st.S[0];const wq=P.st.q-1;
+      const st2={...P.st,S:[{...s,q:wq,prod:wq*P.dv,r:s.cur-wq*P.dv}]};shownQ=qcellsOf(st2,1);rowsOverride=buildRows(st2,1,'done','');
+      wrongRows=['quot','r0'];fix={q:`正確的答案是？`,opts:[`${P.st.q} … ${P.st.r}`,`${wq} … ${P.st.r+P.dv}`,`${P.st.q+1} … ${Math.abs(P.st.r-P.dv)}`]};
+      why=`餘數 ${P.st.r+P.dv} 比除數 ${P.dv} 還大，代表還能再分一次，商少估了 1。`;hints=['看看最後剩下的數，和除數比一比。','餘數一定要比除數小！']}
+    else{P=gen(100,999,12,89,(dd,dv,st)=>dd<dv*10&&st.q>=2&&st.r>=2&&st.r<dv-2);const s=P.st.S[0];const bad=s.r+(Math.random()<.5?1:-1)*(s.r>=10&&Math.random()<.5?10:1);
+      const st2={...P.st,S:[{...s,r:bad}]};shownQ=qcellsOf(P.st,1);rowsOverride=buildRows(st2,1,'done','');
+      wrongRows=['r0'];fix={q:`${s.cur} − ${s.prod} ＝ ？`,opts:[`${s.r}`,`${bad}`,`${s.r+(bad>s.r?2:-2)>=0?s.r+(bad>s.r?2:-2):s.r+5}`]};why=`減法算錯了：${s.cur} − ${s.prod} 不等於 ${bad}。`;hints=['每一行都檢查一下：乘對了嗎？減對了嗎？','用直式重新減一次最下面那一行。']}
+    S.append(el('div',{class:'q',html:`小明算 <b>${P.dd} ÷ ${P.dv}</b>，直式裡有一個地方錯了。<br><span class="small">點出錯的那一列（商那一列或下面的算式）</span>`}));
+    const view=divView({dv:P.dv,D:P.st.D,qcells:shownQ,rows:rowsOverride,onRow:tap});
+    const wrap=el('div',{class:'ldwrap'},view);const fb=el('div',{class:'fb',hidden:''});const qa=el('div');S.append(wrap,fb,qa);
+    let mis=0,found=false;
+    async function tap(id){if(found)return;
+      if(wrongRows.includes(id)){found=true;sfx(true);fb.hidden=false;fb.className='fb ok';fb.innerHTML='抓到了！'+why;
+        const g=await pick(qa,{q:fix.q,opts:fix.opts,hints,explain:`正確：${P.dd} ÷ ${P.dv} ＝ ${P.st.q} … ${P.st.r}。`,pts:6});res(Math.max(0,4-mis)+g)}
+      else{mis++;sfx(false);fb.hidden=false;fb.className='fb bad';fb.textContent='這一列沒有錯，再找找看。（'+hints[0]+'）'}}
+  });
+}
+async function w4(ctx){
+  const S=ctx.stage;ctx.N=6;
+  for(const k of shuffle(['zero','big','sub','big'])){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'直式偵探　找出錯誤，再訂正');ctx.tick(await detect(ctx,S,k),10);if(!ctx.alive())return;await waitBtn(S,'下一份 →')}
+  for(let t=0;t<2;t++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'驗算站　除數 × 商 ＋ 餘數 ＝ 被除數');
+    const P=gen(100,9999,12,89,(dd,dv,st)=>st.q>=3&&st.r>0);const good=Math.random()<.5;
+    const cq=good?P.st.q:P.st.q+(Math.random()<.5?1:-1),cr=good?P.st.r:P.st.r;const chk=P.dv*cq+cr;
+    const qa=el('div');S.append(qa);
+    const g1=await pick(qa,{q:`小華算出 <b>${P.dd} ÷ ${P.dv} ＝ ${cq} … ${cr}</b>。<br>驗算：${P.dv} × ${cq} ＋ ${cr} ＝ ？`,opts:[String(chk),String(chk+P.dv),String(chk-10)],
+      hints:['先算乘法，再加上餘數。',`${P.dv} × ${cq} ＝ ${P.dv*cq}`],explain:`${P.dv} × ${cq} ＋ ${cr} ＝ ${chk}。`,pts:5});
+    if(!ctx.alive())return;
+    const g2=await pick(qa,{q:`驗算的結果 ${chk}，和被除數 ${P.dd} 一樣嗎？小華算對了嗎？`,opts:good?['一樣，算對了','不一樣，算錯了']:['不一樣，算錯了','一樣，算對了'],
+      hints:['比一比兩個數字。','驗算的結果要等於被除數才對。'],explain:good?'驗算結果等於被除數，答案正確。':`驗算結果不等於被除數，正確答案是 ${P.st.q} … ${P.st.r}。`,pts:5});
+    ctx.tick(g1+g2,10)}
+}
+
+/* ================= 世界 5：生活任務 ================= */
+const TASKS=[
+ {k:'floor',mk:()=>{const P=gen(100,2000,6,48,(dd,dv,st)=>st.r>0);const it=rnd(['鳳梨酥','巧克力','彈力球','馬卡龍']);return{P,q:`工廠做了 <b>${P.dd}</b> 個${it}，每 <b>${P.dv}</b> 個裝成一盒。<br>最多可以<b>裝滿</b>幾盒？`,unit:'盒',ans:'q',why:`剩下的 ${P.st.r} 個裝不滿一盒，不能算。`,icon:'🎁'}}},
+ {k:'ceil',mk:()=>{const P=gen(100,900,20,48,(dd,dv,st)=>st.r>0);return{P,q:`校外教學有 <b>${P.dd}</b> 人，每輛遊覽車最多坐 <b>${P.dv}</b> 人。<br><b>最少</b>要幾輛遊覽車才能全部載完？`,unit:'輛',ans:'q1',why:`剩下的 ${P.st.r} 人也要坐車，所以要再多一輛。`,icon:'🚌'}}},
+ {k:'ceil',mk:()=>{const P=gen(150,900,12,36,(dd,dv,st)=>st.r>0);return{P,q:`每個西瓜切成 <b>${P.dv}</b> 片，要分給 <b>${P.dd}</b> 人，每人一片。<br><b>最少</b>要切幾個西瓜才夠？`,unit:'個',ans:'q1',why:`剩下的 ${P.st.r} 人也要吃到，所以要再多切一個。`,icon:'🍉'}}},
+ {k:'both',mk:()=>{const P=gen(100,2000,12,65,(dd,dv,st)=>st.r>0);return{P,q:`哥哥有 <b>${P.dd}</b> 元，一張遊樂園門票 <b>${P.dv}</b> 元。<br>最多可以買幾張？`,unit:'張',ans:'q',why:`剩下的 ${P.st.r} 元不夠再買一張。`,icon:'🎟️'}}},
+ {k:'floor',mk:()=>{const P=gen(100,999,12,45,(dd,dv,st)=>st.r>0);return{P,q:`老師有 <b>${P.dd}</b> 張色紙，平分給 <b>${P.dv}</b> 位同學。<br>每人最多可以拿到幾張？`,unit:'張',ans:'q',why:`剩下的 ${P.st.r} 張不夠每人再多分一張。`,icon:'📄'}}},
+ {k:'exact',mk:()=>{let P;do{const dv=ri(12,40),q=ri(105,450);P={dd:dv*q,dv,st:steps(dv*q,dv)}}while(P.dd>9999);return{P,q:`一臺相機 <b>${P.dd}</b> 元，平分 <b>${P.dv}</b> 期付款。<br>每期要付幾元？`,unit:'元',ans:'q',why:'剛好分完，沒有剩下。',icon:'📷'}}}
+];
+function lifeTask(ctx,S,T){
+  return new Promise(res=>{
+    const{P}=T;const q=P.st.q,r=P.st.r,final=T.ans==='q1'&&r>0?q+1:q;
+    S.append(el('div',{class:'card-clue',html:T.icon+' '+T.q}));
+    S.append(el('div',{class:'small'},'先用紙筆（或心算）算出商和餘數，填進下面的格子。'));
+    const form=el('div',{class:'qr-in'});
+    const bq=el('button',{class:'slot on'},'');const br=el('button',{class:'slot'},'');
+    form.append(el('span',{},`${P.dd} ÷ ${P.dv} ＝`),bq,el('span',{},'…'),br);
+    const fb=el('div',{class:'fb',hidden:''});S.append(form);
+    let cur='q',vq='',vr='',mis=0;
+    bq.onclick=()=>{cur='q';bq.classList.add('on');br.classList.remove('on')};br.onclick=()=>{cur='r';br.classList.add('on');bq.classList.remove('on')};
+    const kp=keypad(t=>{if(t==='⌫'){if(cur==='q')vq=vq.slice(0,-1);else vr=vr.slice(0,-1)}
+      else if(t==='確定'){check();return}
+      else{if(cur==='q'&&vq.length<4)vq+=t;else if(cur==='r'&&vr.length<3)vr+=t}
+      bq.textContent=vq;br.textContent=vr});
+    S.append(kp,fb);
+    const say=(t,ok)=>{fb.hidden=false;fb.className='fb '+(ok?'ok':'bad');fb.innerHTML=t};
+    function check(){if(vq===''){say('先填商。');return}if(vr===''){cur='r';br.click();say('再填餘數（沒有剩下就填 0）。');return}
+      const a=+vq,b=+vr;
+      if(a===q&&b===r){sfx(true);kp.remove();say(`算對了！${P.dd} ÷ ${P.dv} ＝ ${q} … ${r}`,true);step2();return}
+      mis++;sfx(false);
+      if(b>=P.dv)say(`餘數 ${b} 比除數 ${P.dv} 還大，<b>還能再分</b>！商要改大。`);
+      else if(a*P.dv+b===P.dd)say('算式對了，但是再檢查一次…');
+      else if(a*P.dv>P.dd)say(`${P.dv} × ${a} ＝ ${a*P.dv}，比 ${P.dd} 大，商太大了。`);
+      else say(`驗算看看：${P.dv} × ${a} ＋ ${b} ＝ ${a*P.dv+b}，不等於 ${P.dd}，再算一次。`)}
+    async function step2(){
+      const vis=el('div',{class:'packs'});const show=Math.min(q,24);
+      for(let i=0;i<show;i++)vis.append(el('span',{class:'pk'},T.icon));if(q>show)vis.append(el('span',{class:'small'},`…共 ${q} 份`));
+      if(r>0)vis.append(el('span',{class:'pk left'},`剩 ${r}`));S.append(vis);
+      const qa=el('div');S.append(qa);
+      const opts=[...new Set([`${final} ${T.unit}`,`${final===q?q+1:q} ${T.unit}`,`${r} ${T.unit}`])];
+      const g=await pick(qa,{q:'所以答案是？',opts,hints:['想一想：剩下的要「多一個」，還是「不算」？',T.ans==='q1'?'剩下的也需要，不能丟下！':'剩下的不夠一份，不能算進去。'],explain:T.why,pts:5});
+      res(Math.max(0,5-2*mis)+g)}
+  });
+}
+async function w5(ctx){
+  const S=ctx.stage;ctx.N=5;
+  const list=[TASKS[1],TASKS[0],rnd([TASKS[2],TASKS[1]]),TASKS[3],rnd([TASKS[4],TASKS[5]])];
+  for(const t of shuffle(list)){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'生活任務　算出商和餘數，再判斷答案');ctx.tick(await lifeTask(ctx,S,t.mk()),10)}
+}
+
+/* ================= 魔王關：亂除怪 ================= */
+function bossQ(){
+  const g=rnd(['ten','digits','rem','est','check','ceil','zero']);
+  if(g==='zero'){const dv=ri(21,89);let dd;do{dd=ri(dv-15,dv-1)}while(dd<10);return mk(`${dd} ÷ ${dv} ＝ ？`,`0 … ${dd}`,[`1 … ${dd-dv<0?dv-dd:dd-dv}`,`1 … 0`,`0 … 0`],`${dd} 比 ${dv} 小，不夠分，商是 0，全部剩下來，餘數是 ${dd}。`)}
+  const mk=(q,ans,ds,why)=>({q,opts:[String(ans),...shuffle([...new Set(ds.map(String))].filter(x=>x!==String(ans))).slice(0,3)],why});
+  if(g==='ten'){let dv;do{dv=ri(11,94)}while(dv%10===0||dv%10===5);const R=near10(dv);return mk(`估商時，除數 ${dv} 要想成？`,R,[R-10,R+10,dv],`${dv} 最接近 ${R}。`)}
+  if(g==='digits'){const P=gen(100,9999,3,89,()=>true);const L=String(P.st.q).length;return mk(`${P.dd} ÷ ${P.dv}，商是幾位數？`,L+' 位數',[(L+1)+' 位數',Math.max(1,L-1)+' 位數','4 位數','1 位數'],`商從${placeName(P.st.n,P.st.S[0].i)}開始寫，是 ${L} 位數。`)}
+  if(g==='rem'){const dv=ri(12,60),q=ri(2,9);const bad=Math.random()<.5;const r=bad?ri(dv,dv+9):ri(0,dv-1);return mk(`有人算出「□ ÷ ${dv} ＝ ${q} … ${r}」，這個餘數合理嗎？`,bad?'不合理':'合理',[bad?'合理':'不合理'],bad?`餘數 ${r} 不能比除數 ${dv} 大或一樣。`:`餘數 ${r} 比除數 ${dv} 小，合理。`)}
+  if(g==='est'){const P=gen(100,999,12,94,(dd,dv,st)=>dd<dv*10&&dd>=dv);return mk(`${P.dd} ÷ ${P.dv} 的商是？`,P.st.q,[P.st.q+1,Math.max(0,P.st.q-1),P.st.q+2],`${P.dd} ÷ ${P.dv} ＝ ${P.st.q} … ${P.st.r}`)}
+  if(g==='check'){const dv=ri(12,40),q=ri(3,30),r=ri(1,dv-1);return mk(`${dv} × ${q} ＋ ${r} ＝ ？（驗算）`,dv*q+r,[dv*q+r+dv,dv*q-r,dv*q+r+10],`${dv} × ${q} ＝ ${dv*q}，再加 ${r}。`)}
+  const dv=ri(4,9),n=dv*ri(3,8)+ri(1,dv-1);return mk(`${n} 人坐計程車，每輛最多坐 ${dv} 人，最少要幾輛？`,Math.ceil(n/dv),[Math.floor(n/dv),Math.ceil(n/dv)+1],`${n} ÷ ${dv} ＝ ${Math.floor(n/dv)} … ${n%dv}，剩下的人也要坐，要多一輛。`);
+}
+async function w6(ctx){
+  const S=ctx.stage;ctx.N=10;const HP=10,TL=60;let hp=HP,left=TL;
+  const hpb=el('i',{style:'width:100%'});const tEl=el('span',{class:'score'},'⏱ '+TL);
+  const s=svgEl('0 0 340 150','','width:100%;max-width:420px;margin:auto;display:block');
+  const draw=st=>{const k=1-Math.max(0,left)/TL;let h=`<rect width="340" height="150" rx="14" fill="#F2E9DA"/>`;
+    h+=`<g transform="translate(${state==='win'?250:40+k*40} ${state==='win'?60:30}) scale(${state==='win'?1.3:1})">${CROWN}</g>`;
+    if(st!=='win'){const sh=st==='hit'?'#B58AD9':'#8A5FB8';h+=`<g transform="translate(${190-k*30} 20)"><path d="M10 110 Q0 40 60 30 Q120 40 110 110Z" fill="${sh}"/><text x="60" y="80" font-size="34" text-anchor="middle" fill="#fff">÷?</text><circle cx="40" cy="55" r="7" fill="#fff"/><circle cx="80" cy="55" r="7" fill="#fff"/><circle cx="${st==='hit'?42:38}" cy="56" r="3" fill="#1E2A3A"/><circle cx="${st==='hit'?82:78}" cy="56" r="3" fill="#1E2A3A"/></g>`}
+    if(st==='lose')h+=`<text x="170" y="140" font-size="18" text-anchor="middle" fill="#C8463D">王冠被亂除怪搶走了！</text>`;
+    if(st==='win')h+=`<text x="120" y="80" font-size="22" text-anchor="middle" fill="#2F9E6B">你是除法估商王！</text>`;
+    s.innerHTML=h};
+  let state='';draw();
+  const warn=el('div',{class:'small',style:'text-align:center;min-height:1.6em;color:var(--bad);font-family:var(--display)'});
+  S.append(el('div',{class:'ctrl'},el('span',{class:'tag'},'亂除怪的力氣'),tEl),el('div',{class:'hp'},hpb),s,warn,el('div',{class:'small'},'60 秒內答對 10 題，把王冠搶回來！答錯會扣 5 秒。'));
+  await waitBtn(S,'搶回王冠！');
+  const qa=el('div');S.append(qa);const t0=Date.now();let over=false,pen=0;
+  const tick=setInterval(()=>{left=Math.max(0,TL-(Date.now()-t0)/1000-pen);tEl.textContent='⏱ '+Math.ceil(left);tEl.style.color=left<=10?'var(--bad)':'';warn.textContent=left<=10?'⚠ 王冠快被搶走了！':'';draw(state);if(left<=0||!ctx.alive()){over=true;clearInterval(tick)}},200);
+  ctx.max=HP*10;
+  while(hp>0&&!over&&ctx.alive()){
+    const Q=bossQ();qa.innerHTML='';const box=el('div',{class:'qbox'},el('div',{class:'q',html:Q.q}));const wrap=el('div',{class:'opts'});const fb=el('div',{class:'fb',hidden:''});box.append(wrap,fb);qa.append(box);
+    const ok=await new Promise(r=>{const bs=[];
+      shuffle(Q.opts.map((_,i)=>i)).forEach(i=>{const b=el('button',{},Q.opts[i]);bs[i]=b;wrap.append(b);
+        b.onclick=()=>{bs.forEach(x=>x.disabled=true);if(i===0){b.classList.add('ok');r(true)}else{b.classList.add('bad');bs[0].classList.add('ok');bs[0].disabled=false;fb.hidden=false;fb.className='fb bad';fb.textContent='正確答案是「'+Q.opts[0]+'」。'+Q.why+'（扣 5 秒）';r(false)}}});
+      const iv=setInterval(()=>{if(over||!ctx.alive()){clearInterval(iv);r(null)}},150)});
+    if(ok===null)break;
+    if(ok){hp--;ctx.add(10);ctx.step++;sfx(true);hpb.style.width=(hp/HP*100)+'%';state='hit';draw(state);await sleep(350);state=''}
+    else{sfx(false);pen+=5;shake(s);await sleep(1500)}
+  }
+  clearInterval(tick);if(!ctx.alive())return;
+  qa.innerHTML='';
+  if(hp<=0){state='win';draw('win');sfx(true);qa.append(el('div',{class:'fb ok'},'王冠搶回來了！你就是除法估商王！還剩 '+Math.ceil(left)+' 秒。'))}
+  else{state='lose';draw('lose');sfx(false);warn.textContent='';qa.append(el('div',{class:'fb bad'},'時間到！亂除怪還剩 '+hp+' 格力氣，王冠被搶走了……再挑戰一次！'))}
+  await waitBtn(S,'看成績 →');
+}
+
+/* ---------- 紀錄 ---------- */
+const KEY='divking_v1',NW=6;
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:Array(NW).fill(0),stars:Array(NW).fill(0),time:Array(NW).fill(0),plays:0};const p=DB.players[n];['best','stars','time'].forEach(k=>{while(p[k].length<NW)p[k].push(0)});return p}
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase（和其他遊戲同一個專案，資料存在 divking_scores 表） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+const WKEY=['w1','w2','w3','w4','w5','w6'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/divking_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4,w5,w6)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+async function pushScore(i,secs){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_divking',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_divking',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/divking_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 首頁 ---------- */
+function header(){const p=DB.current;
+  return el('div',{class:'top'},el('div',{class:'logo'},el('span',{html:'<svg width="40" height="40" viewBox="0 0 64 64">'+LOGO+'</svg>'}),el('h1',{},'除法估商王')),p?el('span',{class:'chip'},'玩家：'+p):null)}
+function shakeInput(i){i.focus();shake(i)}
+function home(){
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'四上數學 第 4 單元：整數的除法'),
+      el('p',{},'五個世界加一個魔王關，題目每次都不一樣，答對拿分數和星星，每關都會計時。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v)return shakeInput(input);DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      names.length&&!bzN?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null),
+    el('div',{class:'hero-ico',html:'<svg viewBox="0 0 64 64" style="width:100%;height:auto">'+CROWN+'</svg>'})));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(w.boss?' boss':'')+(unlocked?'':' locked'),onclick:()=>{if(!pl)return shakeInput(input);if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="'+(w.vb||'0 0 64 64')+'">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b)});
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.boss?'魔王關':w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}app.innerHTML='';app.append(header())}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[];const b=p.best;return tab===0?{n,v:b.reduce((a,c)=>a+c,0),t:tm.reduce((a,c,i)=>a+(b[i]>0?(c||0):0),0)}:{n,v:b[tab-1]||0,t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{class:'lb'},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'除法估商王 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:(w.boss?'魔王關':'世界 '+(i+1)+' '+w.name)+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / '+(NW*3)),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');const stage=el('div',{class:'stage'});const t0=Date.now();
+  const token={};CUR=token;
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'stats'},tm,sc)),el('div',{class:'bar'},bar),stage);
+  const ctx={stage,score:0,max:0,step:0,N:1,alive:()=>CUR===token,
+    add(n){this.score+=n;sc.textContent=this.score+' 分'},
+    tick(got,pts){this.max+=pts;this.add(got);bar.style.width=(Math.min(1,++this.step/this.N)*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(()=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,ctx.max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();score=Math.max(0,score);let st=starsFor(score,max||1);if(WORLDS[i].boss&&score<max)st=Math.min(st,2);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=(i===NW-1&&score<max)?'王冠被搶走了……再挑戰一次，把亂除怪打倒！':st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?(i<NW-1?'過關了！下一關已經打開。':'過關了！你就是除法估商王！'):'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--brick)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,up,el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<NW-1&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一關'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+function waitBtn(parent,label){return new Promise(r=>{const b=el('button',{class:'big'},label);b.onclick=()=>{b.remove();r()};parent.append(b);b.focus({preventScroll:true})})}
+const ptsFor=(pts,wrong)=>[pts,Math.round(pts*.6),Math.round(pts*.3)][wrong]||0;
+const lab=o=>o.label||String(o.html||o).replace(/<[^>]+>/g,'');
+const tagLine=(S,t)=>S.append(el('div',{class:'tag'},t));
+
+/* 答錯不給答案：第 1、2 次錯給提示可重答（得分遞減），第 3 次才揭曉 */
+function tiered(fb,{hints=[],explain=''}){
+  let wrong=0;
+  return{get wrong(){return wrong},
+    bad(why){wrong++;sfx(false);fb.hidden=false;fb.className='fb bad';if(wrong>=3)return true;
+      fb.innerHTML=(why?why+'<br>':'')+'💡 提示：'+(hints[Math.min(wrong-1,hints.length-1)]||'再想一想！')+' 再試一次！';return false},
+    good(){sfx(true);fb.hidden=false;fb.className='fb ok';fb.innerHTML='答對了！'+(explain?' '+explain:'')},
+    reveal(ans){fb.className='fb bad';fb.innerHTML='答案是「'+ans+'」。'+(explain?' '+explain:'')}}
+}
+function pick(parent,{q,tag,top,opts,ans=0,hints,explain,pts=10,img=false}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(tag)box.append(el('div',{class:'tag'},tag));if(top)box.append(el('div',{class:'focus',html:top}));if(q)box.append(el('div',{class:'q',html:q}));
+    const wrap=el('div',{class:'opts'+(img?' imgs':'')});if(img)wrap.style.gridTemplateColumns='repeat('+(opts.length===4&&innerWidth<520?2:opts.length)+',minmax(0,1fr))';
+    const fb=el('div',{class:'fb',hidden:''});
+    const T=tiered(fb,{hints,explain});const btns=[];let done=false;
+    const end=got=>{done=true;btns.forEach(b=>b.disabled=true);btns[ans].classList.add('ok');btns[ans].disabled=false;
+      const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})};
+    shuffle(opts.map((_,i)=>i)).forEach(i=>{const o=opts[i];
+      const b=el('button',{html:o.html||o});b.onclick=()=>{if(done||b.disabled)return;
+        if(i===ans){b.classList.add('ok');T.good();end(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');b.disabled=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));end(0)}}};
+      btns[i]=b;wrap.append(b)});
+    box.append(wrap,fb);parent.append(box);
+  });
+}
+/* 飄來飄去的泡泡選項 */
+function chase(parent,ctx,{q,top,opts,ans=0,hints,explain,pts=10}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(top)box.append(el('div',{class:'focus',html:top}));box.append(el('div',{class:'q',html:q}));
+    const sky=el('div',{class:'sky'});const fb=el('div',{class:'fb',hidden:''});box.append(sky,fb);parent.append(box);
+    const T=tiered(fb,{hints,explain});let done=false;const S=96,H=300;const W=()=>Math.max(220,sky.clientWidth);
+    const ms=shuffle(opts.map((_,i)=>i)).map((i,k)=>{const o=opts[i];const b=el('button',{class:'mover',html:o.html});sky.append(b);
+      const m={b,i,x:(k%2)*(W()-S),y:(k>>1)*(H-S),vx:(Math.random()<.5?-1:1)*(30+Math.random()*25),vy:(Math.random()<.5?-1:1)*(25+Math.random()*20),dead:false};
+      b.onclick=()=>{if(done||m.dead)return;
+        if(i===ans){b.classList.add('ok');T.good();fin(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');m.dead=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));ms.find(z=>z.i===ans).b.classList.add('ok');fin(0)}}};
+      return m});
+    let last=performance.now();const place=m=>{m.b.style.transform=`translate(${m.x}px,${m.y}px)`};ms.forEach(place);
+    function loop(now){if(done||!ctx.alive())return;const dt=Math.min(.05,(now-last)/1000);last=now;const w=W();
+      ms.forEach(m=>{if(m.dead)return;m.x+=m.vx*dt;m.y+=m.vy*dt;if(m.x<0){m.x=0;m.vx*=-1}if(m.x>w-S){m.x=w-S;m.vx*=-1}if(m.y<0){m.y=0;m.vy*=-1}if(m.y>H-S){m.y=H-S;m.vy*=-1}});
+      for(let a=0;a<ms.length;a++)for(let c=a+1;c<ms.length;c++){const A=ms[a],B=ms[c];const dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy)||1;if(d<S){const o=(S-d)/2,nx=dx/d,ny=dy/d;if(!A.dead){A.x-=nx*o;A.y-=ny*o}if(!B.dead){B.x+=nx*o;B.y+=ny*o}if(!A.dead&&!B.dead){[A.vx,B.vx]=[B.vx,A.vx];[A.vy,B.vy]=[B.vy,A.vy]}}}
+      ms.forEach(m=>{m.x=Math.max(0,Math.min(w-S,m.x));m.y=Math.max(0,Math.min(H-S,m.y));place(m)});requestAnimationFrame(loop)}
+    if(!REDUCE)requestAnimationFrame(loop);
+    function fin(got){done=true;const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})}
+  });
+}
+
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body></html>

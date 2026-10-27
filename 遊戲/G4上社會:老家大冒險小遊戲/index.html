@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>阿嬤的三合院</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+[hidden]{display:none!important}
+/* 版面：稻埕黃土地＋紅磚瓦的老家，四個世界是老家的四個角落；舞台在上、題目卡在下 */
+:root{
+  --bg:#F2E7D2; --panel:#FFF9EE; --panel2:#F6EBD5; --ink:#3A2A20; --soft:#7A6553;
+  --brick:#B5412F; --brick-d:#7E2A1E; --grain:#E7C873; --bamboo:#5E8A4A; --water:#7FB0D8;
+  --line:#E2D2B4; --ok:#3F8A55; --bad:#C9503E;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;
+  background-image:repeating-linear-gradient(90deg,transparent 0 46px,#E9DCC2 46px 48px),repeating-linear-gradient(0deg,transparent 0 22px,#E9DCC2 22px 24px)}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+b{color:var(--brick)}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--brick);color:#fff;box-shadow:0 3px 0 var(--brick-d);transition:transform .08s;min-height:48px}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--brick-d)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+button.ghost{background:var(--panel);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--bad);box-shadow:0 3px 0 #8A3426}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--brick)}
+.chip{font-family:var(--display);background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--panel);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.players button{font-size:15px;padding:4px 12px;min-height:36px;box-shadow:none;background:var(--panel2);color:var(--ink)}
+.players button.on{background:var(--grain);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.worlds .boss{grid-column:1/-1}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-ico{display:none!important}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:46px;height:46px}}
+.world{position:relative;text-align:left;background:var(--panel);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world.boss{border-color:#C9A27A;background:linear-gradient(120deg,var(--panel),#F4DCC8)}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:#E0A526;letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead .stats{display:flex;gap:14px;margin-left:auto;white-space:nowrap}
+@media (max-width:520px){.gamehead h2{font-size:20px;flex:1 1 0}.gamehead .stats{flex:1 1 100%;justify-content:space-between}}
+.gamehead h2{font-size:23px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--brick);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bamboo);width:0;transition:width .3s}
+.stage{background:var(--panel);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.qbox{display:flex;flex-direction:column;gap:10px}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts.imgs button{text-align:center;padding:8px 4px}
+.ib{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:16px;line-height:1.3}
+.ib svg{width:64px;height:64px}
+.ib.house svg{width:100%;max-width:120px;height:auto}
+.opts button.ok,.mover.ok,.lg.ok{background:var(--ok)!important;color:#fff;box-shadow:0 3px 0 #2A5E3A;opacity:1}
+.opts button.bad,.mover.bad,.lg.bad{background:var(--bad)!important;color:#fff;box-shadow:0 3px 0 #8A3426}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px;line-height:1.55}
+.fb.ok{background:#E2F1E5;color:#2A5E3A;border:2px solid #A9D3B4}
+.fb.bad{background:#FBE5DF;color:#8A3426;border:2px solid #EAB3A6}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.big{font-size:22px;padding:14px 26px}
+.small{font-size:14px;color:var(--soft)}
+.hero-ico{display:flex;justify-content:center}
+.focus{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--display);font-size:22px}
+.focus svg{width:110px;height:110px}
+/* 時光機 */
+.sky{position:relative;height:300px;border-radius:16px;overflow:hidden;background:linear-gradient(#DCEAF2,#F6EEDC);border:2px solid var(--line)}
+.mover{position:absolute;left:0;top:0;width:96px;height:96px;padding:4px;border-radius:50%;background:#ffffffd8;border:2px solid var(--line);box-shadow:0 4px 10px #7A655333;color:var(--ink);display:grid;place-items:center;will-change:transform}
+.mover .ib{font-size:13px}
+.mover .ib svg{width:50px;height:50px}
+/* 拼圖 */
+.tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tray button{background:var(--grain);color:var(--ink);box-shadow:0 3px 0 #B9973E;touch-action:none;user-select:none;-webkit-user-select:none}
+.tray button.sel{outline:3px solid var(--brick);outline-offset:2px}
+.ghost-chip{position:fixed;z-index:50;pointer-events:none;font-family:var(--display);font-size:18px;background:var(--grain);border-radius:14px;padding:10px 18px;box-shadow:0 6px 16px #0003;transform:translate(-50%,-60%)}
+.plan{width:100%;max-width:520px;margin:auto;touch-action:manipulation}
+/* 分類快答 */
+.flash{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--display);font-size:28px;padding:18px 10px;background:#fff;border:2px solid var(--line);border-radius:18px}
+.flash svg{width:90px;height:90px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two button{font-size:22px;padding:16px}
+.two .yuan{background:var(--bamboo);box-shadow:0 3px 0 #3E6A30}
+.two .han{background:var(--brick)}
+/* 地圖 */
+.mapwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:520px){.mapwrap{grid-template-columns:1fr}}
+.mapwrap svg{width:100%;max-width:300px;margin:auto}
+.legend{display:flex;flex-direction:column;gap:8px}
+.lg{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:16px;line-height:1.35}
+.lg .no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brick);color:#fff;margin-right:6px;font-size:15px}
+.card-clue{background:#fff;border:3px dashed var(--brick);border-radius:16px;padding:12px 14px;font-family:var(--display);font-size:20px}
+/* 魔王 */
+.hp{height:16px;border-radius:99px;background:#EBD7C7;overflow:hidden;border:2px solid #C9A27A}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,#E0A526,#B5412F);transition:width .3s}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:#E0A526;letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;min-height:40px;background:var(--panel2);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--brick);color:#fff}
+table.lb{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.lb td,.lb th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.lb th{font-family:var(--display);font-weight:400;color:var(--soft)}
+.lb td.n{text-align:right;font-family:var(--display);font-size:19px}
+.lb tr.me td{background:#FBEFC9}
+.card{border:3px dashed var(--brick);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--panel2)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--brick)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:pop .4s}
+@keyframes pop{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+</style>
+</head><body style="margin:0">
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.random()*a.length|0];
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function shake(e){e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake')}
+const NS='http://www.w3.org/2000/svg';
+function svgEl(vb,inner,css=''){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',vb);s.innerHTML=inner;if(css)s.style.cssText=css;return s}
+
+/* ---------- 器物圖示（viewBox 0 0 100 100） ---------- */
+const BLD='<rect x="22" y="12" width="56" height="78" fill="#C9CED6" stroke="#7D8794" stroke-width="2"/>'+[0,1,2,3,4].map(r=>[0,1,2].map(c=>`<rect x="${30+c*15}" y="${20+r*13}" width="10" height="8" fill="#7FB0D8"/>`).join('')).join('')+'<rect x="44" y="78" width="12" height="12" fill="#7D8794"/>';
+const IT={
+ zao:['土灶','<rect x="14" y="40" width="72" height="46" fill="#B5412F"/><path d="M14 52h72M14 64h72M14 76h72" stroke="#8E2F21" stroke-width="1.5"/><path d="M38 86 v-16 a12 12 0 0 1 24 0 v16z" fill="#2A1A12"/><path d="M44 84 q6 -18 12 0z" fill="#F2A23A"/><path d="M24 40 q26 22 52 0z" fill="#555"/><ellipse cx="50" cy="40" rx="27" ry="6" fill="#3A3A3A"/>'],
+ zhenglong:['蒸籠','<ellipse cx="50" cy="30" rx="32" ry="9" fill="#E8C98E" stroke="#9C7536" stroke-width="2"/><rect x="18" y="30" width="64" height="22" fill="#DDB574" stroke="#9C7536" stroke-width="2"/><rect x="18" y="52" width="64" height="22" fill="#D2A964" stroke="#9C7536" stroke-width="2"/><path d="M18 74 q32 12 64 0" fill="#D2A964" stroke="#9C7536" stroke-width="2"/><path d="M40 18 q-4 -8 2 -14 M58 18 q-4 -8 2 -14" stroke="#BBB" stroke-width="3" fill="none"/>'],
+ mucai:['木柴','<g fill="#A06A3C" stroke="#6E4526" stroke-width="2"><rect x="14" y="62" width="72" height="16" rx="8"/><rect x="20" y="44" width="66" height="16" rx="8"/><rect x="14" y="26" width="64" height="16" rx="8"/></g><circle cx="22" cy="70" r="5" fill="#D9B07A"/><circle cx="28" cy="52" r="5" fill="#D9B07A"/><circle cx="22" cy="34" r="5" fill="#D9B07A"/>'],
+ caichu:['菜櫥','<rect x="22" y="10" width="56" height="80" rx="3" fill="#8A5A34"/><rect x="28" y="16" width="20" height="32" fill="#D9C8A8"/><rect x="52" y="16" width="20" height="32" fill="#D9C8A8"/><path d="M28 22h20M28 28h20M28 34h20M28 40h20M52 22h20M52 28h20M52 34h20M52 40h20" stroke="#B9A47C"/><rect x="28" y="54" width="44" height="30" fill="#6E4526"/><circle cx="46" cy="33" r="2" fill="#333"/><circle cx="54" cy="33" r="2" fill="#333"/>'],
+ zhaozhao:['桌罩','<path d="M14 72 q36 -72 72 0z" fill="#E3C98A" stroke="#9C7536" stroke-width="2"/><path d="M26 72 q24 -52 48 0 M38 72 q12 -42 24 0 M50 20 v52 M20 58h60 M29 44h42" stroke="#9C7536" fill="none" stroke-width="1.5"/><circle cx="50" cy="18" r="4" fill="#9C7536"/><rect x="8" y="72" width="84" height="6" rx="3" fill="#8A5A34"/>'],
+ shuitong:['水桶','<path d="M24 36 L76 36 L70 88 L30 88Z" fill="#B98552" stroke="#7A5230" stroke-width="2"/><path d="M27 50h46M29 74h42" stroke="#555" stroke-width="3"/><path d="M24 36 q26 -34 52 0" fill="none" stroke="#7A5230" stroke-width="3"/>'],
+ zhanban:['砧板','<ellipse cx="50" cy="66" rx="38" ry="14" fill="#A06A3C"/><ellipse cx="50" cy="60" rx="38" ry="14" fill="#C9935C"/><path d="M28 50 l40 -24 l6 6 l-40 22z" fill="#B9C3CC"/><path d="M68 26 l12 -8 l4 6 l-12 8z" fill="#5E3E20"/>'],
+ douli:['斗笠','<path d="M8 64 L50 22 L92 64 q-42 10 -84 0Z" fill="#E2C47E" stroke="#9C7536" stroke-width="2"/><path d="M50 22 L30 62 M50 22 L50 68 M50 22 L70 62" stroke="#9C7536"/><path d="M36 68 q14 18 28 0" fill="none" stroke="#7A5230" stroke-width="2"/>'],
+ suoyi:['蓑衣','<path d="M36 14 h28 l22 72 h-72z" fill="#8F7A45"/><path d="M14 86 l4 -10 l4 10 l4 -10 l4 10 l4 -10 l4 10 l4 -10 l4 10 l4 -10 l4 10 l4 -10 l4 10 l4 -10 l4 10 l4 -10 l4 10 l4 -10" fill="none" stroke="#5E4E26" stroke-width="2"/><path d="M42 28 l-6 42 M50 24 v50 M58 28 l6 42 M30 50 h40" stroke="#6E5A2E" stroke-width="1.5"/>'],
+ zongzi:['葉子包粽子','<path d="M50 14 L84 78 L16 78Z" fill="#5E8A4A" stroke="#3E6A30" stroke-width="2"/><path d="M50 14 L50 78 M28 58 L72 58" stroke="#E8D9A8" stroke-width="3"/>'],
+ yuetao:['月桃葉包食物','<path d="M14 70 Q40 20 88 22 Q70 70 14 70Z" fill="#6E9A4E" stroke="#3E6A30" stroke-width="2"/><path d="M16 68 Q50 44 86 24" stroke="#3E6A30" stroke-width="2" fill="none"/><ellipse cx="46" cy="70" rx="22" ry="10" fill="#7FA85A" stroke="#3E6A30" stroke-width="2"/><path d="M30 66 l32 8" stroke="#C9A85C" stroke-width="3"/>'],
+ yuquan:['魚筌','<path d="M6 50 L28 26 L92 34 L92 66 L28 74Z" fill="#E2C47E" stroke="#9C7536" stroke-width="2"/><path d="M28 26 v48 M44 28 v44 M60 30 v40 M76 32 v36 M28 38 l64 4 M28 62 l64 -4 M28 50 h64" stroke="#9C7536" stroke-width="1.5"/><path d="M66 50 q8 -6 14 0 q-6 6 -14 0z M80 50 l5 -4 v8z" fill="#5B8DBF"/>'],
+ muchu:['木杵','<rect x="44" y="4" width="12" height="56" rx="6" fill="#A06A3C" transform="rotate(14 50 34)"/><path d="M22 58 h56 l-6 30 h-44z" fill="#8A5A34"/><ellipse cx="50" cy="58" rx="28" ry="6" fill="#6E4526"/>'],
+ beilou:['藤編背簍','<path d="M22 24 h56 l-8 64 h-40z" fill="#C49A5C" stroke="#7A5230" stroke-width="2"/><path d="M24 38h52M26 52h48M28 66h44M30 80h40" stroke="#7A5230"/><path d="M36 24 v64 M50 24 v64 M64 24 v64" stroke="#9C7536"/><path d="M30 24 q-14 -16 0 -18 M70 24 q14 -16 0 -18" stroke="#5E3E20" stroke-width="3" fill="none"/>'],
+ gas:['瓦斯爐','<rect x="10" y="46" width="80" height="34" rx="6" fill="#C9CED6" stroke="#7D8794" stroke-width="2"/><ellipse cx="32" cy="46" rx="14" ry="4" fill="#3A3A3A"/><ellipse cx="68" cy="46" rx="14" ry="4" fill="#3A3A3A"/><path d="M26 42 q6 -16 12 0z M62 42 q6 -16 12 0z" fill="#5B8DEF"/><circle cx="32" cy="64" r="5" fill="#555"/><circle cx="68" cy="64" r="5" fill="#555"/>'],
+ cooker:['電鍋','<path d="M20 42 h60 v34 a10 10 0 0 1 -10 10 h-40 a10 10 0 0 1 -10 -10z" fill="#F7F7F7" stroke="#7D8794" stroke-width="2"/><path d="M18 42 q32 -26 64 0z" fill="#E8E8E8" stroke="#7D8794" stroke-width="2"/><rect x="44" y="20" width="12" height="6" rx="3" fill="#555"/><rect x="40" y="58" width="20" height="10" rx="2" fill="#D9443A"/>'],
+ fridge:['冰箱','<rect x="26" y="8" width="48" height="84" rx="6" fill="#E9EEF3" stroke="#7D8794" stroke-width="2"/><path d="M26 40 h48" stroke="#7D8794" stroke-width="2"/><rect x="64" y="18" width="4" height="14" rx="2" fill="#7D8794"/><rect x="64" y="48" width="4" height="20" rx="2" fill="#7D8794"/>'],
+ tap:['水龍頭','<rect x="8" y="18" width="14" height="34" fill="#9AA4B0"/><path d="M22 28 h42 a10 10 0 0 1 10 10 v12 h-12 v-8 h-40z" fill="#B9C3CC" stroke="#7D8794" stroke-width="2"/><rect x="40" y="16" width="16" height="8" rx="2" fill="#5B8DEF"/><path d="M68 58 q-4 10 0 14 q4 -4 0 -14z M68 78 q-4 10 0 14 q4 -4 0 -14z" fill="#5B8DEF"/>'],
+ umbrella:['雨傘','<path d="M8 50 q42 -46 84 0 q-10 -6 -21 0 q-10 -6 -21 0 q-10 -6 -21 0 q-11 -6 -21 0z" fill="#3E7BD6"/><path d="M50 50 v30 a7 7 0 0 1 -14 0" stroke="#444" stroke-width="3" fill="none"/>'],
+ raincoat:['雨衣','<path d="M38 12 h24 l6 10 l18 16 l-8 10 l-8 -6 v48 h-40 v-48 l-8 6 l-8 -10 l18 -16z" fill="#F2C14E" stroke="#B48A1F" stroke-width="2"/><path d="M50 22 v68" stroke="#B48A1F" stroke-width="2"/><circle cx="56" cy="36" r="2" fill="#B48A1F"/><circle cx="56" cy="52" r="2" fill="#B48A1F"/>'],
+ backpack:['背包','<rect x="24" y="22" width="52" height="66" rx="14" fill="#D9443A"/><rect x="32" y="56" width="36" height="22" rx="6" fill="#B5352C"/><path d="M38 22 q12 -18 24 0" stroke="#7A2A22" stroke-width="4" fill="none"/>'],
+ bag:['塑膠袋','<path d="M22 32 h56 l6 56 h-68z" fill="#F4F6F8" stroke="#9AA4B0" stroke-width="2"/><path d="M32 32 q0 -22 10 -22 q8 0 8 22 M50 32 q0 -22 10 -22 q8 0 8 22" fill="none" stroke="#9AA4B0" stroke-width="3"/>'],
+ building:['鋼筋混凝土樓房',BLD],
+ bamboohouse:['竹管仔厝','<rect x="0" y="86" width="100" height="14" fill="#9BAF7A"/><path d="M8 46 L50 16 L92 46z" fill="#C9A85C"/><path d="M8 46 L50 16 L92 46" stroke="#9C7536" stroke-width="2" fill="none"/><rect x="16" y="46" width="68" height="40" fill="#C9A77E"/><path d="M16 46v40M33 46v40M50 46v40M67 46v40M84 46v40M16 60h68M16 74h68" stroke="#6E8A3E" stroke-width="3"/>']
+};
+const iSvg=k=>`<svg viewBox="0 0 100 100" aria-hidden="true">${IT[k][1]}</svg>`;
+const iLab=k=>`<span class="ib">${iSvg(k)}<span>${IT[k][0]}</span></span>`;
+
+/* ---------- 住屋（viewBox 0 0 120 90） ---------- */
+const ROOF='#B5412F',WALL='#EAD9B8',WL='#8E5A3A';
+const hMain=(x,w)=>`<rect x="${x}" y="34" width="${w}" height="22" fill="${WALL}" stroke="${WL}"/><path d="M${x-4} 36 l8 -14 h${w-8} l8 14z" fill="${ROOF}"/><rect x="${x+w/2-4}" y="42" width="8" height="14" fill="#8E2F21"/>`;
+const hWing=x=>`<rect x="${x}" y="48" width="24" height="30" fill="${WALL}" stroke="${WL}"/><path d="M${x-3} 50 l6 -10 h18 l6 10z" fill="${ROOF}"/><rect x="${x+8}" y="58" width="8" height="8" fill="#8E5A3A"/>`;
+const GROUND='<rect x="0" y="78" width="120" height="12" fill="#E7C873"/>';
+const HS={
+ yitiao:['一條龍',GROUND+hMain(22,76)],
+ danshen:['單伸手',GROUND+hMain(12,66)+hWing(90)],
+ sanhe:['三合院',GROUND+hMain(32,56)+hWing(6)+hWing(90)],
+ stone:['石板屋','<rect y="78" width="120" height="12" fill="#9BAF7A"/><rect x="18" y="44" width="84" height="34" fill="#8E9299"/><path d="M18 52h84M18 60h84M18 68h84M30 44v8M54 44v8M78 44v8M42 52v8M66 52v8M90 52v8M30 60v8M54 60v8M78 60v8M42 68v10M66 68v10" stroke="#5E636B" stroke-width="1.5"/><path d="M8 46 L60 24 L112 46z" fill="#5E636B"/><path d="M20 41h80M34 35h52" stroke="#3E434B" stroke-width="1.5"/><rect x="54" y="60" width="12" height="18" fill="#3E434B"/><path d="M62 18 q-4 -6 2 -12 M70 20 q-4 -6 2 -12" stroke="#bbb" stroke-width="2" fill="none"/>'],
+ under:['地下屋','<rect y="52" width="120" height="38" fill="#B9A27A"/><rect x="26" y="54" width="68" height="28" fill="#8A7454"/><path d="M18 54 q42 -26 84 0z" fill="#6E5A3A"/><path d="M26 54 v28 M94 54 v28" stroke="#5E4A2E" stroke-width="2"/><path d="M4 22 h30 M10 30 h36 M2 38 h22" stroke="#7FB0D8" stroke-width="3" stroke-linecap="round"/><path d="M96 60 l14 0 M100 70 l14 0" stroke="#7A6A4A" stroke-width="2"/>'],
+ atayal:['泰雅族傳統住屋','<rect y="78" width="120" height="12" fill="#9BAF7A"/><rect x="24" y="42" width="72" height="36" fill="#B98552"/><path d="M30 42v36M38 42v36M46 42v36M54 42v36M62 42v36M70 42v36M78 42v36M86 42v36" stroke="#8A5A34" stroke-width="2"/><path d="M14 44 L60 16 L106 44z" fill="#C9A85C"/><path d="M14 44 L60 16 L106 44" stroke="#9C7536" stroke-width="2" fill="none"/><rect x="54" y="56" width="12" height="22" fill="#5E3E20"/>'],
+ bamboo:['竹管仔厝','<rect y="78" width="120" height="12" fill="#9BAF7A"/><path d="M14 44 L60 18 L106 44z" fill="#C9A85C"/><rect x="22" y="44" width="76" height="34" fill="#C9A77E"/><path d="M22 44v34M41 44v34M60 44v34M79 44v34M98 44v34M22 56h76M22 68h76" stroke="#6E8A3E" stroke-width="3"/>'],
+ tuku:['土埆厝','<rect y="78" width="120" height="12" fill="#9BAF7A"/><rect x="20" y="70" width="80" height="8" fill="#8E9299"/>'+[0,1,2].map(r=>[0,1,2,3,4,5,6,7].map(c=>`<rect x="${20+c*10+(r%2)*5}" y="${46+r*8}" width="${c===7&&r%2?5:10}" height="8" fill="#C9A06A" stroke="#8E6A3E" stroke-width=".8"/>`).join('')).join('')+'<path d="M12 48 L60 24 L108 48z" fill="#8E3A2A"/><rect x="54" y="54" width="12" height="16" fill="#5E3E20"/>'],
+ building:['鋼筋混凝土樓房','<rect y="78" width="120" height="12" fill="#B9C3CC"/><g transform="translate(10 -12) scale(1)">'+BLD+'</g>']
+};
+const hSvg=k=>`<svg viewBox="0 0 120 90" aria-hidden="true">${HS[k][1]}</svg>`;
+const hLab=k=>`<span class="ib house">${hSvg(k)}<span>${HS[k][0]}</span></span>`;
+
+/* ---------- 紀錄 ---------- */
+const KEY='laojia_v1',NW=5;
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:Array(NW).fill(0),stars:Array(NW).fill(0),time:Array(NW).fill(0),plays:0};const p=DB.players[n];['best','stars','time'].forEach(k=>{while(p[k].length<NW)p[k].push(0)});return p}
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase（和其他遊戲同一個專案，資料存在 laojia_scores 表） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+const WKEY=['w1','w2','w3','w4','w5'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/laojia_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4,w5)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+async function pushScore(i,secs){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_laojia',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_laojia',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/laojia_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 世界 ---------- */
+const WORLDS=[
+ {name:'三合院工地',sub:'把一條龍蓋成三合院，拼好正廳、護龍、稻埕，再分配房間',color:'#F4D6CC',ico:'<rect x="4" y="50" width="56" height="8" fill="#E7C873"/><rect x="18" y="22" width="28" height="12" fill="#EAD9B8"/><path d="M15 24 l5 -8 h24 l5 8z" fill="#B5412F"/><rect x="6" y="32" width="12" height="18" fill="#EAD9B8"/><path d="M4 34 l3 -6 h10 l3 6z" fill="#B5412F"/><rect x="46" y="32" width="12" height="18" fill="#EAD9B8"/><path d="M44 34 l3 -6 h10 l3 6z" fill="#B5412F"/>',run:w1},
+ {name:'阿嬤的一天',sub:'炊粿、包粽、捕魚、搗小米，選出最適合的傳統器物',color:'#F6E5BE',ico:IT.zhenglong[1].replace(/<path d="M40 18[^>]*>/,''),vb:'0 0 100 100',run:w2},
+ {name:'住屋偵探',sub:'看線索找住屋，再到臺灣地圖上找出部落和聚落在哪裡',color:'#DCE7D0',ico:'<path d="M30 6 L40 10 L42 24 L38 40 L32 56 L26 50 L22 34 L24 18Z" fill="#9BAF7A" stroke="#5E8A4A" stroke-width="2"/><circle cx="30" cy="44" r="5" fill="#B5412F"/><circle cx="46" cy="44" r="10" fill="none" stroke="#3A2A20" stroke-width="3"/><path d="M53 51 l7 7" stroke="#3A2A20" stroke-width="4" stroke-linecap="round"/>',run:w3},
+ {name:'時光機',sub:'傳統器物飛進時光機，找出現在是誰取代了它',color:'#D7E6F0',ico:'<circle cx="32" cy="32" r="24" fill="#fff" stroke="#3A2A20" stroke-width="3"/><path d="M32 14 v18 l12 8" stroke="#B5412F" stroke-width="4" stroke-linecap="round" fill="none"/>',run:w4},
+ {name:'魔王關：拆屋怪',sub:'拆屋怪要把老房子全部拆掉！限時快答，保護傳統住屋',color:'#F0D9C2',ico:'<rect x="6" y="30" width="34" height="18" rx="4" fill="#E0A526"/><rect x="12" y="20" width="16" height="12" fill="#E0A526"/><circle cx="14" cy="52" r="6" fill="#3A2A20"/><circle cx="34" cy="52" r="6" fill="#3A2A20"/><path d="M40 34 l14 -14 l6 10" stroke="#3A2A20" stroke-width="4" fill="none"/><circle cx="18" cy="26" r="2" fill="#3A2A20"/><circle cx="24" cy="26" r="2" fill="#3A2A20"/>',run:w5,boss:true}
+];
+
+/* ---------- 首頁 ---------- */
+function header(){const p=DB.current;
+  return el('div',{class:'top'},el('div',{class:'logo'},el('span',{html:'<svg width="44" height="34" viewBox="0 0 120 90">'+HS.sanhe[1]+'</svg>'}),el('h1',{},'阿嬤的三合院')),p?el('span',{class:'chip'},'玩家：'+p):null)}
+function shakeInput(i){i.focus();shake(i)}
+function home(){
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'四上社會 第二單元：家鄉的住屋與器物'),
+      el('p',{},'四個世界加一個魔王關，答對拿分數和星星，每關都會計時。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v)return shakeInput(input);DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      names.length&&!bzN?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null),
+    el('div',{class:'hero-ico',html:'<svg viewBox="0 0 120 90" style="width:100%;height:auto">'+HS.sanhe[1]+'</svg>'})));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(w.boss?' boss':'')+(unlocked?'':' locked'),onclick:()=>{if(!pl)return shakeInput(input);if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="'+(w.vb||'0 0 64 64')+'">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b)});
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.boss?'魔王關':w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}app.innerHTML='';app.append(header())}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[];const b=p.best;return tab===0?{n,v:b.reduce((a,c)=>a+c,0),t:tm.reduce((a,c,i)=>a+(b[i]>0?(c||0):0),0)}:{n,v:b[tab-1]||0,t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{class:'lb'},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'阿嬤的三合院 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:(w.boss?'魔王關':'世界 '+(i+1)+' '+w.name)+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / '+(NW*3)),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');const stage=el('div',{class:'stage'});const t0=Date.now();
+  const token={};CUR=token;
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'stats'},tm,sc)),el('div',{class:'bar'},bar),stage);
+  const ctx={stage,score:0,max:0,step:0,N:1,alive:()=>CUR===token,
+    add(n){this.score+=n;sc.textContent=this.score+' 分'},
+    tick(got,pts){this.max+=pts;this.add(got);bar.style.width=(Math.min(1,++this.step/this.N)*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(()=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,ctx.max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();score=Math.max(0,score);let st=starsFor(score,max||1);if(WORLDS[i].boss&&score<max)st=Math.min(st,2);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=(i===NW-1&&score<max)?'老房子倒了……再挑戰一次，把拆屋怪趕走！':st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?(i<NW-1?'過關了！下一關已經打開。':'過關了！老房子保住了！'):'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--brick)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,up,el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<NW-1&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一關'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+function waitBtn(parent,label){return new Promise(r=>{const b=el('button',{class:'big'},label);b.onclick=()=>{b.remove();r()};parent.append(b);b.focus({preventScroll:true})})}
+const ptsFor=(pts,wrong)=>[pts,Math.round(pts*.6),Math.round(pts*.3)][wrong]||0;
+const lab=o=>o.label||String(o.html||o).replace(/<[^>]+>/g,'');
+const tagLine=(S,t)=>S.append(el('div',{class:'tag'},t));
+
+/* 答錯不給答案：第 1、2 次錯給提示可重答（得分遞減），第 3 次才揭曉 */
+function tiered(fb,{hints=[],explain=''}){
+  let wrong=0;
+  return{get wrong(){return wrong},
+    bad(why){wrong++;sfx(false);fb.hidden=false;fb.className='fb bad';if(wrong>=3)return true;
+      fb.innerHTML=(why?why+'<br>':'')+'💡 提示：'+(hints[Math.min(wrong-1,hints.length-1)]||'再想一想！')+' 再試一次！';return false},
+    good(){sfx(true);fb.hidden=false;fb.className='fb ok';fb.innerHTML='答對了！'+(explain?' '+explain:'')},
+    reveal(ans){fb.className='fb bad';fb.innerHTML='答案是「'+ans+'」。'+(explain?' '+explain:'')}}
+}
+function pick(parent,{q,tag,top,opts,ans=0,hints,explain,pts=10,img=false}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(tag)box.append(el('div',{class:'tag'},tag));if(top)box.append(el('div',{class:'focus',html:top}));if(q)box.append(el('div',{class:'q',html:q}));
+    const wrap=el('div',{class:'opts'+(img?' imgs':'')});if(img)wrap.style.gridTemplateColumns='repeat('+(opts.length===4&&innerWidth<520?2:opts.length)+',minmax(0,1fr))';
+    const fb=el('div',{class:'fb',hidden:''});
+    const T=tiered(fb,{hints,explain});const btns=[];let done=false;
+    const end=got=>{done=true;btns.forEach(b=>b.disabled=true);btns[ans].classList.add('ok');btns[ans].disabled=false;
+      const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})};
+    shuffle(opts.map((_,i)=>i)).forEach(i=>{const o=opts[i];
+      const b=el('button',{html:o.html||o});b.onclick=()=>{if(done||b.disabled)return;
+        if(i===ans){b.classList.add('ok');T.good();end(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');b.disabled=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));end(0)}}};
+      btns[i]=b;wrap.append(b)});
+    box.append(wrap,fb);parent.append(box);
+  });
+}
+/* 飄來飄去的泡泡選項 */
+function chase(parent,ctx,{q,top,opts,ans=0,hints,explain,pts=10}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(top)box.append(el('div',{class:'focus',html:top}));box.append(el('div',{class:'q',html:q}));
+    const sky=el('div',{class:'sky'});const fb=el('div',{class:'fb',hidden:''});box.append(sky,fb);parent.append(box);
+    const T=tiered(fb,{hints,explain});let done=false;const S=96,H=300;const W=()=>Math.max(220,sky.clientWidth);
+    const ms=shuffle(opts.map((_,i)=>i)).map((i,k)=>{const o=opts[i];const b=el('button',{class:'mover',html:o.html});sky.append(b);
+      const m={b,i,x:(k%2)*(W()-S),y:(k>>1)*(H-S),vx:(Math.random()<.5?-1:1)*(30+Math.random()*25),vy:(Math.random()<.5?-1:1)*(25+Math.random()*20),dead:false};
+      b.onclick=()=>{if(done||m.dead)return;
+        if(i===ans){b.classList.add('ok');T.good();fin(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');m.dead=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));ms.find(z=>z.i===ans).b.classList.add('ok');fin(0)}}};
+      return m});
+    let last=performance.now();const place=m=>{m.b.style.transform=`translate(${m.x}px,${m.y}px)`};ms.forEach(place);
+    function loop(now){if(done||!ctx.alive())return;const dt=Math.min(.05,(now-last)/1000);last=now;const w=W();
+      ms.forEach(m=>{if(m.dead)return;m.x+=m.vx*dt;m.y+=m.vy*dt;if(m.x<0){m.x=0;m.vx*=-1}if(m.x>w-S){m.x=w-S;m.vx*=-1}if(m.y<0){m.y=0;m.vy*=-1}if(m.y>H-S){m.y=H-S;m.vy*=-1}});
+      for(let a=0;a<ms.length;a++)for(let c=a+1;c<ms.length;c++){const A=ms[a],B=ms[c];const dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy)||1;if(d<S){const o=(S-d)/2,nx=dx/d,ny=dy/d;if(!A.dead){A.x-=nx*o;A.y-=ny*o}if(!B.dead){B.x+=nx*o;B.y+=ny*o}if(!A.dead&&!B.dead){[A.vx,B.vx]=[B.vx,A.vx];[A.vy,B.vy]=[B.vy,A.vy]}}}
+      ms.forEach(m=>{m.x=Math.max(0,Math.min(w-S,m.x));m.y=Math.max(0,Math.min(H-S,m.y));place(m)});requestAnimationFrame(loop)}
+    if(!REDUCE)requestAnimationFrame(loop);
+    function fin(got){done=true;const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})}
+  });
+}
+
+/* ================= 世界 1：三合院工地 ================= */
+const PART={
+ '正廳':{why:'正廳在正身的正中央。',info:'正廳在正身正中央，可以供奉神明、祭拜祖先、接待客人。'},
+ '左護龍':{why:'站在正廳往外看，左手邊的護龍才是左護龍，在你看到的「右邊」。',info:'左護龍：站在正廳往外看的左手邊。以左為尊，左護龍比較大（左大右小）。'},
+ '右護龍':{why:'站在正廳往外看，右手邊的護龍才是右護龍，在你看到的「左邊」。',info:'右護龍：站在正廳往外看的右手邊。'},
+ '稻埕':{why:'稻埕是三合院中央的空地，被正身和兩邊護龍圍起來。',info:'稻埕是三合院中央的空地，閩南語叫「門口庭」，可以晒穀、宴客、祭拜，小孩玩耍、晚上乘涼聊天。'},
+ '竹林':{why:'竹林種在房子後面，像一道牆把房子包起來。',info:'竹林提供編織和修理住屋的材料，還可以防風、防盜。'},
+ '果樹':{why:'果樹種在房子的旁邊。',info:'果樹提供水果，枯枝也是柴火的來源。'},
+ '水池':{why:'水池在三合院的前方。',info:'水池用來洗滌、養殖，也是滅火的水源。'},
+ '堆肥場':{why:'堆肥場在比較角落、離住的房間遠一點的地方。',info:'堆肥場把枯枝落葉和禽畜的糞便做成堆肥。'}
+};
+const SLOTS=[{id:'hall',k:'正廳',x:152,y:66,w:56,h:36},{id:'wl',k:'右護龍',x:96,y:104,w:40,h:98},{id:'wr',k:'左護龍',x:224,y:104,w:40,h:98},{id:'yard',k:'稻埕',x:140,y:108,w:80,h:94},
+ {id:'bamboo',k:'竹林',x:96,y:8,w:168,h:44},{id:'fruit',k:'果樹',x:284,y:100,w:66,h:96},{id:'pond',k:'水池',x:150,y:236,w:100,h:50},{id:'compost',k:'堆肥場',x:10,y:70,w:74,h:58}];
+function drawPart(s,filled){
+  const {x,y,w,h,k}=s;
+  if(!filled)return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#ffffff88" stroke="#7A6553" stroke-width="2" stroke-dasharray="6 5"/><text x="${x+w/2}" y="${y+h/2+7}" text-anchor="middle" font-size="20" fill="#7A6553">?</text>`;
+  let g='';
+  if(k==='正廳')g=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#B5412F"/><path d="M${x} ${y+h/2}h${w}" stroke="#8E2F21" stroke-width="2"/><rect x="${x+w/2-8}" y="${y+h-8}" width="16" height="8" fill="#5E3E20"/>`;
+  else if(k.includes('護龍'))g=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#C4513D"/><path d="M${x+w/2} ${y}v${h}" stroke="#8E2F21" stroke-width="2"/>`;
+  else if(k==='稻埕')g=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#E7C873"/><ellipse cx="${x+24}" cy="${y+40}" rx="16" ry="6" fill="#D8AE4A"/><ellipse cx="${x+56}" cy="${y+60}" rx="16" ry="6" fill="#D8AE4A"/>`;
+  else if(k==='竹林')g=[...Array(12)].map((_,i)=>`<path d="M${x+8+i*13} ${y+h}v-${h-4}" stroke="#5E8A4A" stroke-width="4"/><path d="M${x+8+i*13} ${y+10} l8 -6" stroke="#7FA85A" stroke-width="3"/>`).join('');
+  else if(k==='果樹')g=[[18,20],[48,40],[20,62],[48,82]].map(([a,b])=>`<circle cx="${x+a}" cy="${y+b}" r="13" fill="#6E9A4E"/><circle cx="${x+a+4}" cy="${y+b-3}" r="3" fill="#E07B39"/>`).join('');
+  else if(k==='水池')g=`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w/2}" ry="${h/2}" fill="#7FB0D8"/><path d="M${x+20} ${y+h/2}q10 -6 20 0 M${x+55} ${y+h/2+8}q10 -6 20 0" stroke="#fff" stroke-width="2" fill="none"/>`;
+  else if(k==='堆肥場')g=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#C9B38A"/><ellipse cx="${x+22}" cy="${y+h-14}" rx="16" ry="10" fill="#7A5A34"/><ellipse cx="${x+52}" cy="${y+h-18}" rx="14" ry="10" fill="#8A6A44"/>`;
+  return g+`<text x="${x+w/2}" y="${y+h/2+6}" text-anchor="middle" font-size="${k.length>2?13:15}" fill="#fff" stroke="#3A2A20" stroke-width="3" paint-order="stroke">${k}</text>`;
+}
+function planBase(){return `<rect width="360" height="300" rx="14" fill="#BFD39A"/><path d="M0 222 h360" stroke="#A9C084"/><rect x="96" y="66" width="56" height="36" fill="#B5412F"/><rect x="208" y="66" width="56" height="36" fill="#B5412F"/><path d="M96 84h56M208 84h56" stroke="#8E2F21" stroke-width="2"/><text x="124" y="89" text-anchor="middle" font-size="12" fill="#fff">正身</text><text x="236" y="89" text-anchor="middle" font-size="12" fill="#fff">正身</text><g transform="translate(300 250)"><circle r="9" fill="#F2C9A0" stroke="#3A2A20" stroke-width="1.5"/><path d="M0 12 v14 M-6 20 l6 8 l6 -8" stroke="#B5412F" stroke-width="3" fill="none" stroke-linecap="round"/></g><text x="300" y="236" text-anchor="middle" font-size="10" fill="#3A2A20">正廳往外看</text><text x="180" y="296" text-anchor="middle" font-size="12" fill="#3A2A20">↓ 前方（大門口）</text>`}
+function puzzle(ctx,S){
+  return new Promise(res=>{
+    tagLine(S,'三合院拼圖　把名牌拖到正確的位置（也可以先點名牌，再點「?」）。左、右護龍要用「站在正廳往外看」來分喔！');
+    const placed={};let sel=null,mis=0;
+    const s=svgEl('0 0 360 300','','');s.classList.add('plan');
+    const draw=()=>{s.innerHTML=planBase()+SLOTS.map(sl=>`<g data-slot="${sl.id}" style="cursor:pointer">${drawPart(sl,placed[sl.id])}</g>`).join('')};draw();
+    const tray=el('div',{class:'tray'});const fb=el('div',{class:'fb',hidden:''});
+    S.append(s,tray,fb);
+    const chips=shuffle(SLOTS.map(sl=>sl.k)).map(k=>{const b=el('button',{},k);b.dataset.k=k;tray.append(b);return b});
+    function tryPlace(chip,slotId){
+      const sl=SLOTS.find(z=>z.id===slotId);if(!sl||placed[slotId])return;const k=chip.dataset.k;
+      if(sl.k===k){placed[slotId]=true;sfx(true);chip.remove();sel=null;draw();fb.hidden=false;fb.className='fb ok';fb.textContent='✔ '+PART[k].info;
+        if(Object.keys(placed).length===SLOTS.length){const got=Math.max(4,24-mis*2);S.append(el('div',{class:'fb ok'},'三合院和周圍的環境都拼好了！'));waitBtn(S,'下一步 →').then(()=>res(got))}}
+      else{mis++;sfx(false);shake(chip);fb.hidden=false;fb.className='fb bad';fb.innerHTML='這裡不是「'+k+'」的位置。💡 '+PART[k].why}
+    }
+    s.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-slot]');if(!g)return;if(!sel){fb.hidden=false;fb.className='fb bad';fb.textContent='先點一個名牌，或直接把名牌拖過來。';return}tryPlace(sel,g.getAttribute('data-slot'))});
+    chips.forEach(b=>{
+      b.addEventListener('pointerdown',e=>{if(!b.isConnected)return;e.preventDefault();const sx=e.clientX,sy=e.clientY;let ghost=null;
+        try{b.setPointerCapture(e.pointerId)}catch(_){}
+        const mv=ev=>{if(!ghost&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){ghost=el('div',{class:'ghost-chip'},b.dataset.k);document.body.append(ghost)}if(ghost){ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px'}};
+        const up=ev=>{b.removeEventListener('pointermove',mv);b.removeEventListener('pointerup',up);b.removeEventListener('pointercancel',up);
+          if(ghost){ghost.remove();const t=document.elementFromPoint(ev.clientX,ev.clientY);const g=t&&t.closest&&t.closest('[data-slot]');if(g)tryPlace(b,g.getAttribute('data-slot'))}
+          else{chips.forEach(c=>c.classList.remove('sel'));if(sel===b){sel=null}else{sel=b;b.classList.add('sel')}}};
+        b.addEventListener('pointermove',mv);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up)});
+      b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();chips.forEach(c=>c.classList.remove('sel'));sel=b;b.classList.add('sel')}});
+    });
+  });
+}
+function leftRoom(ctx,S,who,want){
+  return new Promise(res=>{
+    tagLine(S,'誰住哪裡　以左為尊、左大右小');
+    S.append(el('div',{class:'q',html:who}));
+    const s=svgEl('0 0 360 260','');s.classList.add('plan');
+    const H=`<rect width="360" height="260" rx="14" fill="#BFD39A"/><rect x="96" y="30" width="168" height="40" fill="#B5412F"/><text x="180" y="56" text-anchor="middle" font-size="16" fill="#fff">正身（正廳在中間）</text>
+      <rect x="140" y="72" width="80" height="150" fill="#E7C873"/><text x="180" y="210" text-anchor="middle" font-size="13" fill="#7A6553">稻埕</text>
+      <g transform="translate(180 108)"><circle r="13" fill="#F2C9A0" stroke="#3A2A20" stroke-width="2"/><path d="M-6 6 h12" stroke="#3A2A20" stroke-width="2"/><circle cx="-5" cy="2" r="2" fill="#3A2A20"/><circle cx="5" cy="2" r="2" fill="#3A2A20"/><path d="M0 18 v30" stroke="#B5412F" stroke-width="5" stroke-linecap="round"/><path d="M-8 40 l8 12 l8 -12" stroke="#B5412F" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <text x="180" y="180" text-anchor="middle" font-size="11" fill="#3A2A20">站在正廳前</text><text x="180" y="194" text-anchor="middle" font-size="11" fill="#3A2A20">往外看</text>
+      ${['wl','wr'].map(id=>{const x=id==='wl'?94:224;return `<g data-room="${id}" style="cursor:pointer"><rect x="${x}" y="72" width="42" height="150" fill="#C4513D" stroke="#8E2F21" stroke-width="2"/><text x="${x+21}" y="140" text-anchor="middle" font-size="15" fill="#fff">護</text><text x="${x+21}" y="160" text-anchor="middle" font-size="15" fill="#fff">龍</text></g>`}).join('')}
+      <text x="180" y="248" text-anchor="middle" font-size="12" fill="#3A2A20">↓ 前方（大門口）</text>`;
+    s.innerHTML=H;const fb=el('div',{class:'fb',hidden:''});S.append(s,fb);
+    const T=tiered(fb,{hints:['「左」是用正廳往外看的方向來算，不是用你在螢幕前看的方向喔。','想像你站在小人的位置，背對正廳、面向大門口，你的左手會指向畫面的哪一邊？'],explain:'站在正廳往外看，左手邊是畫面的右邊。以左為尊，所以'+(want==='wr'?'大房住畫面右邊（正廳往外看的左邊）的護龍。':'二房住畫面左邊（正廳往外看的右邊）的護龍。')});
+    let done=false;
+    s.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-room]');if(!g||done)return;const id=g.getAttribute('data-room');
+      if(id===want){T.good();g.querySelector('rect').setAttribute('fill','#3F8A55');fin(ptsFor(10,T.wrong))}
+      else{g.querySelector('rect').setAttribute('fill','#7A6553');if(T.bad('')){T.reveal(want==='wr'?'畫面右邊的護龍':'畫面左邊的護龍');s.querySelector(`[data-room="${want}"] rect`).setAttribute('fill','#3F8A55');fin(0)}}});
+    function fin(g){done=true;waitBtn(S,'下一步 →').then(()=>res(g))}
+  });
+}
+async function w1(ctx){
+  const S=ctx.stage;ctx.N=9;
+  /* A 長大的家 */
+  const GROW=[
+   {q:'阿祖剛成家，只蓋了一排「正身」。房子是哪一個樣子？',a:'yitiao',hints:['只有正身，還沒有加蓋護龍。','只有一排房子，像一條長長的龍。'],explain:'只有正身的房子叫「一條龍」。'},
+   {q:'孩子長大結婚，家裡人變多了，在正身的「一側」加蓋護龍。房子變成哪一個樣子？',a:'danshen',hints:['只有「一側」加蓋喔。','像伸出一隻手一樣。'],explain:'在正身一側加蓋護龍，叫「單伸手」。以左為尊，通常先蓋在正廳往外看的左邊，也就是你看到的右邊。'},
+   {q:'經濟變好，又在正身的「兩側」都加蓋護龍。房子變成哪一個樣子？',a:'sanhe',hints:['這次「兩側」都有護龍。','正身加上兩邊的護龍，一共三邊。'],explain:'在正身兩側加蓋護龍，叫「三合院」。'}
+  ];
+  for(const g of GROW){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'長大的家');const qa=el('div');S.append(qa);
+    ctx.tick(await pick(qa,{q:g.q,img:true,ans:0,opts:[g.a,...['yitiao','danshen','sanhe'].filter(k=>k!==g.a)].map(k=>({html:hLab(k),label:HS[k][0],why:'這是「'+HS[k][0]+'」。'})),hints:g.hints,explain:g.explain}),10)}
+  if(!ctx.alive())return;S.innerHTML='';const q0=el('div');S.append(q0);
+  ctx.tick(await pick(q0,{tag:'長大的家',q:'漢人為什麼會把房子越蓋越大？',opts:['家中成員增加、經濟條件改善','房子太舊一定要拆掉','政府規定要蓋三合院'],hints:['剛剛的故事裡，家裡發生了什麼事？','人變多了、錢也變多了。'],explain:'擴充房屋的原因是家中成員增加、經濟條件改善。'}),10);
+  /* B 拼圖 */
+  if(!ctx.alive())return;S.innerHTML='';ctx.tick(await puzzle(ctx,S),24);
+  /* C 用途 */
+  const FQ=shuffle([
+   {q:'過年要祭拜祖先、供奉神明，要到三合院的哪裡？',a:'正廳',d:['稻埕','護龍','堆肥場']},
+   {q:'秋天稻子收成了，要把稻穀攤開晒乾，要到哪裡？',a:'稻埕',d:['正廳','水池','竹林']},
+   {q:'閩南語叫做「門口庭」的地方是哪裡？',a:'稻埕',d:['正廳','護龍','果樹']},
+   {q:'房子後面種了一大片，可以防風、防盜，還能拿來編東西、修房子的是？',a:'竹林',d:['果樹','稻埕','堆肥場']},
+   {q:'失火了！三合院附近哪裡有滅火的水源？',a:'水池',d:['堆肥場','稻埕','竹林']}
+  ]).slice(0,2);
+  if(!ctx.alive())return;S.innerHTML='';const q1=el('div');S.append(q1);
+  for(const f of FQ){if(!ctx.alive())return;ctx.tick(await pick(q1,{tag:'三合院的用途',q:f.q,opts:[f.a,...f.d],hints:['想想剛剛拼圖時跳出來的說明。',PART[f.a].why],explain:PART[f.a].info}),10)}
+  /* D 以左為尊 */
+  if(!ctx.alive())return;S.innerHTML='';ctx.tick(await leftRoom(ctx,S,'家族要分配護龍。以左為尊、左大右小，<b>大房</b>（大伯一家）要住哪一邊的護龍？點點看！','wr'),10);
+  if(!ctx.alive())return;S.innerHTML='';ctx.tick(await leftRoom(ctx,S,'那<b>二房</b>（二叔一家）要住哪一邊的護龍？','wl'),10);
+}
+
+/* ================= 世界 2：阿嬤的一天 ================= */
+const HAN=[
+ {t:'清晨',q:'阿嬤今天要炊粿，要把粿放進什麼裡面蒸？',a:'zhenglong',d:['caichu','shuitong','beilou'],hints:['要能裝食物、讓熱氣跑進去。','用竹子做的，一層一層疊起來。'],explain:'漢人用竹子做蒸籠來蒸食物。'},
+ {t:'清晨',q:'蒸籠要放在哪裡加熱？',a:'zao',d:['zhanban','zhaozhao','caichu'],hints:['要能生火的地方。','用泥土、磚頭砌成的。'],explain:'漢人用泥土或磚建造灶，在灶裡燒木柴煮飯。'},
+ {t:'早上',q:'灶要生火，要放進什麼東西燒？',a:'mucai',d:['zongzi','douli','shuitong'],hints:['灶燒的是木頭做的燃料。','從山上撿回來、砍下來的。'],explain:'灶用木柴燒火。'},
+ {t:'早上',q:'阿嬤要切菜，要把菜放在什麼上面切？',a:'zhanban',d:['zhaozhao','beilou','douli'],hints:['用木材做的，厚厚的一塊。','切菜時墊在下面。'],explain:'漢人用木材做砧板。'},
+ {t:'中午',q:'午飯吃不完的菜，要防止蒼蠅飛上去，用什麼蓋住？',a:'zhaozhao',d:['zhenglong','shuitong','beilou'],hints:['要蓋在桌上的食物上面。','用竹子、藤編成的罩子。'],explain:'桌罩用竹子或藤編成，遮蓋桌上的食物。'},
+ {t:'下午',q:'碗盤和剩下的菜，要收進哪裡？',a:'caichu',d:['beilou','zhanban','douli'],hints:['用木材做成的櫃子。','有紗網門，可以通風。'],explain:'漢人用木材做菜櫥。'},
+ {t:'下午',q:'要到井邊打水回家，要用什麼裝？',a:'shuitong',d:['zhaozhao','caichu','zhenglong'],hints:['要能裝水、不會漏。','用木材做成的桶子。'],explain:'漢人用木材做水桶。'},
+ {t:'下午',q:'阿公要下田，太陽很大，頭上要戴什麼遮陽擋雨？',a:'douli',d:['zhaozhao','zhenglong','suoyi'],hints:['戴在頭上的。','用竹葉編成的。'],explain:'斗笠用竹葉編製，用來遮陽擋雨。'},
+ {t:'傍晚',q:'突然下大雨，阿公要披在身上擋雨的是？',a:'suoyi',d:['douli','beilou','zhaozhao'],hints:['要穿在身上的。','用植物纖維一片一片編成的雨具。'],explain:'蓑衣用植物纖維編成，披在身上擋雨。'},
+ {t:'端午',q:'端午節要包粽子，阿嬤用什麼包？',a:'zongzi',d:['bag','zhaozhao','caichu'],hints:['就地取材，大自然裡就有。','是一種植物的葉子。'],explain:'漢人用植物葉子包裝粿、粽子。'}
+];
+const YUAN=[
+ {q:'族人要到溪裡捕魚，用什麼工具？',a:'yuquan',d:['beilou','muchu','zhenglong'],hints:['要放進水裡的。','用竹子、藤編成，開口像漏斗。'],explain:'原住民族用竹子、藤編製魚筌捕魚。'},
+ {q:'要把小米搗成粉，用什麼工具？',a:'muchu',d:['yuquan','zhanban','shuitong'],hints:['要用力往下搗。','用木頭做成的。'],explain:'原住民族用木頭做成木杵搗製食物。'},
+ {q:'上山採收作物，要背在背上裝東西的是？',a:'beilou',d:['shuitong','yuquan','caichu'],hints:['背在背上的。','用藤編製的。'],explain:'原住民族用藤編製背簍背負物品。'},
+ {q:'族人出門要帶便當，用什麼包裹食物？',a:'yuetao',d:['bag','zhaozhao','muchu'],hints:['就地取材的植物。','一種大大的葉子。'],explain:'原住民族用月桃葉等植物葉子包裹食物。'}
+];
+const W2T=[
+ {q:'灶的火太小了，要怎麼讓火變大？',opts:['多放一些木柴','把灶門關緊','倒一點水進去'],hints:['火力大小是靠什麼控制的？','木柴愈多，火愈大。'],explain:'藉由木柴數量的增減來控制火力大小。'},
+ {q:'木柴燒完剩下的灰燼還有餘溫，阿嬤會拿來做什麼？',opts:['悶熟地瓜','包粽子','洗碗盤'],hints:['餘溫還是熱的喔。','可以把食物埋進去慢慢燜。'],explain:'灰燼有餘溫時可以悶熟食物，例如地瓜。'},
+ {q:'灰燼冷卻以後，還可以拿來做什麼？',opts:['當作肥料','當作蓋房子的磚','直接倒進河裡'],hints:['可以讓植物長得更好。','放到菜園裡。'],explain:'冷卻的灰燼可以當作肥料。'},
+ {q:'灰燼可以燜地瓜、當肥料，展現先民什麼智慧？',opts:['物盡其用','用完就丟','越多越好'],hints:['東西用到最後一點都不浪費。','物「盡」其用。'],explain:'這展現先民物盡其用的智慧。'},
+ {q:'魚筌的縫隙可以讓小魚游出去，這樣做是為了什麼？',opts:['讓魚群生生不息','讓魚筌比較輕','讓大魚也游出去'],hints:['小魚長大以後呢？','不要把魚抓光光。'],explain:'小魚從縫隙游出去，讓魚群生生不息。'},
+ {q:'家鄉居民製作器物，用的材料大多是？',opts:['就地取材','從國外買來','用塑膠做'],hints:['竹子、藤、木頭、泥土都在身邊。','就「地」取材。'],explain:'家鄉居民製作器物的材料大多就地取材。'},
+ {q:'以前的器物原料來自大自然，用壞以後的廢棄物會？',opts:['回歸大自然','變成塑膠垃圾','永遠不會分解'],hints:['竹子、木頭會不會慢慢分解？','它們本來就是從大自然來的。'],explain:'原料來自大自然，廢棄物也會回歸大自然。'}
+];
+async function w2(ctx){
+  const S=ctx.stage;ctx.N=12;
+  const han=[...HAN].filter((_,i)=>i<3).concat(shuffle(HAN.slice(3)).slice(0,3)).slice(0,6);
+  S.innerHTML='';tagLine(S,'阿嬤的一天（漢人）');const qa=el('div');S.append(qa);
+  for(const h of han){if(!ctx.alive())return;
+    ctx.tick(await pick(qa,{tag:h.t,q:h.q,img:true,opts:[h.a,...h.d].map(k=>({html:iLab(k),label:IT[k][0],why:'「'+IT[k][0]+'」不是用來做這件事的。'})),hints:h.hints,explain:h.explain}),10)}
+  for(const t of shuffle(W2T.slice(0,4)).slice(0,2)){if(!ctx.alive())return;ctx.tick(await pick(qa,{tag:'灶的祕密',q:t.q,opts:t.opts,hints:t.hints,explain:t.explain}),10)}
+  if(!ctx.alive())return;S.innerHTML='';tagLine(S,'部落的一天（原住民族）');const qb=el('div');S.append(qb);
+  for(const h of shuffle(YUAN).slice(0,2)){if(!ctx.alive())return;
+    ctx.tick(await pick(qb,{q:h.q,img:true,opts:[h.a,...h.d].map(k=>({html:iLab(k),label:IT[k][0],why:'「'+IT[k][0]+'」不是用來做這件事的。'})),hints:h.hints,explain:h.explain}),10)}
+  for(const t of shuffle(W2T.slice(4)).slice(0,1)){if(!ctx.alive())return;ctx.tick(await pick(qb,{q:t.q,opts:t.opts,hints:t.hints,explain:t.explain}),10)}
+  /* 快手分類 */
+  if(!ctx.alive())return;S.innerHTML='';
+  tagLine(S,'快手分類　30 秒內判斷：這是課本裡「原住民族」還是「漢人」的傳統器物？答對一題 3 分，最多 10 題');
+  const DECK=[['yuquan',1],['muchu',1],['beilou',1],['yuetao',1],['zhenglong',0],['zao',0],['caichu',0],['shuitong',0],['zhanban',0],['douli',0],['zhaozhao',0],['zongzi',0]];
+  const deck=shuffle(DECK);let k=0,right=0,ans=0;const MAXC=10;
+  const tEl=el('span',{class:'score'},'⏱ 30');const cEl=el('span',{class:'tag'},'答對 0');
+  const cardEl=el('div',{class:'flash'});const fb=el('div',{class:'fb',hidden:''});
+  const yb=el('button',{class:'yuan'},'原住民族'),hb=el('button',{class:'han'},'漢人');
+  S.append(el('div',{class:'ctrl'},tEl,cEl),cardEl,el('div',{class:'two'},yb,hb),fb);
+  await waitBtn(S,'準備好了，開始！');
+  const show=()=>{const it=deck[k%deck.length][0];cardEl.innerHTML=iSvg(it)+'<span>'+IT[it][0]+'</span>'};show();
+  const t0=Date.now();let busy=false;
+  await new Promise(res=>{
+    const tick=setInterval(()=>{if(!ctx.alive()){clearInterval(tick);return res()}const left=Math.max(0,30-(Date.now()-t0)/1000);tEl.textContent='⏱ '+Math.ceil(left);if(left<=0){clearInterval(tick);res()}},200);
+    const choose=y=>{if(busy)return;const [it,isY]=deck[k%deck.length];const ok=!!isY===y;ans++;
+      if(ok){right++;sfx(true);fb.hidden=false;fb.className='fb ok';fb.textContent='✔ '+IT[it][0]+'：'+(isY?'原住民族':'漢人');cEl.textContent='答對 '+right}
+      else{sfx(false);shake(cardEl);fb.hidden=false;fb.className='fb bad';fb.textContent='✘ 課本裡，'+IT[it][0]+'是'+(isY?'原住民族':'漢人')+'的傳統器物。';busy=true;setTimeout(()=>busy=false,900)}
+      k++;if(ans>=MAXC){clearInterval(tick);return res()}show()};
+    yb.onclick=()=>choose(true);hb.onclick=()=>choose(false)});
+  yb.disabled=hb.disabled=true;cardEl.textContent='時間到！答對 '+right+' 題';
+  ctx.tick(right*3,MAXC*3);await waitBtn(S,'看成績 →');
+}
+
+/* ================= 世界 3：住屋偵探 ================= */
+const CLUES=[
+ {c:'用石板交錯堆疊而成，冬暖夏涼。煙霧會從石板縫隙飄出去，被稱為「會呼吸的房子」。',a:'stone',hints:['想想看哪一種房子是用「石頭」蓋的？','排灣族、魯凱族的傳統住屋。'],explain:'這是排灣族、魯凱族的石板屋。'},
+ {c:'蘭嶼的風很大，房子蓋得低低的，一半在地底下，可以防避強風。',a:'under',hints:['房子為什麼要蓋低？','雅美族（達悟族）的傳統住屋。'],explain:'這是雅美族（達悟族）的地下屋。'},
+ {c:'用木頭、竹子等材料建造，是泰雅族的傳統住屋。',a:'atayal',hints:['題目已經說出族群了。','泰雅族。'],explain:'泰雅族以木頭、竹子等材料建造傳統住屋。'},
+ {c:'先用竹子搭好房子的骨架，再敷上泥土。',a:'bamboo',hints:['房子的骨架是用什麼做的？','名字裡有「竹」。'],explain:'這是漢人的竹管仔厝。'},
+ {c:'先用石塊當地基，再疊上用稻稈、泥土和水做成的土磚。',a:'tuku',hints:['牆是一塊一塊的「土磚」。','名字裡有「土」。'],explain:'這是漢人的土埆厝。'},
+ {c:'正身的兩側都加蓋了護龍，中間有一大片稻埕。',a:'sanhe',hints:['正身＋兩邊護龍。','三邊的房子合起來。'],explain:'這是漢人的三合院。'},
+ {c:'工商業發達、建材改良以後，很多傳統住屋被這種房子取代。',a:'building',hints:['現代的建材是什麼？','鋼筋混凝土。'],explain:'傳統住屋漸漸被鋼筋混凝土樓房取代。'}
+];
+const LL=(lon,lat)=>[(lon-119.4)*115,(25.4-lat)*115];
+const TW=[[121.53,25.3],[121.75,25.15],[122.0,25.0],[121.86,24.75],[121.85,24.55],[121.65,24.2],[121.6,23.98],[121.5,23.6],[121.4,23.2],[121.18,22.8],[121.0,22.55],[120.9,22.3],[120.85,21.92],[120.72,21.95],[120.7,22.2],[120.6,22.38],[120.45,22.5],[120.28,22.62],[120.18,22.9],[120.1,23.1],[120.12,23.4],[120.18,23.7],[120.3,24.0],[120.48,24.3],[120.68,24.6],[120.88,24.85],[121.05,25.05],[121.3,25.15]];
+const PLACES=[
+ {id:'p1',name:'屏東縣瑪家鄉 舊排灣部落',ll:[120.62,22.68],card:'排灣族利用石板興建石板屋，具有冬暖夏涼的優點',hints:['在臺灣南部的屏東縣。','屏東縣「瑪家鄉」，部落名字裡有族群的名字。']},
+ {id:'p2',name:'臺東縣蘭嶼鄉 野銀部落',ll:[121.55,22.05],card:'雅美族（達悟族）利用木頭和石頭蓋地下屋，防避強風',hints:['在臺灣東南方的一座小島上。','臺東縣蘭嶼鄉。']},
+ {id:'p3',name:'宜蘭縣蘇澳鎮 武荖坑風景區',ll:[121.84,24.6],card:'泰雅族以木頭、竹子等材料建造的傳統住屋',hints:['在臺灣東北部。','宜蘭縣蘇澳鎮。']},
+ {id:'p4',name:'苗栗縣頭份市 蘆竹湳聚落',ll:[120.9,24.68],card:'保存著閩南文化三合院建築特色的聚落',hints:['在臺灣西北部。','苗栗縣頭份市。']},
+ {id:'p5',name:'屏東縣霧臺鄉 舊好茶部落',ll:[120.8,22.86],card:'魯凱族保存較完整的石板屋聚落，被指定為縣市定古蹟',hints:['魯凱族住在屏東縣的山上。','屏東縣霧臺鄉。']},
+ {id:'p6',name:'屏東縣春日鄉 七佳部落',ll:[120.66,22.42],card:'排灣族保存完整的石板屋聚落',hints:['也在屏東縣，但這次是排灣族。','屏東縣春日鄉。']},
+ {id:'p7',name:'澎湖縣西嶼鄉 二崁村',ll:[119.56,23.6],card:'保存了完整的歷史建築，被評定為文化聚落保存區',hints:['在臺灣海峽上的群島。','澎湖縣西嶼鄉。']},
+ {id:'p8',name:'臺中市烏日區 咖啡館三合院',ll:[120.62,24.1],card:'把傳統三合院改建成咖啡館，吸引遊客體驗傳統生活',hints:['在臺灣中部。','臺中市烏日區。']}
+];
+function mapRound(ctx,S,set){
+  return new Promise(res=>{
+    tagLine(S,'臺灣地圖偵探　看卡片，點出它在地圖上的哪裡（點地圖上的號碼或右邊的地名都可以）');
+    const order=shuffle(set);const num={};set.forEach((p,i)=>num[p.id]=i+1);
+    const tw=TW.map(p=>LL(...p).map(v=>v.toFixed(1)).join(',')).join(' ');
+    const [px,py]=LL(119.58,23.58),[lx,ly]=LL(121.55,22.05);
+    const s=svgEl('0 0 310 410','');
+    const base=`<rect width="310" height="410" rx="14" fill="#D7E8F2"/><polygon points="${tw}" fill="#C9DDA8" stroke="#5E8A4A" stroke-width="2"/><ellipse cx="${px}" cy="${py}" rx="9" ry="14" fill="#C9DDA8" stroke="#5E8A4A" stroke-width="2"/><ellipse cx="${lx}" cy="${ly}" rx="6" ry="5" fill="#C9DDA8" stroke="#5E8A4A" stroke-width="2"/><text x="${px+4}" y="${py+34}" text-anchor="middle" font-size="11" fill="#3A2A20">澎湖</text><text x="${lx}" y="${ly+18}" text-anchor="middle" font-size="11" fill="#3A2A20">蘭嶼</text><text x="290" y="24" text-anchor="end" font-size="12" fill="#3A2A20">北 ↑</text>`;
+    const done={};
+    const draw=()=>{s.innerHTML=base+set.map(p=>{const [x,y]=LL(...p.ll);return `<g data-p="${p.id}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="15" fill="${done[p.id]?'#3F8A55':'#B5412F'}" stroke="#fff" stroke-width="2"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="14" fill="#fff">${num[p.id]}</text></g>`}).join('')};draw();
+    const legend=el('div',{class:'legend'});const lgs={};
+    set.forEach(p=>{const b=el('button',{class:'lg',html:`<span class="no">${num[p.id]}</span>${p.name}`});b.onclick=()=>choose(p.id);lgs[p.id]=b;legend.append(b)});
+    const clue=el('div',{class:'card-clue'});const fb=el('div',{class:'fb',hidden:''});
+    S.append(clue,el('div',{class:'mapwrap'},s,legend),fb);
+    s.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-p]');if(g)choose(g.getAttribute('data-p'))});
+    let idx=0,T,total=0,busy=false;
+    const next=()=>{const p=order[idx];clue.textContent='🔎 '+p.card;fb.hidden=true;Object.values(lgs).forEach(b=>{if(!b.classList.contains('ok'))b.classList.remove('bad'),b.disabled=false});
+      T=tiered(fb,{hints:p.hints,explain:'在'+p.name+'。'})};next();
+    function choose(id){if(busy||done[id])return;const p=order[idx];
+      if(id===p.id){done[id]=true;lgs[id].classList.add('ok');lgs[id].disabled=true;draw();T.good();total+=ptsFor(5,T.wrong);adv()}
+      else{lgs[id].classList.add('bad');if(T.bad('')){done[p.id]=true;lgs[p.id].classList.add('ok');draw();T.reveal(p.name);adv()}}}
+    function adv(){busy=true;idx++;const nx=el('button',{},idx<order.length?'下一張卡片 →':'下一步 →');S.append(nx);
+      nx.onclick=()=>{nx.remove();busy=false;if(idx<order.length)next();else res(total)}}
+  });
+}
+const CHANGE=[
+ {q:'下面哪一個「不是」傳統住屋漸漸消失的原因？',opts:['大家都不需要房子了','工商業發達','居民生活方式改變','建材改良，改用鋼筋混凝土'],hints:['課本列了三個原因。','人還是需要住房子的。'],explain:'原因是工商業發達、生活方式改變、建材改良。'},
+ {q:'政府和民間團體怎麼保存傳統建築？',opts:['列為古蹟或聚落保存區','全部拆掉蓋大樓','禁止任何人靠近'],hints:['要讓它被保護下來。','古「蹟」。'],explain:'可以列為古蹟或聚落保存區，或結合當地特色規畫成觀光景點。'},
+ {q:'保存與維護傳統住屋的目的是？',opts:['讓現代人更認識傳統住屋，為老建築找到新生命','讓房子賣得比較貴','讓大家不要住新房子'],hints:['保存是為了讓更多人了解。','老建築找到「新生命」。'],explain:'目的是讓現代的人更加認識傳統住屋，為老建築找到新生命。'},
+ {q:'漢人蓋傳統住屋時，哪一種材料是「人工燒製」的？',opts:['磚瓦','竹子','木頭','土石'],hints:['竹子、木頭、土石都是就地取材。','要放進窯裡燒。'],explain:'磚瓦是人工燒製的，竹子、木頭、土石是就地取材。'}
+];
+async function w3(ctx){
+  const S=ctx.stage;ctx.N=4+8+2;
+  /* A 線索 */
+  for(const c of shuffle(CLUES).slice(0,4)){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'線索卡　哪一種住屋符合線索？');const qa=el('div');S.append(qa);
+    const ds=shuffle(Object.keys(HS).filter(k=>k!==c.a&&k!=='yitiao'&&k!=='danshen')).slice(0,3);
+    ctx.tick(await pick(qa,{q:'🔎 '+c.c,img:true,opts:[c.a,...ds].map(k=>({html:hLab(k),label:HS[k][0],why:'「'+HS[k][0]+'」不符合這個線索。'})),hints:c.hints,explain:c.explain}),10)}
+  /* B 地圖 */
+  const A=PLACES.slice(0,4),B=PLACES.slice(4);
+  for(const set of shuffle([A,B])){if(!ctx.alive())return;S.innerHTML='';const g=await mapRound(ctx,S,set);ctx.max+=20;ctx.add(g);ctx.step+=3;ctx.tick(0,0)}
+  /* C 住屋的轉變 */
+  if(!ctx.alive())return;S.innerHTML='';const qc=el('div');S.append(qc);
+  for(const t of shuffle(CHANGE).slice(0,2)){if(!ctx.alive())return;ctx.tick(await pick(qc,{tag:'住屋的轉變',q:t.q,opts:t.opts,hints:t.hints,explain:t.explain}),10)}
+}
+
+/* ================= 世界 4：時光機 ================= */
+const PAIRS=[
+ {o:'zao',n:'gas',hints:['現在煮飯用什麼開火？','不用燒木柴，打開開關就有火。'],explain:'以前用土灶燒木柴煮飯，現在多用瓦斯爐。'},
+ {o:'zhenglong',n:'cooker',hints:['現在家裡蒸東西用什麼？','插電、按下開關就會蒸熟。'],explain:'以前用蒸籠蒸食物，現在常用電鍋。'},
+ {o:'caichu',n:'fridge',hints:['現在剩菜收在哪裡？','會冷冷的，食物放得比較久。'],explain:'以前用菜櫥、桌罩收放食物，現在多用冰箱。'},
+ {o:'shuitong',n:'tap',hints:['現在要用水去哪裡拿？','轉一下就有水流出來。'],explain:'以前用水桶挑水，現在打開水龍頭就有自來水。'},
+ {o:'douli',n:'umbrella',hints:['現在遮陽擋雨用什麼？','可以撐開、收起來。'],explain:'以前戴斗笠遮陽擋雨，現在常用雨傘。'},
+ {o:'suoyi',n:'raincoat',hints:['披在身上擋雨的，現在是什麼？','騎機車下雨時會穿。'],explain:'以前披蓑衣擋雨，現在穿雨衣。'},
+ {o:'beilou',n:'backpack',hints:['現在背在背上裝東西的是？','上學也會用到。'],explain:'以前背藤編背簍，現在背背包。'},
+ {o:'zongzi',n:'bag',hints:['現在買東西、裝食物常用什麼？','輕便、便宜，但不容易分解。'],explain:'以前用植物葉子包食物，現在常被塑膠袋取代。'},
+ {o:'bamboohouse',n:'building',hints:['現在大家住的房子用什麼蓋？','鋼筋混凝土。'],explain:'以前住竹管仔厝、土埆厝，現在多住鋼筋混凝土樓房。'}
+];
+const PLASTIC=[
+ {q:'為什麼塑膠器物會取代竹子、木材做的器物？',opts:['輕便、便宜、使用方便','比較容易分解','都是大自然長出來的'],hints:['想想塑膠袋拿起來的感覺。','輕、便宜、好用。'],explain:'塑膠器物輕便、便宜、使用方便。'},
+ {q:'塑膠器物有什麼缺點？',opts:['在自然環境中不易分解，成為難以處理的垃圾','太重了拿不動','太貴了買不起'],hints:['塑膠丟掉以後會怎樣？','要花上千年才能分解。'],explain:'塑膠在自然環境中不易分解，成為難以處理的垃圾。'},
+ {q:'環保團體每年回收的海洋廢棄物，以哪一種最多？',opts:['塑膠器物','木頭','竹子'],hints:['不容易分解的那一種。','塑膠袋、吸管……'],explain:'海洋廢棄物以塑膠器物最多。'},
+ {q:'下面哪一個是響應「減塑運動」的做法？',opts:['自備環保杯和購物袋，重複使用','每次都拿新的塑膠袋','用完的吸管丟進海裡'],hints:['選擇能重複使用的器物。','對環境友善。'],explain:'減塑可以選擇對環境友善、能重複使用的器物。'},
+ {q:'海裡的塑膠垃圾，可能會傷害哪些動物？',opts:['海龜、魚類、鯨豚、信天翁','只有人類','都不會傷害動物'],hints:['動物可能會誤吃下肚。','海龜會把塑膠袋當成食物。'],explain:'塑膠會被海龜、魚類誤食，也害死鯨豚和信天翁幼鳥。'}
+];
+async function w4(ctx){
+  const S=ctx.stage;ctx.N=9;
+  for(const p of shuffle(PAIRS).slice(0,6)){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'時光機　傳統器物穿越到現在，是誰取代了它？點中飄來飄去的答案！');
+    const others=shuffle(PAIRS.filter(z=>z!==p)).slice(0,3);
+    const topSvg=HS[p.o]?hSvg(p.o):`<svg viewBox="0 0 100 100" style="width:110px;height:110px">${IT[p.o][1]}</svg>`;
+    ctx.tick(await chase(S,ctx,{top:topSvg+'<span>'+IT[p.o][0]+'</span>',q:'以前的「'+IT[p.o][0]+'」，現在被什麼取代了？',
+      opts:[p,...others].map(z=>({html:iLab(z.n),label:IT[z.n][0],why:'「'+IT[z.n][0]+'」取代的是'+IT[z.o][0]+'。'})),hints:p.hints,explain:p.explain}),10)}
+  if(!ctx.alive())return;S.innerHTML='';tagLine(S,'塑膠的代價');const qa=el('div');S.append(qa);
+  for(const t of shuffle(PLASTIC).slice(0,3)){if(!ctx.alive())return;ctx.tick(await pick(qa,{q:t.q,opts:t.opts,hints:t.hints,explain:t.explain}),10)}
+}
+
+/* ================= 魔王關：拆屋怪 ================= */
+function bossQ(){
+  const g=rnd(['han','yuan','clue','place','pair','part','plastic','change']);
+  const mk=(q,ans,ds,why)=>({q,opts:[ans,...shuffle(ds).slice(0,3)],why});
+  if(g==='han'){const h=rnd(HAN);return mk(h.q,IT[h.a][0],h.d.map(k=>IT[k][0]),h.explain)}
+  if(g==='yuan'){const h=rnd(YUAN);return mk(h.q,IT[h.a][0],h.d.map(k=>IT[k][0]),h.explain)}
+  if(g==='clue'){const c=rnd(CLUES);return mk(c.c+' 這是？',HS[c.a][0],Object.keys(HS).filter(k=>k!==c.a&&k!=='yitiao'&&k!=='danshen').map(k=>HS[k][0]),c.explain)}
+  if(g==='place'){const p=rnd(PLACES);return mk('「'+p.card+'」在哪裡？',p.name,PLACES.filter(z=>z!==p).map(z=>z.name),'在'+p.name+'。')}
+  if(g==='pair'){const p=rnd(PAIRS);return mk('「'+IT[p.o][0]+'」現在被什麼取代？',IT[p.n][0],PAIRS.filter(z=>z!==p).map(z=>IT[z.n][0]),p.explain)}
+  if(g==='part'){const k=rnd(Object.keys(PART));return mk(PART[k].info.replace(k,'＿＿')+' 空格是？',k,Object.keys(PART).filter(z=>z!==k),PART[k].info)}
+  const t=g==='plastic'?rnd(PLASTIC):rnd(CHANGE.concat(W2T));return mk(t.q,t.opts[0],t.opts.slice(1),t.explain);
+}
+async function w5(ctx){
+  const S=ctx.stage;ctx.N=10;const HP=10,TL=60;let hp=HP,left=TL;
+  const hpb=el('i',{style:'width:100%'});const tEl=el('span',{class:'score'},'⏱ '+TL);
+  const s=svgEl('0 0 320 160','','width:100%;max-width:420px;margin:auto;overflow:visible');
+  s.innerHTML=`<rect x="0" y="140" width="320" height="20" fill="#C9B38A"/>
+   <g id="house"><g transform="translate(196 52)">${HS.sanhe[1]}</g></g>
+   <g id="dust" opacity="0">${[0,1,2,3,4].map(k=>`<circle cx="${200+k*24}" cy="${136-(k%2)*10}" r="${14+(k%3)*5}" fill="#B9A27A"/>`).join('')}</g>
+   <g id="mon"><rect x="0" y="86" width="104" height="44" rx="8" fill="#E0A526" stroke="#3A2A20" stroke-width="3"/><rect x="18" y="56" width="48" height="34" rx="4" fill="#E0A526" stroke="#3A2A20" stroke-width="3"/><circle cx="32" cy="72" r="5" fill="#3A2A20"/><circle cx="52" cy="72" r="5" fill="#3A2A20"/><path id="mouth" d="M32 82 q10 7 20 0" stroke="#3A2A20" stroke-width="3" fill="none"/><path d="M26 64 l10 4 M58 64 l-10 4" stroke="#3A2A20" stroke-width="3"/><rect x="-4" y="128" width="112" height="16" rx="8" fill="#3A2A20"/><path d="M100 96 l34 -24 l12 28" stroke="#3A2A20" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M142 98 l16 4 l-6 14z" fill="#7D8794"/></g>`;
+  const house=s.querySelector('#house'),mon=s.querySelector('#mon'),mouth=s.querySelector('#mouth'),dust=s.querySelector('#dust');
+  let push=0;const monX=()=>Math.min(96,-20+(1-left/TL)*110+push)-(1-hp/HP)*40;
+  const render=(shk=0)=>{mon.setAttribute('transform',`translate(${monX()} 0)`);house.setAttribute('transform',`translate(${shk?(Math.random()*4-2):0} 0)`)};render();
+  const warn=el('div',{class:'small',style:'text-align:center;min-height:1.6em;color:var(--bad);font-family:var(--display)'});
+  S.append(el('div',{class:'ctrl'},el('span',{class:'tag'},'拆屋怪的力氣'),tEl),el('div',{class:'hp'},hpb),s,warn,el('div',{class:'small'},'60 秒內答對 10 題就能趕走拆屋怪！時間愈少，拆屋怪愈靠近；答錯會被扣 5 秒。'));
+  await waitBtn(S,'保護老房子！');
+  const qa=el('div');S.append(qa);const t0=Date.now();let over=false,pen=0;
+  const tick=setInterval(()=>{left=Math.max(0,TL-(Date.now()-t0)/1000-pen);tEl.textContent='⏱ '+Math.ceil(left);tEl.style.color=left<=10?'var(--bad)':'';
+    warn.textContent=left<=10?'⚠ 拆屋怪快撞到房子了！':'';render(left<=10&&!REDUCE);if(left<=0||!ctx.alive()){over=true;clearInterval(tick)}},100);
+  ctx.max=HP*10;
+  while(hp>0&&!over&&ctx.alive()){
+    const Q=bossQ();qa.innerHTML='';const box=el('div',{class:'qbox'},el('div',{class:'q',html:Q.q}));const wrap=el('div',{class:'opts'});const fb=el('div',{class:'fb',hidden:''});box.append(wrap,fb);qa.append(box);
+    const ok=await new Promise(r=>{const bs=[];
+      shuffle(Q.opts.map((_,i)=>i)).forEach(i=>{const b=el('button',{},Q.opts[i]);bs[i]=b;wrap.append(b);
+        b.onclick=()=>{bs.forEach(x=>x.disabled=true);if(i===0){b.classList.add('ok');r(true)}else{b.classList.add('bad');bs[0].classList.add('ok');bs[0].disabled=false;fb.hidden=false;fb.className='fb bad';fb.textContent='正確答案是「'+Q.opts[0]+'」。'+Q.why+'（扣 5 秒）';r(false)}}});
+      const iv=setInterval(()=>{if(over||!ctx.alive()){clearInterval(iv);r(null)}},150)});
+    if(ok===null)break;
+    if(ok){hp--;ctx.add(10);ctx.step++;sfx(true);hpb.style.width=(hp/HP*100)+'%';mouth.setAttribute('d','M32 86 q10 -7 20 0');await sleep(350);mouth.setAttribute('d','M32 82 q10 7 20 0')}
+    else{sfx(false);pen+=5;shake(s);await sleep(1300)}
+  }
+  clearInterval(tick);if(!ctx.alive())return;
+  qa.innerHTML='';
+  if(hp<=0){
+    sfx(true);const x0=monX();
+    await new Promise(r=>{const t1=performance.now();(function f(n){const q=Math.min(1,(n-t1)/900);mon.setAttribute('transform',`translate(${x0-q*320} 0) scale(1)`);if(q<1)requestAnimationFrame(f);else r()})(t1)});
+    qa.append(el('div',{class:'fb ok'},'拆屋怪被趕跑了，老房子保住了！還剩 '+Math.ceil(left)+' 秒。'));
+  }else{
+    sfx(false);warn.textContent='';
+    const x0=monX();
+    await new Promise(r=>{const t1=performance.now();(function f(n){const q=Math.min(1,(n-t1)/1600);
+      mon.setAttribute('transform',`translate(${x0+(96-x0)*Math.min(1,q*2)} 0)`);
+      if(q>.45){const k=(q-.45)/.55;house.setAttribute('transform',`translate(${196+60} ${140}) rotate(${k*18}) scale(1 ${1-k*.7}) translate(${-(196+60)} ${-140})`);dust.setAttribute('opacity',String(Math.min(1,k*1.4)))}
+      if(q<1&&!REDUCE)requestAnimationFrame(f);else{house.setAttribute('transform','translate(256 140) rotate(18) scale(1 .3) translate(-256 -140)');dust.setAttribute('opacity','1');r()}})(t1)});
+    qa.append(el('div',{class:'fb bad'},'轟隆！老房子被拆掉了……拆屋怪還剩 '+hp+' 格力氣。再挑戰一次，把老家救回來！'));
+  }
+  await waitBtn(S,'看成績 →');
+}
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body></html>

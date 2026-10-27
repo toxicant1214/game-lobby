@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>植物大冒險｜三上自然第 1 單元闖關</title>
+<style>
+:root{
+  --bg:#e8f6ec; --card:#ffffff; --ink:#12343b; --muted:#4f6f77; --line:#a9d3b5;
+  --accent:#0f7d59; --accent-ink:#ffffff; --good:#0f7d59; --bad:#c2410c; --gold:#e8a400;
+  --chip-bg:#f6fbf7; --chip-ink:#12343b; --soft:#eaf7ef; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e2217; --card:#16301f; --ink:#e7f5ea; --muted:#9fc4aa; --line:#2f6244;
+    --accent:#3ccf9c; --accent-ink:#06251c; --good:#4ade9d; --bad:#fb923c; --gold:#f5c542;
+    --chip-bg:#f6fbf7; --chip-ink:#12343b; --soft:#1b3d29; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,sans-serif;
+  line-height:1.5;-webkit-tap-highlight-color:transparent;
+  padding-top:env(safe-area-inset-top,0px)}
+#app{max-width:760px;margin:0 auto;padding:12px 14px 20px}
+h1,h2,h3{margin:0}
+.hud{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px;font-weight:700}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--accent)} .dot.cur{outline:3px solid var(--gold);outline-offset:1px}
+.score{font-size:18px;white-space:nowrap}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.title{font-size:22px;margin-bottom:4px}
+.sub{color:var(--muted);margin:0 0 10px}
+.btn{appearance:none;border:0;border-radius:14px;background:var(--accent);color:var(--accent-ink);
+  font:inherit;font-weight:700;font-size:18px;padding:12px 22px;cursor:pointer;min-height:48px}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:active{transform:scale(.98)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input[type=text]{font:inherit;font-size:18px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);
+  background:var(--card);color:var(--ink);width:100%;min-height:48px}
+label{display:block;font-weight:700;margin:10px 0 4px}
+.hero{text-align:center;padding:10px 0 4px}
+.hero .big{font-size:34px;font-weight:900;letter-spacing:2px}
+.emojis{font-size:40px;letter-spacing:6px;margin:6px 0}
+.fb{min-height:28px;font-weight:700;margin:6px 0}
+.fb.good{color:var(--good)} .fb.bad{color:var(--bad)}
+.tray{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--soft);border-radius:14px;min-height:96px;margin-bottom:10px}
+.chip{display:inline-flex;flex-direction:column;align-items:center;gap:2px;background:var(--chip-bg);color:var(--chip-ink);
+  border:2px solid var(--line);border-radius:12px;padding:6px 8px;min-width:76px;font-weight:700;cursor:grab;
+  touch-action:none;user-select:none;-webkit-user-select:none}
+.chip .emo{font-size:34px;line-height:46px;display:block}
+.chip.txt{flex-direction:row;min-width:0;padding:9px 12px;font-size:16px;max-width:100%}
+.chip.sel{outline:3px solid var(--gold)} .chip.src{opacity:.3}
+.chip.ghostc{position:fixed;z-index:99;pointer-events:none;box-shadow:0 8px 20px rgba(0,0,0,.35);transform:scale(1.08)}
+.chip.placed{cursor:default}
+.slot .chip{flex-direction:row;min-width:0;padding:3px 8px;gap:4px;font-size:14px}
+.slot .chip .emo{font-size:20px;line-height:26px}
+.zones{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.zones .zone:last-child:nth-child(odd){grid-column:1/-1}
+.zone{background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:8px;transition:border-color .1s,background .1s}
+.zone.hot{border-color:var(--accent);background:var(--soft)}
+.zone .cap{font-size:17px;margin:4px 2px;font-weight:800}
+.zone .clue{font-size:13px;color:var(--muted);margin:0 2px 4px}
+.zone .slot{display:flex;flex-wrap:wrap;gap:4px;min-height:34px}
+.zone.done{border-style:solid;border-color:var(--good)}
+.badge{display:inline-block;background:var(--good);color:var(--accent-ink);border-radius:8px;padding:0 8px;font-size:13px;margin-left:6px}
+.fig{width:100%;max-width:110px;height:auto;display:block;margin:0 auto}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+.q{font-size:20px;font-weight:700;margin:4px 0 12px}
+.qicon{display:flex;justify-content:center;margin-bottom:6px}
+.qicon svg{width:130px;height:130px;background:var(--chip-bg);border-radius:14px;border:2px solid var(--line)}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:18px;font-weight:600;background:var(--card);color:var(--ink);
+  border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;min-height:48px}
+.opt.good{border-color:var(--good);background:var(--soft)} .opt.bad{border-color:var(--bad);opacity:.6}
+.opt:disabled{cursor:default}
+.why{background:var(--soft);border-radius:12px;padding:10px 12px;margin:8px 0}
+.timer{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-bottom:10px}
+.timer i{display:block;height:100%;background:var(--accent);width:100%}
+.timer.low i{background:var(--bad)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:8px;margin-bottom:8px}
+.tab{flex:1;padding:8px;border-radius:12px;border:2px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.tab.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.stars{font-size:44px;text-align:center;letter-spacing:6px}
+.note{font-size:14px;color:var(--muted)}
+.me{background:var(--soft);font-weight:700}
+.foot{text-align:center;color:var(--muted);font-size:14px;padding:18px 14px calc(18px + env(safe-area-inset-bottom,0px))}
+</style>
+</head>
+<body>
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+<div id="app">
+  <div id="hud" class="hud" hidden></div>
+  <div id="view"></div>
+</div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+<script>
+"use strict";
+/* ====== Supabase 設定 ====== */
+var SUPABASE_URL = "https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+var SUPABASE_KEY = "sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+var GAME_ID = "plants-unit1";
+var LS_P = "unit1_player", LS_B = "unit1_board";
+var CLOUD = SUPABASE_URL.indexOf("YOUR-") < 0 && SUPABASE_KEY.indexOf("YOUR-") < 0;
+function sb(path,body){
+  return fetch(SUPABASE_URL+path,{
+    method: body ? "POST" : "GET",
+    headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r){
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    return r.text().then(function(t){ return t ? JSON.parse(t) : null; });
+  });
+}
+
+/* ---------- helpers ---------- */
+function $(s,r){ return (r||document).querySelector(s); }
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+function store(k,v){ try{ if(v===undefined){ var r=localStorage.getItem(k); return r?JSON.parse(r):null; } localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function pid(name){ var s=name+"|",h=5381; for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;} return "p"+(h>>>0).toString(36); }
+
+/* ---------- SVG figures ---------- */
+function leafE(x,y,a){ return '<ellipse cx="'+x+'" cy="'+y+'" rx="13" ry="5.5" transform="rotate('+a+' '+x+' '+y+')" fill="#6cc04a" stroke="#3f8f2e" stroke-width="1"/>'; }
+function rt(y){ return leafE(63,y-3,-20); }
+function lf(y){ return leafE(37,y-3,20); }
+function arrSvg(k){
+  var s='<svg class="fig" viewBox="0 0 100 90" aria-hidden="true"><path d="M50 88V6" stroke="#a07a4a" stroke-width="3" fill="none"/>';
+  if(k==="alt"){ s+=rt(72)+lf(54)+rt(36)+lf(18); }
+  else if(k==="opp"){ s+=rt(66)+lf(66)+rt(34)+lf(34); }
+  else { s+=rt(72)+lf(72)+leafE(50,58,90)+rt(38)+lf(38)+leafE(50,24,90); }
+  return s+'</svg>';
+}
+function flowerSvg(hl){
+  function op(k){ return hl===k?1:0.3; }
+  function sw(k){ return hl===k?3:1; }
+  var s='<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 82V100" stroke="#4a9a4a" stroke-width="4"/>';
+  var pet=''; for(var a=0;a<360;a+=72){ pet+='<ellipse cx="50" cy="34" rx="11" ry="19" transform="rotate('+a+' 50 52)"/>'; }
+  s+='<g fill="#f48fb1" stroke="#c2185b" stroke-width="'+sw("petal")+'" opacity="'+op("petal")+'">'+pet+'</g>';
+  s+='<g fill="#4caf50" stroke="#1b5e20" stroke-width="'+sw("sepal")+'" opacity="'+op("sepal")+'"><path d="M50 76L28 92L50 84L72 92Z"/><path d="M50 76L40 96L50 84L60 96Z"/></g>';
+  var st=''; [-55,-28,28,55].forEach(function(d){ var r=d*Math.PI/180, x=(50+Math.sin(r)*21).toFixed(1), y=(52-Math.cos(r)*21).toFixed(1);
+    st+='<line x1="50" y1="52" x2="'+x+'" y2="'+y+'"/><circle cx="'+x+'" cy="'+y+'" r="3.4" fill="#ffca28"/>'; });
+  s+='<g stroke="#e65100" stroke-width="'+(hl==="stamen"?3:1.2)+'" opacity="'+op("stamen")+'">'+st+'</g>';
+  s+='<g stroke="#b71c1c" stroke-width="'+(hl==="pistil"?3:1.2)+'" opacity="'+op("pistil")+'"><line x1="50" y1="58" x2="50" y2="30"/><circle cx="50" cy="28" r="4.5" fill="#ef5350"/><ellipse cx="50" cy="58" rx="5" ry="4" fill="#ef5350"/></g>';
+  return s+'</svg>';
+}
+
+/* ---------- state ---------- */
+var S = {name:"",score:0,max:0,level:0,gain:0};
+var timerId = null;
+function clearTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+var view = $("#view"), hud = $("#hud");
+var LEVELS = [];
+
+function updateHud(){
+  hud.hidden = false;
+  var d=""; for(var i=0;i<LEVELS.length;i++){ d+='<span class="dot'+(i<S.level?" on":"")+(i===S.level?" cur":"")+'"></span>'; }
+  hud.innerHTML='<div class="dots" aria-label="第 '+(S.level+1)+' 關，共 '+LEVELS.length+' 關">'+d+'</div><div class="score">⭐ '+S.score+' 分</div>';
+}
+function addScore(n){ S.score+=n; S.gain+=n; updateHud(); }
+
+/* ---------- start ---------- */
+function showStart(){
+  clearTimer(); hud.hidden=true;
+  var last = store(LS_P) || {name:""}; var bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})(); if(bzN) last={name:bzN.slice(0,8)};
+  view.innerHTML =
+   '<div class="card hero"><div class="big">植物大冒險</div><p class="sub">三上自然第 1 單元　'+LEVELS.length+' 關闖關，破關拿高分，進排行榜！</p>'+
+   '<div class="emojis" aria-hidden="true">🌱🌸🍃🌳</div></div>'+
+   '<div class="card"><label for="nm">你的名字（最多 8 字）</label><input id="nm" type="text" maxlength="8" autocomplete="off"'+(bzN?' readonly':'')+' value="'+esc(last.name||"")+'">'+
+   '<p class="note">小提醒：同名字的人會算同一個人，可以在名字後面加個字，例如「小明A」。</p>'+
+   '<p id="err" class="fb bad"></p><div class="row"><button class="btn" id="go">開始闖關</button><button class="btn ghost" id="lb">看排行榜</button></div></div>'+
+   '<div class="card"><h3>闖關內容</h3><p class="sub" style="margin:6px 0 0">① 生物大分類　② 植物身體　③ 吃的是哪一部分　④ 葉序　⑤ 莖和根　⑥ 花與果實種子　⑦ 限時總決賽</p></div>';
+  $("#go").onclick=function(){
+    var n=$("#nm").value.trim();
+    if(!n){ $("#err").textContent="請先輸入名字喔！"; return; }
+    S={name:n,score:0,max:0,level:0,gain:0}; store(LS_P,{name:n}); startLevel();
+  };
+  $("#lb").onclick=function(){ showBoard(); };
+}
+function startLevel(){ clearTimer(); S.gain=0; updateHud(); window.scrollTo(0,0); LEVELS[S.level](); }
+function levelDone(){
+  clearTimer();
+  var last = S.level>=LEVELS.length-1;
+  view.innerHTML='<div class="card hero"><div class="big">'+(last?"全部通關！":"第 "+(S.level+1)+" 關完成！")+'</div>'+
+    '<p class="title">本關得分 <b>'+S.gain+'</b></p><p class="sub">目前總分 '+S.score+'</p>'+
+    '<button class="btn" id="nx">'+(last?"看成績":"下一關")+'</button></div>';
+  $("#nx").onclick=function(){ if(last){ showResult(); } else { S.level++; startLevel(); } };
+}
+
+/* ---------- drag engine ---------- */
+function chipHtml(it){
+  var inner = it.emoji ? '<span class="emo" aria-hidden="true">'+it.emoji+'</span><span>'+esc(it.name)+'</span>' : '<span>'+esc(it.name)+'</span>';
+  return '<div class="chip'+(it.emoji?'':' txt')+'" data-id="'+it.id+'" role="button" tabindex="0">'+inner+'</div>';
+}
+function dragLevel(cfg){
+  var byId={}, placed=0, names={};
+  cfg.zones.forEach(function(z){ names[z.key]=z.name; });
+  cfg.items.forEach(function(it,i){ it.id=i; it.miss=false; byId[i]=it; S.max+=cfg.base; });
+  view.innerHTML='<div class="card"><h2 class="title">'+cfg.title+'</h2><p class="sub">'+cfg.sub+'</p>'+
+    '<div class="fb" id="fb" aria-live="polite">拖曳（或先點項目、再點位置）</div>'+
+    '<div class="tray" id="tray">'+shuffle(cfg.items).map(chipHtml).join("")+'</div>'+
+    '<div class="zones" id="zones">'+cfg.zones.map(function(z){
+      return '<div class="zone" data-key="'+z.key+'">'+z.html+'<div class="slot"></div></div>'; }).join("")+'</div></div>';
+  var fb=$("#fb"), zonesEl=$("#zones"), sel=null, drag=null;
+  function say(t,c){ fb.textContent=t; fb.className="fb "+(c||""); }
+  function tryPlace(chip,zone){
+    var it=byId[chip.dataset.id], key=zone.dataset.key, slot=$(".slot",zone);
+    var full = cfg.cap && slot.children.length>=cfg.cap;
+    if(it.type===key && !full){
+      chip.classList.remove("sel","src"); chip.classList.add("placed"); slot.appendChild(chip); sel=null;
+      addScore(Math.round(it.miss ? cfg.base*0.4 : cfg.base));
+      if(cfg.cap){ zone.classList.add("done"); var cp=$(".cap",zone); if(cp && !$(".badge",cp)) cp.insertAdjacentHTML("beforeend",'<span class="badge">✓</span>'); }
+      say("答對了！"+it.name+" → "+names[key],"good"); placed++;
+      if(placed===cfg.items.length){ setTimeout(levelDone,900); }
+    } else {
+      it.miss=true; chip.classList.remove("sel"); sel=null; chip.classList.add("shake");
+      setTimeout(function(){ chip.classList.remove("shake"); },400);
+      say("再想想："+cfg.hint,"bad");
+    }
+  }
+  function zoneAt(x,y){ var el=document.elementFromPoint(x,y); return el && el.closest ? el.closest(".zone") : null; }
+  function hot(z){ Array.prototype.forEach.call(zonesEl.children,function(e){ e.classList.toggle("hot",e===z); }); }
+  view.firstElementChild.addEventListener("pointerdown",onDown);
+  function onDown(e){
+    var chip=e.target.closest && e.target.closest(".chip");
+    if(!chip || chip.classList.contains("placed")) return;
+    e.preventDefault();
+    drag={chip:chip,sx:e.clientX,sy:e.clientY,moved:false,ghost:null};
+    window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp); window.addEventListener("pointercancel",onCancel);
+  }
+  function onMove(e){
+    if(!drag) return;
+    if(!drag.moved && Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8){
+      drag.moved=true; var r=drag.chip.getBoundingClientRect(), g=drag.chip.cloneNode(true);
+      g.classList.add("ghostc"); g.style.width=r.width+"px"; document.body.appendChild(g); drag.ghost=g; drag.w=r.width; drag.h=r.height;
+      drag.chip.classList.add("src");
+    }
+    if(drag.moved){
+      drag.ghost.style.left=(e.clientX-drag.w/2)+"px"; drag.ghost.style.top=(e.clientY-drag.h/2)+"px";
+      hot(zoneAt(e.clientX,e.clientY));
+    }
+  }
+  function cleanup(){
+    window.removeEventListener("pointermove",onMove); window.removeEventListener("pointerup",onUp); window.removeEventListener("pointercancel",onCancel);
+    if(drag && drag.ghost) drag.ghost.remove(); hot(null);
+  }
+  function onUp(e){
+    if(!drag) return; var d=drag; cleanup(); drag=null;
+    if(!d.moved){
+      if(sel===d.chip){ d.chip.classList.remove("sel"); sel=null; }
+      else { if(sel) sel.classList.remove("sel"); sel=d.chip; d.chip.classList.add("sel"); say("再點一個位置放下去","");} return;
+    }
+    d.chip.classList.remove("src");
+    var z=zoneAt(e.clientX,e.clientY); if(z && zonesEl.contains(z)) tryPlace(d.chip,z);
+  }
+  function onCancel(){ if(!drag) return; var d=drag; cleanup(); drag=null; d.chip.classList.remove("src"); }
+  zonesEl.addEventListener("click",function(e){
+    var z=e.target.closest(".zone"); if(z && sel && !drag) tryPlace(sel,z);
+  });
+}
+function Z(key,name,clue,pre){ return {key:key,name:name,html:(pre||"")+'<div class="cap">'+name+'</div>'+(clue?'<div class="clue">'+clue+'</div>':'')}; }
+function I(name,emoji,type){ return {name:name,emoji:emoji,type:type}; }
+
+/* ---------- levels ---------- */
+function level1(){
+  dragLevel({title:"第 1 關　生物大分類",sub:"植物、動物、非生物，分一分！",base:50,cap:0,
+    hint:"有沒有生命？會不會自己移動？",
+    items:[I("榕樹","🌳","plant"),I("樟樹","🌲","plant"),I("仙丹花","🌺","plant"),I("長春花","🌼","plant"),
+           I("蝴蝶","🦋","animal"),I("麻雀","🐦","animal"),I("魚","🐟","animal"),I("石頭","🪨","non"),I("鐵椅","🪑","non")],
+    zones:[Z("plant","🌱 植物","有生命・不會自己移動"),Z("animal","🐾 動物","有生命・會移動"),Z("non","🧱 非生物","沒有生命")]});
+}
+function level2(){
+  dragLevel({title:"第 2 關　植物身體",sub:"每個部位負責做什麼？把功能放到正確的部位。",base:80,cap:1,
+    hint:"這個部位負責做什麼事？",
+    items:[I("吸收水分、抓住土壤、固定植物","","root"),I("支撐身體，輸送水分和養分","","stem"),I("接收陽光，製造養分","","leaf"),
+           I("吸引動物幫忙傳粉","","flower"),I("保護種子，幫助傳播","","fruit"),I("在合適的地方長成新植物","","seed")],
+    zones:[Z("root","根",""),Z("stem","莖",""),Z("leaf","葉",""),Z("flower","花",""),Z("fruit","果實",""),Z("seed","種子","")]});
+}
+function level3(){
+  dragLevel({title:"第 3 關　吃的是哪一部分？",sub:"這些食物主要用到植物的哪個部位？",base:50,cap:0,
+    hint:"我們吃（或喝）的是它的哪個部位？",
+    items:[I("甘蔗汁","🥤","stem"),I("洋蔥","🧅","stem"),I("地瓜","🍠","root"),I("紅茶","🍵","leaf"),I("抹茶粉","🍃","leaf"),I("炒地瓜葉","🥬","leaf"),
+           I("玫瑰花茶","🌹","flower"),I("綠豆湯","🥣","seed"),I("紅豆","🫘","seed"),I("鳳梨","🍍","fruit"),I("西瓜","🍉","fruit"),I("金桔汁","🍊","fruit")],
+    zones:[Z("root","根",""),Z("stem","莖",""),Z("leaf","葉",""),Z("flower","花",""),Z("fruit","果實",""),Z("seed","種子","")]});
+}
+function level4(){
+  dragLevel({title:"第 4 關　葉序",sub:"葉子在節上怎麼排？數數看每個節長幾片！",base:50,cap:0,
+    hint:"數數看：同一個節上長幾片葉子？",
+    items:[{name:"榕樹",type:"alt"},{name:"朱槿",type:"alt"},{name:"樟樹",type:"alt"},
+           {name:"桂花",type:"opp"},{name:"番石榴",type:"opp"},{name:"福木",type:"opp"},
+           {name:"軟枝黃蟬",type:"whorl"},{name:"黑板樹",type:"whorl"}],
+    zones:[Z("alt","互生","每節 1 片，交互排列",arrSvg("alt")),Z("opp","對生","每節 2 片，相對",arrSvg("opp")),Z("whorl","輪生","每節 3 片以上",arrSvg("whorl"))]});
+}
+function level5(){
+  dragLevel({title:"第 5 關　莖和根",sub:"它們的莖或根，是哪一種類型？",base:50,cap:0,
+    hint:"莖是高大、細小還是要攀爬？根是一條粗的，還是像鬍鬚？",
+    items:[{name:"榕樹的莖",type:"wood"},{name:"木棉的莖",type:"wood"},{name:"長春花的莖",type:"herb"},{name:"昭和草的莖",type:"herb"},
+           {name:"牽牛花的莖",type:"vine"},{name:"絲瓜的莖",type:"vine"},
+           {name:"菠菜的根",type:"tap"},{name:"小白菜的根",type:"tap"},{name:"蔥的根",type:"fib"},{name:"水稻的根",type:"fib"}],
+    zones:[Z("wood","木本莖","高大粗壯・直立"),Z("herb","草本莖","細小柔軟・能直立"),Z("vine","藤本莖","柔軟・要攀爬"),
+           Z("tap","軸根","一條粗大的主根"),Z("fib","鬚根","細小像鬍鬚")]});
+}
+
+/* ---------- quiz engine ---------- */
+function quiz(cfg){
+  var i=0, qs=cfg.qs, per = cfg.base + (cfg.timed ? cfg.limit*3 : 0);
+  S.max += qs.length*per;
+  function show(){
+    clearTimer();
+    var q=qs[i], opts=shuffle(q.opts.map(function(t,idx){return {t:t,ok:idx===q.ans};})), tries=0, done=false, left=cfg.limit, t0=Date.now();
+    view.innerHTML='<div class="card"><h2 class="title">'+cfg.title+'</h2><p class="sub">'+cfg.sub+'　（'+(i+1)+' / '+qs.length+'）</p>'+
+      (cfg.timed?'<div class="timer" id="tm"><i></i></div>':'')+
+      (q.svg?'<div class="qicon">'+q.svg+'</div>':'')+
+      '<div class="q">'+esc(q.q)+'</div><div id="ops">'+opts.map(function(o,k){ return '<button class="opt" data-k="'+k+'">'+esc(o.t)+'</button>'; }).join("")+'</div>'+
+      '<div id="ex"></div></div>';
+    var ops=$("#ops"), ex=$("#ex");
+    function finish(gain,right){
+      done=true; clearTimer();
+      Array.prototype.forEach.call(ops.children,function(b,k){ b.disabled=true; if(opts[k].ok) b.classList.add("good"); });
+      if(gain) addScore(gain);
+      ex.innerHTML='<div class="why"><b>'+(right?"答對了！"+(gain?" +"+gain+" 分":""):"答案是綠色的選項。")+'</b><br>'+esc(q.why)+'</div>'+
+        '<button class="btn" id="nq">'+(i+1<qs.length?"下一題":"完成本關")+'</button>';
+      $("#nq").onclick=function(){ i++; if(i<qs.length){ show(); } else { levelDone(); } };
+    }
+    ops.addEventListener("click",function(e){
+      var b=e.target.closest(".opt"); if(!b||done||b.disabled) return;
+      var o=opts[+b.dataset.k];
+      if(o.ok){ var g = cfg.timed ? cfg.base+Math.ceil(left)*3 : (tries===0?cfg.base:Math.round(cfg.base*0.4)); finish(g,true); }
+      else {
+        tries++; b.classList.add("bad"); b.disabled=true;
+        if(cfg.timed||tries>=2){ finish(0,false); }
+        else ex.innerHTML='<div class="why">再想一下～提示：'+esc(q.hint||"回想一下課本裡的重點。")+'</div>';
+      }
+    });
+    if(cfg.timed){
+      var bar=$("#tm"), fill=$("i",bar);
+      timerId=setInterval(function(){
+        left=cfg.limit-(Date.now()-t0)/1000;
+        if(left<=0){ finish(0,false); ex.insertAdjacentHTML("afterbegin",'<div class="why"><b>時間到！</b></div>'); return; }
+        fill.style.width=(left/cfg.limit*100)+"%"; bar.classList.toggle("low",left<5);
+      },100);
+    }
+  }
+  show();
+}
+function Q(q,opts,ans,why,hint,svg){ return {q:q,opts:opts,ans:ans,why:why,hint:hint,svg:svg}; }
+var PARTS4=["花萼","花瓣","雄蕊","雌蕊"];
+function level6(){
+  quiz({title:"第 6 關　花、果實和種子",sub:"認識花的構造和它們的功能。",base:100,timed:false,qs:[
+    Q("圖中顏色最清楚的部分，是花的哪一部分？",PARTS4,0,"花萼在花的最外圍，有保護作用。","在花的最外圍。",flowerSvg("sepal")),
+    Q("圖中顏色最清楚的部分，是花的哪一部分？",PARTS4,1,"花瓣顏色鮮豔，保護雄蕊和雌蕊，也能吸引動物。","常常顏色很鮮豔。",flowerSvg("petal")),
+    Q("圖中顏色最清楚的部分，是花的哪一部分？",PARTS4,2,"雄蕊有花粉，數量通常比雌蕊多。","有花粉的是哪一個？",flowerSvg("stamen")),
+    Q("圖中顏色最清楚的部分，是花的哪一部分？",PARTS4,3,"雌蕊在花的中心，數量比較少。","在花的正中間。",flowerSvg("pistil")),
+    Q("花瓣鮮豔、有花蜜和特殊香味，有什麼功能？",["吸引動物來採食，幫忙傳粉","讓花變重","讓植物長得更高"],0,"動物採花蜜時，會把花粉傳到雌蕊，讓植物繁衍後代。","想想蝴蝶和蜜蜂為什麼會飛來。"),
+    Q("絲瓜的花有「雄花」和「雌花」之分，它是什麼花？",["完全花","不完全花"],1,"雄花缺少雌蕊，雌花缺少雄蕊，所以是不完全花。","完全花要有花萼、花瓣、雄蕊、雌蕊四部分。"),
+    Q("果實有什麼功能？",["保護種子，幫助傳播種子","吸收水分","製造養分"],0,"果實保護種子，也能幫助種子傳播。","種子在果實的哪裡？"),
+    Q("每個果實裡的種子，都只有 1 顆嗎？",["是，每個都 1 顆","不是，不同植物的數量不一樣"],1,"龍眼、芒果、櫻桃只有 1 顆；西瓜、木瓜、蘋果有很多顆。","想想西瓜切開的樣子。")
+  ]});
+}
+var POOL=[
+  Q("長春花的莖是哪一類？",["木本莖","草本莖","藤本莖"],1,"長春花的莖細小柔軟，能直立，是草本莖。","不是高大粗壯的樹。"),
+  Q("牽牛花的莖柔軟，要攀爬，是哪一類？",["木本莖","草本莖","藤本莖"],2,"藤本莖柔軟無法直立，要攀爬在別的物體上。","想想牽牛花爬在牆上。"),
+  Q("榕樹的莖高大粗壯，是哪一類？",["木本莖","草本莖","藤本莖"],0,"木本莖高大、粗壯、能直立。"),
+  Q("蔥的根細小像鬍鬚，是哪一類？",["軸根","鬚根"],1,"蔥、蒜、水稻是鬚根。"),
+  Q("菠菜的根有一條粗大的主根，是哪一類？",["軸根","鬚根"],0,"菠菜、莧菜、小白菜是軸根。"),
+  Q("葉子從莖長出來的地方，叫做什麼？",["葉柄","節","葉脈"],1,"葉子長在莖上的位置叫節。"),
+  Q("每個節上只長 1 片葉子，交互排列，是哪一種葉序？",["互生","對生","輪生"],0,"榕樹、朱槿是互生。"),
+  Q("每個節上長 2 片相對的葉子，是哪一種葉序？",["互生","對生","輪生"],1,"桂花、番石榴、福木是對生。"),
+  Q("每個節上長 3 片以上的葉子，是哪一種葉序？",["互生","對生","輪生"],2,"軟枝黃蟬、黑板樹是輪生。"),
+  Q("葉子要錯開生長，主要是為了什麼？",["讓每片葉子都能照到陽光","讓葉子比較重","讓莖長得比較粗"],0,"錯開生長，葉子才不會互相擋住陽光。"),
+  Q("甘蔗汁是用植物的哪一部分做的？",["根","莖","葉","果實"],1,"甘蔗吃的是莖。"),
+  Q("地瓜是植物的哪一部分？",["根","莖","葉","種子"],0,"地瓜是長在地下、膨大的根。"),
+  Q("紅茶是用茶樹的哪一部分做的？",["根","葉","花","種子"],1,"茶是用茶樹的葉子做的。"),
+  Q("綠豆湯裡的綠豆，是植物的哪一部分？",["果實","葉","種子","莖"],2,"綠豆、紅豆是種子。"),
+  Q("葉脈有什麼功能？",["輸送水分和養分","吸引蜜蜂","固定植物"],0,"葉脈能輸送水分和養分。"),
+  Q("植物的根有什麼功能？",["吸收水分、固定植物","製造養分","吸引動物"],0,"根吸收水分，也抓住土壤固定植物。"),
+  Q("植物會自己移動位置嗎？",["會","不會"],1,"植物是生物，會生長，但不會自己移動。"),
+  Q("蝴蝶和麻雀是植物嗎？",["是","不是，是動物"],1,"蝴蝶和麻雀是會移動的動物。"),
+  Q("用棉花做成衣服，是植物在生活中哪一方面的應用？",["食","衣","住","行"],1,"棉、麻可以做成衣服。"),
+  Q("用木材蓋成木屋、做成家具，是哪一方面的應用？",["食","衣","住","育樂"],2,"木屋和家具屬於「住」。"),
+  Q("植物園當作自然教學的場所，是哪一方面的應用？",["食","行","育","衣"],2,"植物園屬於「育」。"),
+  Q("所有植物都會開花嗎？",["都會","不一定，有些不開花"],1,"不是所有植物都會開花。"),
+  Q("山櫻花通常在哪一個季節開花？",["春天","夏天","秋天"],0,"山櫻花、杜鵑在春天開花。")
+];
+function level7(){
+  quiz({title:"第 7 關　限時總決賽",sub:"每題 15 秒，越快答對分數越高！",base:100,timed:true,limit:15,qs:shuffle(POOL).slice(0,10)});
+}
+LEVELS=[level1,level2,level3,level4,level5,level6,level7];
+
+/* ---------- result & leaderboard ---------- */
+async function saveScore(){
+  var id=pid(S.name), result="local";
+  var all=store(LS_B)||{}; var p=all[id]||{name:S.name,best:0,plays:0};
+  p.best=Math.max(p.best,S.score); p.plays++; all[id]=p; store(LS_B,all);
+  if(!CLOUD) return result;
+  try{
+    await sb("/rest/v1/rpc/submit_score",{p_game:GAME_ID,p_id:id,p_name:S.name,p_cls:"",p_score:S.score});
+    result="shared";
+  }catch(e){}
+  return result;
+}
+function showResult(){
+  clearTimer(); hud.hidden=true;
+  var pct=S.max?S.score/S.max:0, stars=pct>=0.85?3:pct>=0.6?2:1;
+  view.innerHTML='<div class="card hero"><div class="big">任務完成！</div><div class="stars" aria-label="'+stars+' 顆星">'+"★".repeat(stars)+"☆".repeat(3-stars)+'</div>'+
+    '<p class="title">'+esc(S.name)+'　總分 <b>'+S.score+'</b></p><p class="sub">滿分約 '+S.max+' 分</p><p class="note" id="sv">成績儲存中…</p>'+
+    '<div class="row" style="justify-content:center"><button class="btn" id="again">再玩一次</button><button class="btn ghost" id="lb">看排行榜</button><button class="btn ghost" id="chg">換人</button></div></div>';
+  $("#again").onclick=function(){ S.score=0;S.max=0;S.level=0;S.gain=0; startLevel(); };
+  $("#lb").onclick=function(){ showBoard(); };
+  $("#chg").onclick=showStart;
+  saveScore().then(function(r){ var n=$("#sv"); if(n) n.textContent = r==="shared" ? "已登記到全校排行榜" : (CLOUD ? "連線失敗，成績只存在這台裝置" : "已登記到這台裝置的排行榜"); });
+}
+async function showBoard(){
+  clearTimer(); hud.hidden=true;
+  var mode = CLOUD ? "school" : "local";
+  view.innerHTML='<div class="card"><h2 class="title">排行榜</h2><div class="tabs" id="tabs"></div><div id="rows">載入中…</div>'+
+    '<p class="note" id="nt"></p><div class="row"><button class="btn" id="bk">回首頁</button></div></div>';
+  $("#bk").onclick=showStart;
+  function tabs(){
+    var t=$("#tabs"); t.innerHTML=""; if(!CLOUD) return;
+    [["school","全校"],["local","本機"]].forEach(function(x){
+      var b=document.createElement("button"); b.className="tab"+(mode===x[0]?" on":""); b.textContent=x[1];
+      b.onclick=function(){ mode=x[0]; tabs(); load(); }; t.appendChild(b);
+    });
+  }
+  async function load(){
+    var rows=[], failed=false;
+    if(mode==="local"){
+      var all=store(LS_B)||{}; rows=Object.keys(all).map(function(k){return all[k];}).sort(function(a,b){return b.best-a.best;}).slice(0,10);
+    } else {
+      try{ rows=await sb("/rest/v1/scores?game=eq."+encodeURIComponent(GAME_ID)+"&select=name,best&order=best.desc&limit=10")||[]; }catch(e){ failed=true; }
+    }
+    var h='<table><tr><th>名次</th><th>名字</th><th>最高分</th></tr>';
+    if(failed) h+='<tr><td colspan="3">排行榜暫時連不上，請稍後再試。</td></tr>';
+    else if(!rows.length) h+='<tr><td colspan="3">還沒有人上榜，快來當第一名！</td></tr>';
+    rows.forEach(function(r,i){ var m=S.name&&r.name===S.name;
+      h+='<tr class="'+(m?"me":"")+'"><td>'+(i<3?["🥇","🥈","🥉"][i]:(i+1))+'</td><td>'+esc(r.name)+'</td><td>'+r.best+'</td></tr>'; });
+    $("#rows").innerHTML=h+'</table>';
+    $("#nt").textContent = mode==="local" ? "這是這台裝置上的排行榜。" : "全校前 10 名。";
+  }
+  tabs(); load();
+}
+showStart();
+</script>
+</body>
+</html>

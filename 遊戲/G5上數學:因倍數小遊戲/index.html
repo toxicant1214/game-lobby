@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>因倍數大冒險</title>
+<style>
+:root{
+  --bg:#efeaff; --card:#ffffff; --ink:#2b2d42; --muted:#6a6e8f; --accent:#6c5ce7; --accent-ink:#ffffff;
+  --line:#ddd6f7; --good:#16a34a; --bad:#e5484d; --heart:#ff5c7a; --overlay:rgba(30,27,60,.5); --soft:#f6f3ff;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16142b; --card:#221f40; --ink:#f1efff; --muted:#aaa7cf; --accent:#8b7dff; --accent-ink:#14122a;
+    --line:#383263; --good:#4ade80; --bad:#ff7a80; --heart:#ff6f8c; --overlay:rgba(0,0,0,.6); --soft:#2b2750;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16142b; --card:#221f40; --ink:#f1efff; --muted:#aaa7cf; --accent:#8b7dff; --accent-ink:#14122a;
+  --line:#383263; --good:#4ade80; --bad:#ff7a80; --heart:#ff6f8c; --overlay:rgba(0,0,0,.6); --soft:#2b2750;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  line-height:1.5; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:640px;margin:0 auto;padding:14px 14px 28px;}
+[hidden]{display:none !important;}
+button{font:inherit;color:inherit;}
+.btn{
+  border:0;border-radius:14px;padding:12px 20px;font-weight:700;font-size:1.05rem;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);min-height:48px;
+}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);}
+.btn:active{transform:scale(.97);}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+
+/* ---------- Home ---------- */
+.top-tools{display:flex;justify-content:flex-end;gap:8px;}
+.icon-btn{
+  width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);
+  font-size:1.15rem;cursor:pointer;display:grid;place-items:center;
+}
+.hero{text-align:center;padding:6px 0 12px;}
+.hero h1{margin:6px 0 4px;font-size:2rem;letter-spacing:.04em;}
+.hero p{margin:0;color:var(--muted);}
+.hero-row{display:flex;justify-content:center;gap:2px;margin-top:6px;}
+.hero-row .mini{width:62px;height:62px;animation:bob 3s ease-in-out infinite;}
+.hero-row .mini:nth-child(2){animation-delay:-.8s}
+.hero-row .mini:nth-child(3){animation-delay:-1.6s}
+.hero-row .mini:nth-child(4){animation-delay:-2.2s}
+.mini svg{width:100%;height:100%;display:block;}
+.mini .chk,.mini .m-h,.mini .m-b{display:none;}
+.seg{display:flex;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:4px;gap:4px;margin:14px 0;}
+.seg button{
+  flex:1;border:0;background:transparent;border-radius:12px;padding:10px 0;font-weight:700;cursor:pointer;color:var(--muted);min-height:44px;
+}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mode.wide{grid-column:1/-1;border-color:var(--accent);background:linear-gradient(135deg,var(--card),var(--soft));}
+.mode .tag{align-self:flex-start;font-size:.75rem;font-weight:800;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);}
+.lvtotal{margin-top:12px;text-align:center;font-weight:700;color:var(--muted);}
+.lvtotal b{color:var(--accent);font-size:1.3rem;font-variant-numeric:tabular-nums;}
+.grid.arena{display:block;position:relative;height:min(60vh,480px);min-height:340px;border:2px dashed var(--line);border-radius:20px;overflow:hidden;background:var(--soft);touch-action:manipulation;}
+.grid.arena .blob{position:absolute;left:0;top:0;animation:none;aspect-ratio:auto;will-change:transform;}
+.grid.arena .blob.ok{z-index:0;opacity:.85;}
+.mode{
+  text-align:left;border:2px solid var(--line);background:var(--card);border-radius:20px;padding:14px;cursor:pointer;
+  display:flex;flex-direction:column;gap:6px;min-height:132px;
+}
+.mode:active{transform:scale(.98);}
+.mode .nm{font-size:1.2rem;font-weight:800;}
+.mode .ex{color:var(--muted);font-size:.9rem;}
+.mode .best{margin-top:auto;font-size:.85rem;color:var(--muted);}
+.mode .num{font-size:1.5rem;font-weight:800;color:var(--accent);font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;}
+.howto{margin-top:16px;padding:12px 14px;border-radius:16px;background:var(--soft);color:var(--muted);font-size:.92rem;}
+
+/* ---------- Name & board ---------- */
+.namebox{display:flex;gap:8px;margin:12px 0 0;align-items:center}
+.namebox label{font-weight:700;white-space:nowrap}
+.namebox input{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:10px 12px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);min-height:48px}
+.namebox input.need{border-color:var(--bad)}
+.lb-open{width:100%;margin-top:12px}
+.lb-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.lb-tabs button{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:700;min-height:40px}
+.lb-tabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.lb-list{list-style:none;margin:8px 0 0;padding:0;text-align:left}
+.lb-list li{display:flex;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.lb-list li.me{background:var(--soft);border-radius:10px;font-weight:800}
+.lb-list .rk{width:2em;color:var(--muted)}
+.lb-list .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-note{color:var(--muted);font-size:.9rem;margin-top:8px}
+
+/* ---------- Game ---------- */
+.bar{display:flex;align-items:center;gap:10px;}
+.bar .back{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);cursor:pointer;font-size:1.2rem;}
+.bar .round{font-weight:800;flex:1;}
+.hearts{display:flex;gap:3px;}
+.hearts svg{width:26px;height:26px;transition:transform .2s;}
+.hearts .lost{opacity:.22;filter:grayscale(1);}
+.score{font-weight:800;min-width:56px;text-align:right;font-variant-numeric:tabular-nums;}
+.prompt{
+  margin:12px 0 8px;padding:14px 16px;background:var(--card);border:2px solid var(--line);border-radius:20px;text-align:center;
+}
+.prompt .q{font-size:1.45rem;font-weight:800;}
+.prompt .q b{display:inline-block;min-width:1.9em;padding:0 .35em;margin:0 .1em;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;}
+.prompt .prog{color:var(--muted);font-size:.95rem;margin-top:2px;}
+.fb{min-height:2.7em;text-align:center;font-weight:700;padding:4px 8px;}
+.fb.bad{color:var(--bad);}
+.fb.good{color:var(--good);}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 8px;}
+@media (min-width:560px){.grid{grid-template-columns:repeat(4,1fr);}}
+.blob{
+  background:none;border:0;padding:0;cursor:pointer;aspect-ratio:1;
+  animation:bob var(--t,3s) ease-in-out var(--d,0s) infinite;-webkit-tap-highlight-color:transparent;
+}
+.blob svg{width:100%;height:100%;display:block;overflow:visible;transition:transform .15s;}
+.blob:active:not(:disabled) svg{transform:scale(.92);}
+.blob .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite var(--d,0s);}
+.blob .m-h,.blob .m-b,.blob .chk{display:none;}
+.blob.ok .m-s,.blob.bad .m-s{display:none;}
+.blob.ok .m-h{display:block;}
+.blob.ok .chk{display:block;}
+.blob.bad .m-b{display:block;}
+.blob.ok .body{fill:#8fe3a1;}
+.blob.bad .body{fill:#ffb3b8;}
+.blob.ok svg{animation:pop .5s;}
+.blob.bad svg{animation:shake .45s;opacity:.6;}
+.blob.reveal svg{filter:drop-shadow(0 0 7px #f5b800);}
+.blob:disabled{cursor:default;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+@media (prefers-reduced-motion: reduce){
+  .blob,.blob .eyes,.hero-row .mini{animation:none;}
+  .blob.ok svg,.blob.bad svg{animation:none;}
+}
+
+/* ---------- Modal ---------- */
+.overlay{position:fixed;inset:0;background:var(--overlay);display:grid;place-items:center;padding:20px;z-index:10;}
+.modal{background:var(--card);border-radius:24px;padding:22px 20px;max-width:420px;width:100%;text-align:center;max-height:90vh;overflow:auto;}
+.modal h2{margin:0 0 6px;font-size:1.6rem;}
+.modal .body-t{color:var(--ink);text-align:left;background:var(--soft);border-radius:14px;padding:12px 14px;margin:10px 0;line-height:1.8;}
+.modal .stars{font-size:2rem;letter-spacing:.2em;}
+.modal .row{display:flex;gap:10px;margin-top:12px;}
+.modal .row .btn{flex:1;}
+.modal .big{font-size:1.1rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+<div class="wrap">
+
+  <!-- Home -->
+  <section id="home">
+    <div class="top-tools">
+      <button class="icon-btn" id="muteBtn" aria-label="聲音開關">🔊</button>
+    </div>
+    <div class="hero">
+      <div class="hero-row" id="heroRow" aria-hidden="true"></div>
+      <h1>因倍數大冒險</h1>
+      <p>抓出正確的數字小怪獸！</p>
+    </div>
+    <div class="namebox">
+      <label for="nameIn">我的名字</label>
+      <input id="nameIn" maxlength="12" placeholder="輸入名字才能上排行榜" autocomplete="off">
+    </div>
+    <div class="seg" role="group" aria-label="難度">
+      <button data-lv="1" aria-pressed="true">簡單</button>
+      <button data-lv="2" aria-pressed="false">中等</button>
+      <button data-lv="3" aria-pressed="false">困難</button>
+    </div>
+    <div class="modes" id="modes"></div>
+    <div class="lvtotal" id="lvTotal"></div>
+    <button class="btn ghost lb-open" id="lbBtn" type="button">🏆 排行榜</button>
+    <div class="howto">玩法：每場 5 題，每題把符合條件的小怪獸全部點出來。點錯會扣愛心，3 顆愛心用完就結束。「追怪獸」的小怪獸會到處亂跑，要眼明手快！排行榜看的是同一個難度裡，每種玩法最高分的加總。</div>
+  </section>
+
+  <!-- Game -->
+  <section id="game" hidden>
+    <div class="bar">
+      <button class="back" id="backBtn" aria-label="回首頁">←</button>
+      <div class="round" id="roundTxt"></div>
+      <div class="hearts" id="hearts"></div>
+      <div class="score" id="scoreTxt">0</div>
+    </div>
+    <div class="prompt">
+      <div class="q" id="qTxt"></div>
+      <div class="prog" id="progTxt"></div>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var TOTAL = 5;
+var $ = function(s){return document.querySelector(s);};
+var rnd = function(a,b){return Math.floor(Math.random()*(b-a+1))+a;};
+var shuffle = function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=rnd(0,i);var t=a[i];a[i]=a[j];a[j]=t;}return a;};
+var sample = function(a,k){return shuffle(a).slice(0,Math.max(0,k));};
+var pick = function(a){return a[rnd(0,a.length-1)];};
+var gcd = function(a,b){return b?gcd(b,a%b):a;};
+var lcm = function(a,b){return a/gcd(a,b)*b;};
+var factors = function(n){var r=[];for(var i=1;i<=n;i++){if(n%i===0)r.push(i);}return r;};
+var asc = function(a,b){return a-b;};
+var LV_NAME = {1:"簡單",2:"中等",3:"困難"};
+
+/* ---------- sound ---------- */
+var muted = false, actx = null;
+function tone(freq,dur,type,delay,vol){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    var t0 = actx.currentTime + (delay||0);
+    var o = actx.createOscillator(), g = actx.createGain();
+    o.type = type||"sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol||0.12,t0);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(t0); o.stop(t0+dur);
+  }catch(e){}
+}
+var sfx = {
+  ok:function(){tone(660,.12,"triangle",0);tone(880,.16,"triangle",.09);},
+  bad:function(){tone(180,.28,"sawtooth",0,.08);},
+  clear:function(){[523,659,784,1047].forEach(function(f,i){tone(f,.2,"triangle",i*.11);});},
+  over:function(){[392,330,262].forEach(function(f,i){tone(f,.28,"triangle",i*.2);});}
+};
+
+/* ---------- storage (best scores) ---------- */
+function loadBest(){try{return JSON.parse(localStorage.getItem("yb_best")||"{}")||{};}catch(e){return {};}}
+function saveBest(b){try{localStorage.setItem("yb_best",JSON.stringify(b));}catch(e){}}
+var best = loadBest();
+
+/* ---------- cloud leaderboard (Supabase) ---------- */
+var REMOTE = true;
+var SUPABASE_URL = "https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+var SUPABASE_KEY = "sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+function api(path,body){
+  return fetch(SUPABASE_URL+path,{method:body?"POST":"GET",
+    headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},
+    body:body?JSON.stringify(body):undefined}).then(function(r){
+      if(!r.ok) throw new Error(r.status); return r.status===204?null:r.json();});
+}
+function pid(name){var s=name+"|",h=5381;for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return "p"+(h>>>0).toString(36);}
+function getName(){try{return localStorage.getItem("bz_name")||localStorage.getItem("yb_name")||"";}catch(e){return "";}}
+function setName(n){try{localStorage.setItem("yb_name",n);}catch(e){}}
+function submitScore(board,score){
+  var n = getName(); if(!REMOTE||!n||score<=0) return;
+  api("/rest/v1/rpc/submit_yb",{p_board:board,p_id:pid(n),p_name:n,p_score:score}).catch(function(){});
+}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+/* ---------- question generators ---------- */
+function fillTo(nums,pool,target){
+  var extra = shuffle(pool.filter(function(x){return nums.indexOf(x)<0;}));
+  while(nums.length<target && extra.length){nums.push(extra.shift());}
+  return nums;
+}
+
+function genFactor(L){
+  var n = pick({1:[6,8,9,10,12,14,15,16,18],2:[20,24,25,27,28,30,32,35],3:[40,42,45,54,56,63,75]}[L]);
+  var fs = factors(n), cand = [];
+  for(var i=2;i<=Math.max(n+6,14);i++){if(n%i) cand.push(i);}
+  var nums = fs.concat(sample(cand,12-fs.length));
+  return {
+    prompt:"找出 <b>"+n+"</b> 的所有因數",
+    nums:shuffle(nums), correct:fs,
+    reason:function(x){
+      return x>n ? x+" 比 "+n+" 大，不可能是因數" : n+" ÷ "+x+" 除不盡，"+x+" 不是 "+n+" 的因數";
+    },
+    explain:n+" 的因數有：<br><b>"+fs.join("、")+"</b>"
+  };
+}
+
+function genMultiple(L){
+  var n = pick({1:[2,3,4,5,10],2:[6,7,8,9],3:[11,12,13,15]}[L]);
+  var max = {1:50,2:80,3:100}[L], ks = [];
+  for(var k=1;n*k<=max;k++) ks.push(k);
+  var chosen = sample(ks,Math.min(5,ks.length)).map(function(k){return n*k;}).sort(asc);
+  var near = [];
+  chosen.forEach(function(m){[m-1,m+1].forEach(function(x){if(x>=2&&x<=max&&x%n&&near.indexOf(x)<0) near.push(x);});});
+  var dis = sample(near,4);
+  var rest = [];
+  for(var i=2;i<=max;i++){if(i%n && dis.indexOf(i)<0) rest.push(i);}
+  dis = dis.concat(sample(rest,12-chosen.length-dis.length));
+  return {
+    prompt:"找出 <b>"+n+"</b> 的倍數",
+    nums:shuffle(chosen.concat(dis)), correct:chosen,
+    reason:function(x){
+      return x<n ? x+" 比 "+n+" 小，不是 "+n+" 的倍數" : x+" ÷ "+n+" 除不盡，"+x+" 不是 "+n+" 的倍數";
+    },
+    explain:n+" 的倍數每次加 "+n+"：<br><b>"+n+"、"+(2*n)+"、"+(3*n)+"、"+(4*n)+"……</b><br>這題的倍數：<b>"+chosen.join("、")+"</b>"
+  };
+}
+
+function genCF(L){
+  var pair = pick({
+    1:[[6,9],[8,12],[10,15],[12,18],[6,8],[9,12]],
+    2:[[18,24],[20,30],[16,24],[24,36],[15,25],[14,21]],
+    3:[[36,48],[30,45],[42,56],[40,60],[28,42]]
+  }[L]);
+  var a = pair[0], b = pair[1];
+  var common = factors(gcd(a,b)), fa = factors(a), fb = factors(b);
+  var oa = fa.filter(function(x){return common.indexOf(x)<0;});
+  var ob = fb.filter(function(x){return common.indexOf(x)<0;});
+  var r = 12-common.length, per = Math.ceil(r/3);
+  var nums = common.concat(sample(oa,Math.min(oa.length,per)),sample(ob,Math.min(ob.length,per)));
+  var filler = [];
+  for(var i=2;i<=Math.max(a,b);i++){if(a%i && b%i) filler.push(i);}
+  nums = fillTo(nums,filler,12);
+  return {
+    prompt:"找出 <b>"+a+"</b> 和 <b>"+b+"</b> 的公因數",
+    nums:shuffle(nums), correct:common,
+    reason:function(x){
+      var ia = a%x===0, ib = b%x===0;
+      if(ia&&!ib) return x+" 是 "+a+" 的因數，但不是 "+b+" 的因數";
+      if(!ia&&ib) return x+" 是 "+b+" 的因數，但不是 "+a+" 的因數";
+      return x+" 不是 "+a+" 也不是 "+b+" 的因數";
+    },
+    explain:a+" 的因數：<b>"+fa.join("、")+"</b><br>"+b+" 的因數：<b>"+fb.join("、")+"</b><br>兩邊都有的（公因數）：<b>"+common.join("、")+"</b>"
+  };
+}
+
+function genCM(L){
+  var pair = pick({
+    1:[[2,3],[2,5],[3,4]],
+    2:[[3,5],[4,6],[3,6],[4,5],[6,8]],
+    3:[[5,6],[6,9],[8,12],[4,7]]
+  }[L]);
+  var a = pair[0], b = pair[1], l = lcm(a,b), c = (L===1?4:3), R = l*c;
+  var common = [];
+  for(var k=1;k<=c;k++) common.push(l*k);
+  var oa = [], ob = [], filler = [];
+  for(var i=2;i<=R;i++){
+    var ia = i%a===0, ib = i%b===0;
+    if(ia&&!ib) oa.push(i);
+    else if(ib&&!ia) ob.push(i);
+    else if(!ia&&!ib) filler.push(i);
+  }
+  var r = 12-c, per = Math.ceil(r/3);
+  var nums = common.concat(sample(oa,Math.min(oa.length,per)),sample(ob,Math.min(ob.length,per)));
+  nums = fillTo(nums,filler,12);
+  return {
+    prompt:"找出 <b>"+a+"</b> 和 <b>"+b+"</b> 的公倍數",
+    nums:shuffle(nums), correct:common,
+    reason:function(x){
+      var ia = x%a===0, ib = x%b===0;
+      if(ia&&!ib) return x+" 是 "+a+" 的倍數，但不是 "+b+" 的倍數";
+      if(!ia&&ib) return x+" 是 "+b+" 的倍數，但不是 "+a+" 的倍數";
+      return x+" 不是 "+a+" 也不是 "+b+" 的倍數";
+    },
+    explain:a+" 和 "+b+" 的最小公倍數是 <b>"+l+"</b><br>公倍數就是最小公倍數的倍數：<br><b>"+common.join("、")+"……</b>"
+  };
+}
+
+var MODES = {
+  factor:{name:"找因數",ex:"12 的因數有哪些？",big:"÷",gen:genFactor},
+  multiple:{name:"找倍數",ex:"3 的倍數有哪些？",big:"×",gen:genMultiple},
+  cf:{name:"找公因數",ex:"12 和 18 的公因數",big:"∩",gen:genCF},
+  cm:{name:"找公倍數",ex:"2 和 3 的公倍數",big:"∪",gen:genCM},
+  chase:{name:"追怪獸",ex:"題目不動，答案會到處亂跑！",big:"⚡",wide:true,gen:function(L){return pick([genFactor,genMultiple,genCF,genCM])(L);}}
+};
+function levelTotal(L){
+  return Object.keys(MODES).reduce(function(t,k){return t+(best[k+"-"+L]||0);},0);
+}
+function submitLevel(L){ submitScore("lv-"+L, levelTotal(L)); }
+
+/* ---------- blob art ---------- */
+var COLORS = ["#ffd6a5","#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff","#ffc6ff","#ffadad"];
+var SHAPES = [
+  "M50 6C76 6 94 26 92 54C90 80 72 94 48 94C24 94 6 78 8 50C10 24 26 6 50 6Z",
+  "M52 8C78 10 94 30 90 56C86 82 68 92 46 92C22 90 8 72 10 48C12 22 30 6 52 8Z",
+  "M50 10C72 4 94 24 92 50C90 78 76 96 50 92C24 96 6 76 8 50C6 26 28 14 50 10Z"
+];
+function blobSVG(num,idx,showNum){
+  var color = COLORS[idx%COLORS.length], shape = SHAPES[idx%SHAPES.length];
+  var fs = String(num).length>=3 ? 27 : 34;
+  return '<svg viewBox="0 0 100 100" aria-hidden="true">'+
+    '<path class="body" d="'+shape+'" fill="'+color+'" stroke="rgba(0,0,0,.14)" stroke-width="2"/>'+
+    '<g class="eyes"><circle cx="35" cy="30" r="7.5" fill="#fff"/><circle cx="65" cy="30" r="7.5" fill="#fff"/>'+
+    '<circle cx="36.5" cy="31.5" r="3.8" fill="#2b2d42"/><circle cx="63.5" cy="31.5" r="3.8" fill="#2b2d42"/></g>'+
+    '<path class="m-s" d="M42 43Q50 49 58 43" stroke="#2b2d42" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+    '<path class="m-h" d="M39 40Q50 56 61 40Z" fill="#2b2d42"/>'+
+    '<path class="m-b" d="M42 49Q50 41 58 49" stroke="#2b2d42" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+    (showNum===false?'':'<text x="50" y="77" text-anchor="middle" font-size="'+fs+'" font-weight="800" fill="#2b2d42" font-family="ui-rounded,\'Arial Rounded MT Bold\',system-ui,sans-serif">'+num+'</text>')+
+    '<g class="chk"><circle cx="82" cy="18" r="13" fill="#16a34a"/><path d="M75 18l5 5 9-10" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>'+
+  '</svg>';
+}
+var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.800-8 11-8 11z" fill="var(--heart)"/></svg>';
+
+/* ---------- state ---------- */
+var S = {mode:null,level:1,round:0,hearts:3,score:0,q:null,found:null,mistakes:0,locked:false};
+
+/* ---------- home ---------- */
+function renderHome(){
+  var hr = $("#heroRow"); hr.innerHTML = "";
+  [6,12,18,24].forEach(function(n,i){
+    var d = document.createElement("div"); d.className = "mini"; d.innerHTML = blobSVG(n,i+3); hr.appendChild(d);
+  });
+  var m = $("#modes"); m.innerHTML = "";
+  Object.keys(MODES).forEach(function(key){
+    var M = MODES[key], bk = key+"-"+S.level, bs = best[bk];
+    var b = document.createElement("button");
+    b.className = "mode"+(M.wide?" wide":""); b.type = "button";
+    b.innerHTML = (M.wide?'<span class="tag">新玩法</span>':'')+'<span class="num">'+M.big+'</span><span class="nm">'+M.name+'</span><span class="ex">'+M.ex+'</span><span class="best">'+(bs?('最高分 '+bs):'還沒挑戰過')+'</span>';
+    b.addEventListener("click",function(){startGame(key);});
+    m.appendChild(b);
+  });
+  $("#lvTotal").innerHTML = LV_NAME[S.level]+'難度總分 <b>'+levelTotal(S.level)+'</b>';
+}
+document.querySelectorAll(".seg button").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    S.level = +btn.dataset.lv;
+    document.querySelectorAll(".seg button").forEach(function(x){x.setAttribute("aria-pressed",x===btn?"true":"false");});
+    renderHome();
+  });
+});
+$("#muteBtn").addEventListener("click",function(){
+  muted = !muted; this.textContent = muted?"🔇":"🔊";
+});
+
+/* ---------- game ---------- */
+function show(id){
+  $("#home").hidden = id!=="home";
+  $("#game").hidden = id!=="game";
+  window.scrollTo(0,0);
+}
+function startGame(mode){
+  var ni = $("#nameIn"), n = ni.value.trim();
+  if(!n){ni.classList.add("need");ni.focus();ni.placeholder="先輸入名字再開始喔！";return;}
+  setName(n);
+  S.mode = mode; S.round = 0; S.hearts = 3; S.score = 0;
+  hideModal(); show("game"); nextRound();
+}
+function renderHearts(){
+  var h = "";
+  for(var i=0;i<3;i++) h += '<span class="'+(i<S.hearts?'':'lost')+'">'+HEART+'</span>';
+  $("#hearts").innerHTML = h;
+  $("#hearts").querySelectorAll("span").forEach(function(s){s.style.display="inline-flex";});
+  $("#hearts").querySelectorAll("svg").forEach(function(s){s.style.display="block";});
+  $("#hearts").querySelectorAll(".lost svg").forEach(function(s){s.style.opacity=".22";s.style.filter="grayscale(1)";});
+}
+function updateHud(){
+  $("#roundTxt").textContent = "第 "+S.round+" / "+TOTAL+" 題";
+  $("#scoreTxt").textContent = S.score;
+  $("#progTxt").textContent = "已找到 "+S.found.size+" / "+S.q.correct.length;
+  renderHearts();
+}
+/* ---------- 追怪獸：答案亂跑 ---------- */
+var chase = {raf:0, items:[], last:0};
+var reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function stopChase(){ if(chase.raf) cancelAnimationFrame(chase.raf); chase.raf = 0; }
+function startChase(){
+  stopChase();
+  var g = $("#grid"), W = g.clientWidth, H = g.clientHeight;
+  var size = Math.max(56, Math.min(80, W/5));
+  var sp = {1:55,2:85,3:120}[S.level] * (reduceMotion?0.4:1);
+  chase.items = Array.prototype.map.call(g.children, function(b){
+    var a = Math.random()*Math.PI*2;
+    b.style.width = b.style.height = size+"px";
+    return {el:b, x:Math.random()*(W-size), y:Math.random()*(H-size), vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, sp:sp, size:size, turn:Math.random()*2};
+  });
+  chase.last = performance.now();
+  chase.raf = requestAnimationFrame(stepChase);
+}
+function stepChase(t){
+  var dt = Math.min(0.05, (t-chase.last)/1000); chase.last = t;
+  var g = $("#grid"), W = g.clientWidth, H = g.clientHeight;
+  chase.items.forEach(function(it){
+    if(!it.el.disabled){
+      it.turn -= dt;
+      if(it.turn <= 0){                       // 突然轉彎
+        var a = Math.atan2(it.vy,it.vx) + (Math.random()-0.5)*2.2;
+        var v = it.sp*(0.7+Math.random()*0.7);
+        it.vx = Math.cos(a)*v; it.vy = Math.sin(a)*v; it.turn = 0.8+Math.random()*1.6;
+      }
+      it.x += it.vx*dt; it.y += it.vy*dt;
+      if(it.x < 0){it.x = 0; it.vx = Math.abs(it.vx);}
+      if(it.y < 0){it.y = 0; it.vy = Math.abs(it.vy);}
+      if(it.x > W-it.size){it.x = W-it.size; it.vx = -Math.abs(it.vx);}
+      if(it.y > H-it.size){it.y = H-it.size; it.vy = -Math.abs(it.vy);}
+    }
+    it.el.style.transform = "translate("+it.x.toFixed(1)+"px,"+it.y.toFixed(1)+"px)";
+  });
+  chase.raf = requestAnimationFrame(stepChase);
+}
+
+function nextRound(){
+  S.round++; S.mistakes = 0; S.locked = false; S.found = new Set();
+  S.q = MODES[S.mode].gen(S.level);
+  $("#qTxt").innerHTML = S.q.prompt;
+  var fb = $("#fb"); fb.className = "fb"; fb.textContent = "點出所有符合的小怪獸";
+  stopChase();
+  var g = $("#grid"); g.innerHTML = ""; g.classList.toggle("arena", S.mode==="chase");
+  var cols = shuffle([0,1,2,3,4,5,6,7]);
+  S.q.nums.forEach(function(num,i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "blob"; b.dataset.n = num;
+    b.setAttribute("aria-label",String(num));
+    b.style.setProperty("--d",(-Math.random()*3).toFixed(2)+"s");
+    b.style.setProperty("--t",(2.4+Math.random()*1.4).toFixed(2)+"s");
+    b.innerHTML = blobSVG(num,cols[i%8]+Math.floor(i/8));
+    b.addEventListener("click",function(){tap(b,num);});
+    g.appendChild(b);
+  });
+  updateHud();
+  if(S.mode==="chase") startChase();
+}
+function tap(btn,num){
+  if(S.locked || btn.disabled) return;
+  var fb = $("#fb");
+  if(S.q.correct.indexOf(num)>=0){
+    btn.classList.add("ok"); btn.disabled = true; S.found.add(num); S.score += 10; sfx.ok();
+    fb.className = "fb good"; fb.textContent = "答對了！";
+    updateHud();
+    if(S.found.size===S.q.correct.length) roundClear();
+  }else{
+    btn.classList.add("bad"); btn.disabled = true;
+    S.hearts--; S.mistakes++; sfx.bad();
+    fb.className = "fb bad"; fb.textContent = S.q.reason(num);
+    updateHud();
+    if(S.hearts<=0) gameOver();
+  }
+}
+function roundClear(){
+  S.locked = true; stopChase();
+  var bonus = S.mistakes===0 ? 20 : 0;
+  S.score += bonus; updateHud(); sfx.clear();
+  var last = S.round>=TOTAL;
+  setTimeout(function(){
+    showModal(
+      '<h2>'+(bonus?'完美過關！':'過關！')+'</h2>'+
+      (bonus?'<div class="big">沒有答錯，獎勵 +'+bonus+' 分</div>':'')+
+      '<div class="body-t">'+S.q.explain+'</div>',
+      last ? [{label:"看成績",cls:"",fn:finish}] : [{label:"下一題",cls:"",fn:function(){hideModal();nextRound();}}]
+    );
+  },650);
+}
+function gameOver(){
+  S.locked = true; stopChase(); sfx.over();
+  document.querySelectorAll(".blob").forEach(function(b){
+    b.disabled = true;
+    if(S.q.correct.indexOf(+b.dataset.n)>=0 && !b.classList.contains("ok")) b.classList.add("reveal");
+  });
+  var key = S.mode+"-"+S.level;
+  if(!best[key] || S.score>best[key]){best[key] = S.score; saveBest(best);}
+  submitLevel(S.level);
+  setTimeout(function(){
+    showModal(
+      '<h2>愛心用完了</h2><div class="big">本場得分 '+S.score+'</div>'+
+      '<div class="body-t">這題的答案：<br>'+S.q.explain+'</div>',
+      [{label:"回首頁",cls:"ghost",fn:goHome},{label:"再玩一次",cls:"",fn:function(){startGame(S.mode);}}]
+    );
+  },900);
+}
+function finish(){
+  var key = S.mode+"-"+S.level, isBest = !best[key] || S.score>best[key];
+  if(isBest){best[key] = S.score; saveBest(best);}
+  submitLevel(S.level);
+  var stars = S.hearts, s = "";
+  for(var i=0;i<3;i++) s += i<stars?"★":"☆";
+  var msg = stars===3?"全部都對，太強了！":stars===2?"很棒，再挑戰更高難度吧！":"過關了，再練一次會更穩！";
+  showModal(
+    '<h2>挑戰完成</h2><div class="stars" style="color:#f5b800">'+s+'</div>'+
+    '<div class="big">'+MODES[S.mode].name+"・"+LV_NAME[S.level]+'</div>'+
+    '<div class="body-t" style="text-align:center">得分 <b>'+S.score+'</b>'+(isBest?'　🎉 新紀錄':'　最高分 '+best[key])+'<br>'+msg+'</div>',
+    [{label:"回首頁",cls:"ghost",fn:goHome},{label:"再玩一次",cls:"",fn:function(){startGame(S.mode);}}]
+  );
+}
+function goHome(){stopChase();hideModal();show("home");renderHome();}
+$("#backBtn").addEventListener("click",function(){
+  showModal('<h2>要離開嗎？</h2><div class="big">這場的進度不會保留</div>',
+    [{label:"繼續玩",cls:"ghost",fn:hideModal},{label:"回首頁",cls:"",fn:goHome}]);
+});
+
+/* ---------- modal ---------- */
+function showModal(html,buttons){
+  var m = $("#modal"); m.innerHTML = html;
+  var row = document.createElement("div"); row.className = "row";
+  buttons.forEach(function(b){
+    var el = document.createElement("button");
+    el.type = "button"; el.className = "btn "+(b.cls||""); el.textContent = b.label;
+    el.addEventListener("click",b.fn); row.appendChild(el);
+  });
+  m.appendChild(row);
+  $("#overlay").hidden = false;
+  var f = row.querySelector("button:last-child"); if(f) f.focus();
+}
+function hideModal(){$("#overlay").hidden = true;}
+
+/* ---------- leaderboard ---------- */
+var lbLevel = 0;
+function openBoard(){
+  if(!lbLevel) lbLevel = S.level;
+  var tabs = [1,2,3].map(function(k){
+    return '<button type="button" data-m="'+k+'" aria-pressed="'+(k===lbLevel)+'">'+LV_NAME[k]+'</button>';}).join("");
+  showModal('<h2>🏆 排行榜</h2><div class="big">'+LV_NAME[lbLevel]+'・前 10 名</div><div class="lb-tabs">'+tabs+'</div><ol class="lb-list" id="lbList"><li>讀取中…</li></ol><div class="lb-note">分數＝這個難度裡，每種玩法最高分的加總</div>',
+    [{label:"關閉",cls:"",fn:hideModal}]);
+  document.querySelectorAll(".lb-tabs button").forEach(function(b){
+    b.addEventListener("click",function(){lbLevel=+b.dataset.m;openBoard();});});
+  var board = "lv-"+lbLevel, me = pid(getName()||" ");
+  if(!REMOTE){$("#lbList").innerHTML="<li>排行榜未開啟</li>";return;}
+  api("/rest/v1/yb_scores?board=eq."+encodeURIComponent(board)+"&select=player_id,name,best&order=best.desc,updated_at.asc&limit=10")
+    .then(function(rows){
+      var el = $("#lbList"); if(!el) return;
+      el.innerHTML = (rows&&rows.length) ? rows.map(function(r,i){
+        return '<li class="'+(r.player_id===me?'me':'')+'"><span class="rk">'+(i+1)+'</span><span class="nm">'+esc(r.name)+'</span><b>'+r.best+'</b></li>';}).join("")
+        : "<li>還沒有人上榜，搶第一吧！</li>";
+    }).catch(function(){var el=$("#lbList"); if(el) el.innerHTML="<li>連不上排行榜，稍後再試</li>";});
+}
+$("#lbBtn").addEventListener("click",function(){lbLevel=S.level;openBoard();});
+$("#nameIn").value = getName();
+try{if(localStorage.getItem("bz_name"))$("#nameIn").readOnly=true;}catch(e){}
+$("#nameIn").addEventListener("input",function(){this.classList.remove("need");});
+
+renderHome();
+})();
+</script>
+</body>
+</html>

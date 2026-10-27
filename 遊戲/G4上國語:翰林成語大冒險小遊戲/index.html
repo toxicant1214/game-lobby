@@ -1,0 +1,630 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+<title>成語大冒險 翰林</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+/* 版面：米色書頁底、墨藍主色、橘黃點綴；四個世界卡片，遊戲畫面為題目卡 */
+:root{
+  --sky:#F6F0E4; --paper:#FFFFFF; --ink:#2A2418; --soft:#6E6450;
+  --sea:#2C6E63; --sea-l:#C8E2DC; --leaf:#3A9D4A; --sun:#F2AE2E; --coral:#D9443A;
+  --line:#E4D9C4; --air:#FBF7EF;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--sky);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--sea);color:#fff;box-shadow:0 3px 0 #1B4A42;transition:transform .08s}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #1B4A42}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button.ghost{background:var(--paper);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--coral);box-shadow:0 3px 0 #9E3727}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--sea)}
+.chip{font-family:var(--display);background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--paper);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:block}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.players button{font-size:15px;padding:4px 12px;box-shadow:none;background:var(--sky);color:var(--ink)}
+.players button.on{background:var(--sun);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:44px;height:44px}}
+.world{position:relative;text-align:left;background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:var(--sun);letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--coral)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead h2{font-size:24px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--sea);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);width:0;transition:width .3s}
+.stage{background:var(--paper);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{width:100%;height:auto;max-height:360px;display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--sky);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts button.sel{background:var(--sun)}
+.opts button.ok{background:var(--leaf);color:#fff;box-shadow:0 3px 0 #1E6B40}
+.opts button.bad{background:var(--coral);color:#fff;box-shadow:0 3px 0 #9E3727}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px}
+.fb.ok{background:#E3F5EA;color:#1E6B40}
+.fb.bad{background:#FCE8E4;color:#9E3727}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sent{font-family:var(--display);font-size:22px;line-height:2.1}
+.sent button{font-size:22px;padding:2px 8px;margin:2px;background:var(--sky);color:var(--ink);box-shadow:0 2px 0 var(--line);border-radius:10px}
+.sent button.ok{background:var(--leaf);color:#fff}
+.sent button.bad{background:var(--coral);color:#fff}
+.sent button.hint{background:var(--sun)}
+.meter{position:relative;height:22px;border-radius:99px;background:linear-gradient(90deg,#D7EEF8,#7CC6E6,#1C8DB7);border:2px solid var(--line);overflow:hidden;flex:1 1 200px}
+.meter i{position:absolute;top:0;bottom:0;width:6px;background:var(--ink);border-radius:3px;left:0}
+.big{font-size:22px;padding:14px 26px}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:var(--sun);letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;background:var(--sky);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--sea);color:#fff}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-family:var(--display);font-weight:400;color:var(--soft)}
+td.n{text-align:right;font-family:var(--display);font-size:19px}
+tr.me td{background:#FFF5DD}
+.card{border:3px dashed var(--sea);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--air)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--sea)}
+.bz-back{margin:-12px calc(-1 * max(16px,env(safe-area-inset-right,0px))) 12px calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.small{font-size:14px;color:var(--soft)}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+.pair{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:10px;align-items:start}
+.pair .opts button{min-height:56px}
+.pair .opts:first-child button{white-space:nowrap;padding:10px 8px;text-align:center}
+.slots{display:flex;gap:8px;justify-content:center}
+.slot{width:58px;height:58px;border-radius:14px;border:3px dashed var(--line);display:grid;place-items:center;font-family:var(--display);font-size:32px;color:var(--sea);background:var(--air)}
+.slot.on{border-style:solid;border-color:var(--sea)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tiles button{font-size:30px;padding:8px 0;min-height:60px;background:var(--sky);color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.tiles button.ok{background:var(--leaf);color:#fff}
+.tiles button.bad{background:var(--coral);color:#fff}
+.tbar i{transition:none}
+.chat{display:flex;flex-direction:column;gap:8px;background:var(--air);border-radius:16px;padding:12px;border:2px solid var(--line)}
+.msg{display:flex;gap:8px;align-items:flex-end;max-width:88%}
+.msg .bub{padding:9px 13px;border-radius:16px;font-size:17px;line-height:1.5}
+.msg.f .bub{background:#fff;border:2px solid var(--line);border-bottom-left-radius:4px}
+.msg.me{align-self:flex-end}
+.msg.me .bub{background:var(--sea);color:#fff;border-bottom-right-radius:4px}
+.msg.me .bub b{color:#FFD77A}
+.msg.wrongmsg .bub{background:#F3C9C2;color:#7A2A1E}
+.msg.wrongmsg .bub b{color:#B0302A;text-decoration:line-through}
+.msg.n{align-self:center;font-size:14px;color:var(--soft)}
+.av{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;display:grid;place-items:center;font-family:var(--display);font-size:16px}
+.dots{letter-spacing:2px;color:var(--soft);font-size:12px}
+.draft{font-family:var(--display);font-size:19px;background:#fff;border:2px dashed var(--sea);border-radius:14px;padding:10px 14px;line-height:1.6}
+</style>
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+const NS='http://www.w3.org/2000/svg';
+function svg(viewBox,inner){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',viewBox);s.innerHTML=inner;return s}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function tween(ms,fn){return new Promise(res=>{const t0=performance.now();const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;function f(now){let p=reduce?1:Math.min(1,(now-t0)/ms);fn(p);if(p<1)requestAnimationFrame(f);else res()}requestAnimationFrame(f)})}
+const ease=p=>1-Math.pow(1-p,3);
+
+/* ---------- 紀錄（存在這台裝置） ---------- */
+const KEY='idiom_h4_v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:[0,0,0,0],stars:[0,0,0,0],plays:0};const p=DB.players[n];if(!p.time)p.time=[0,0,0,0];return p}
+/* 名次規則：分數高的在前；同分時，秒數少的在前 */
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase（和其他遊戲同一個專案，資料存在 idiom_h4_scores 表） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"; /* anon / publishable key，可以公開 */
+const WKEY=['w1','w2','w3','w4'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+/* 換裝置時，從資料庫把自己的進度接回來 */
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/idiom_h4_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+/* 送出這一關和總分，回傳這一關的名次 */
+async function pushScore(i,secs,stars){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_idiom_h4',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_idiom_h4',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/idiom_h4_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];
+  return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 成語資料（翰林四年級 第 1～6 課，共 24 個） ---------- */
+const ID=[
+ {w:'唾手可得',l:1,m:'非常容易得到。',s:'這份獎品不是唾手可得，大家還是要認真完成任務才拿得到。',
+  fake:['垂','首','何','德'],wrong:[0,'垂'],fix:['唾','垂','睡'],why:'「唾」有口字旁，是吐口水的意思，往手心吐口水就能拿到，表示很容易；「垂」是垂下的垂。'},
+ {w:'忠言逆耳',l:1,m:'真心的提醒雖然不好聽，卻很有幫助。',s:'媽媽提醒我別再拖拖拉拉，雖然聽起來像忠言逆耳，其實是在幫我。',
+  fake:['中','研','送','爾'],wrong:[2,'送'],fix:['逆','送','朔'],why:'「逆」是相反、不順的意思，好話聽起來不順耳；「送」是送禮物的送，兩個字長得很像。'},
+ {w:'一曝十寒',l:1,m:'做事一下熱心、一下停下來，沒有恆心。',s:'學英文如果總是一曝十寒，三天打魚兩天曬網，就很難真正進步。',
+  fake:['衣','暴','石','含'],wrong:[1,'暴'],fix:['曝','暴','爆'],why:'「曝」有日字旁，是在太陽下曬的意思，曬一天、冷十天；「暴」是暴風雨的暴。'},
+ {w:'返老還童',l:1,m:'像變年輕一樣，精神很好、充滿活力。',s:'阿公和我們一起打球時精神十足，看起來簡直像返老還童一樣。',
+  fake:['反','佬','環','同'],wrong:[2,'環'],fix:['還','環','換'],why:'「還」有辵字旁（辶），是回到的意思，回到小孩的樣子；「環」有玉字旁，是圓環、環境的環。'},
+ {w:'咬牙切齒',l:2,m:'非常生氣或怨恨。',s:'聽到有人故意破壞班上的作品，他氣得咬牙切齒，恨不得立刻知道是誰。',
+  fake:['校','芽','砌','恥'],wrong:[1,'芽'],fix:['牙','芽','呀'],why:'「牙」是牙齒的牙，生氣得把牙咬緊；「芽」有草字頭，是發芽的芽。'},
+ {w:'淚如泉湧',l:2,m:'眼淚不停流出來，表示非常傷心。',s:'畢業典禮上，同學想到就要分開，不少人感動得淚如泉湧。',
+  fake:['累','入','全','勇'],wrong:[3,'勇'],fix:['湧','勇','擁'],why:'「湧」有三點水，是水往上冒出來，像泉水一樣；「勇」是勇敢的勇。'},
+ {w:'疊床架屋',l:2,m:'內容重複太多，沒有新意。',s:'寫作文時如果一直重複同樣的意思，就會顯得疊床架屋，讓人讀起來很累。',
+  fake:['蝶','窗','加','握'],wrong:[2,'加'],fix:['架','加','駕'],why:'「架」下面有木，是搭架子的架，床上再疊床、屋上再搭屋；「加」是加法的加。'},
+ {w:'聚精會神',l:2,m:'非常專心。',s:'老師講解實驗步驟時，大家都聚精會神地聽，深怕漏掉重要細節。',
+  fake:['驟','睛','繪','伸'],wrong:[1,'睛'],fix:['精','睛','清'],why:'「精」有米字旁，是精神、精力的精；「睛」有目字旁，是眼睛的睛。'},
+ {w:'明鏡高懸',l:3,m:'做事公正明白，不偏袒任何一方。',s:'這位老師處理同學糾紛時總是明鏡高懸，所以大家都很信服。',
+  fake:['名','境','膏','玄'],wrong:[1,'境'],fix:['鏡','境','竟'],why:'「鏡」有金字旁，是鏡子的鏡，古代鏡子用銅做；「境」有土字旁，是環境的境。'},
+ {w:'旗鼓相當',l:3,m:'雙方實力差不多。',s:'兩隊在球場上你來我往，比分一直接近，看得出來彼此旗鼓相當。',
+  fake:['棋','古','想','擋'],wrong:[0,'棋'],fix:['旗','棋','期'],why:'「旗」是旗子的旗，古代打仗兩邊的軍旗和戰鼓一樣多；「棋」有木字旁，是下棋的棋。'},
+ {w:'天羅地網',l:3,m:'布置得非常嚴密，讓人無處可逃。',s:'警察設下天羅地網追查嫌犯，最後順利把人找到。',
+  fake:['添','蘿','的','綱'],wrong:[3,'綱'],fix:['網','綱','罔'],why:'「網」是漁網的網，天上地下都張好網子；「綱」是大綱的綱，兩個字長得很像。'},
+ {w:'目不識丁',l:3,m:'完全不識字，或幾乎沒有學問。',s:'以前有些人因為沒機會上學，只能目不識丁，現在更要珍惜學習的機會。',
+  fake:['木','布','職','盯'],wrong:[2,'職'],fix:['識','職','織'],why:'「識」有言字旁，是認識、知道的意思；「職」有耳字旁，是職業的職。'},
+ {w:'出奇制勝',l:4,m:'用特別的方法獲得勝利。',s:'這組在比賽中出奇制勝，靠著新穎的點子贏得全場掌聲。',
+  fake:['初','騎','製','聖'],wrong:[2,'製'],fix:['制','製','治'],why:'「制」是控制、壓制的意思，用奇招壓過對手；「製」下面有衣，是製造的製。'},
+ {w:'良藥苦口',l:4,m:'有幫助的勸告雖然不好聽，卻對人有好處。',s:'老師嚴格指出我的缺點，其實是良藥苦口，希望我能真正進步。',
+  fake:['涼','約','古','扣'],wrong:[2,'古'],fix:['苦','古','枯'],why:'「苦」有草字頭，是味道苦的苦，好藥吃起來苦；「古」是古代的古。'},
+ {w:'耳提面命',l:4,m:'當面反覆提醒、仔細教導。',s:'出發前，媽媽耳提面命地提醒我要帶水壺、戴帽子，注意安全。',
+  fake:['爾','題','麵','鳴'],wrong:[1,'題'],fix:['提','題','堤'],why:'「提」有提手旁，是拉著耳朵提醒的意思；「題」有頁字旁，是題目的題。'},
+ {w:'有口皆碑',l:4,m:'大家都稱讚，名聲很好。',s:'這家圖書館服務親切又舒適，在附近居民心中一直有口皆碑。',
+  fake:['友','叩','階','悲'],wrong:[3,'悲'],fix:['碑','悲','卑'],why:'「碑」有石字旁，是石碑的碑，大家的稱讚像刻在石碑上一樣；「悲」是悲傷的悲。'},
+ {w:'美輪美奐',l:5,m:'房屋高大華美，也形容建築漂亮精緻。',s:'新落成的活動中心外觀美輪美奐，讓大家一走進去就覺得眼睛一亮。',
+  fake:['每','倫','換','煥'],wrong:[1,'倫'],fix:['輪','倫','論'],why:'「輪」有車字旁，在這裡形容房子高大；「倫」有人字旁，是倫理的倫。'},
+ {w:'捷足先登',l:5,m:'行動快的人先達到目的。',s:'這次圖書館新書很受歡迎，幸好我一早去借，才能捷足先登。',
+  fake:['睫','促','仙','燈'],wrong:[0,'睫'],fix:['捷','睫','節'],why:'「捷」有提手旁，是快速、敏捷的意思；「睫」有目字旁，是睫毛的睫。'},
+ {w:'循序漸進',l:5,m:'按照順序一步一步來。',s:'學習新知要循序漸進，先把基礎弄懂，再慢慢挑戰更難的內容。',
+  fake:['巡','續','斬','盡'],wrong:[0,'巡'],fix:['循','巡','盾'],why:'「循」有雙人旁，是依照、沿著的意思；「巡」是巡邏的巡，讀音一樣但意思不同。'},
+ {w:'拍案叫絕',l:5,m:'非常讚賞，好到讓人忍不住叫好。',s:'看到同學在表演中的精采創意，老師也忍不住拍案叫絕。',
+  fake:['柏','按','較','決'],wrong:[1,'按'],fix:['案','按','安'],why:'「案」下面有木，是桌子的意思，高興得拍桌子；「按」有提手旁，是按鈕的按。'},
+ {w:'無懈可擊',l:6,m:'非常完整，找不到缺點。',s:'這份報告內容清楚、資料完整，整體表現幾乎無懈可擊。',
+  fake:['舞','蟹','何','繫'],wrong:[1,'蟹'],fix:['懈','蟹','解'],why:'「懈」有豎心旁，是鬆懈的意思，一點鬆懈的地方都沒有；「蟹」下面有虫，是螃蟹的蟹。'},
+ {w:'包羅萬象',l:6,m:'內容很多，什麼都有。',s:'這本科普書包羅萬象，從天文到海洋生物都介紹得很有趣。',
+  fake:['抱','蘿','曼','像'],wrong:[3,'像'],fix:['象','像','向'],why:'「象」是景象、樣子，萬象就是各式各樣的東西；「像」有人字旁，是好像的像。'},
+ {w:'鵬程萬里',l:6,m:'前途非常遠大。',s:'畢業典禮上，老師祝福每位同學鵬程萬里，未來都能發光發熱。',
+  fake:['朋','呈','曼','理'],wrong:[0,'朋'],fix:['鵬','朋','棚'],why:'「鵬」有鳥字，是傳說中能飛很遠的大鳥；「朋」是朋友的朋，少了鳥就飛不起來了。'},
+ {w:'騎虎難下',l:6,m:'事情已經開始了，想停也停不下來。',s:'他答應參加比賽後才發現很辛苦，但現在騎虎難下，只能努力完成。',
+  fake:['奇','琥','男','夏'],wrong:[0,'奇'],fix:['騎','奇','崎'],why:'「騎」有馬字旁，是騎在動物背上的騎；「奇」是奇怪的奇，少了馬就不對了。'}
+];
+const byW=w=>ID.find(x=>x.w===w);
+const meanOf=w=>byW(w).m.replace(/。$/,'');
+/* 在句子中把成語標出來 */
+const hl=(s,w,rep)=>s.replace(w,rep!=null?rep:'<b style="color:var(--sea)">'+w+'</b>');
+
+/* ---------- 世界設定 ---------- */
+const WORLDS=[
+ {name:'成語配對',sub:'把成語和它的白話解釋配成一對，再讀讀課本造句',color:'#D8ECE6',ico:'<rect x="6" y="12" width="22" height="40" rx="5" fill="#fff" stroke="#2C6E63" stroke-width="3"/><rect x="36" y="12" width="22" height="40" rx="5" fill="#fff" stroke="#E0952B" stroke-width="3"/><path d="M28 32 h8" stroke="#3A9D4A" stroke-width="4" stroke-linecap="round"/><path d="M12 24h10M12 32h10M12 40h10" stroke="#2C6E63" stroke-width="3"/>',run:matchWorld},
+ {name:'成語拼字坊',sub:'看解釋和句子，從字堆裡一個字一個字拼出成語',color:'#FBE6C4',ico:'<rect x="6" y="8" width="24" height="24" rx="4" fill="#fff" stroke="#E0952B" stroke-width="3"/><rect x="34" y="8" width="24" height="24" rx="4" fill="#fff" stroke="#E0952B" stroke-width="3"/><rect x="6" y="36" width="24" height="24" rx="4" fill="#fff" stroke="#E0952B" stroke-width="3"/><rect x="34" y="36" width="24" height="24" rx="4" fill="#E0952B"/><text x="18" y="26" text-anchor="middle" font-size="15" fill="#2A2418">成</text><text x="46" y="26" text-anchor="middle" font-size="15" fill="#2A2418">語</text>',run:buildWorld},
+ {name:'錯字小偵探',sub:'句子裡的成語藏了一個錯字，把它抓出來再改正',color:'#F6D5CF',ico:'<circle cx="26" cy="26" r="15" fill="#fff" stroke="#2A2418" stroke-width="4"/><path d="M37 37 L54 54" stroke="#2A2418" stroke-width="6" stroke-linecap="round"/><path d="M19 20 L33 32 M33 20 L19 32" stroke="#D9443A" stroke-width="4" stroke-linecap="round"/>',run:fixWorld},
+ {name:'對話小劇場',sub:'和同學連續聊天，輪到你回話時，選出用對成語的那一句',color:'#D6EEDB',ico:'<rect x="4" y="8" width="38" height="26" rx="10" fill="#fff" stroke="#3A9D4A" stroke-width="3"/><path d="M12 34 l-2 9 l10 -9" fill="#fff" stroke="#3A9D4A" stroke-width="3" stroke-linejoin="round"/><rect x="24" y="28" width="36" height="24" rx="10" fill="#2C6E63"/><path d="M52 52 l2 8 l-10 -8" fill="#2C6E63"/><path d="M13 21h20M32 40h18" stroke-width="3" stroke="#E0952B" stroke-linecap="round"/>',run:talkWorld}
+];
+
+/* ---------- 畫面：首頁 ---------- */
+function header(){
+  const p=DB.current;
+  return el('div',{class:'top'},
+    el('div',{class:'logo'},el('span',{html:'<svg width="40" height="40" viewBox="0 0 40 40"><path d="M4 8 Q12 5 20 9 Q28 5 36 8 V33 Q28 30 20 34 Q12 30 4 33Z" fill="#fff" stroke="#2C6E63" stroke-width="2.5"/><path d="M20 9 V34" stroke="#2C6E63" stroke-width="2"/><path d="M8 14h8M8 19h8M8 24h6M24 14h8M24 19h8M24 24h6" stroke="#E0952B" stroke-width="2"/></svg>'}),el('h1',{},'成語大冒險')),
+    p?el('span',{class:'chip'},'玩家：'+p):null);
+}
+function home(){
+  /* 遊戲書房登入的名字自動帶入 */
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';
+  app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'115 學年上學期 翰林四年級國語 第 1～6 課 成語複習'),
+      el('p',{},'24 個成語，四個世界：配對、拼字、抓錯字、對話小劇場。答對拿分數和星星，每關都會計時。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v){input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);input.focus();return}DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      names.length&&!bzN?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null
+    )));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(unlocked?'':' locked'),onclick:()=>{if(!pl){input.focus();input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);return}if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="0 0 64 64">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},'世界 '+(i+1)+'　'+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b);
+  });
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));
+    try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}
+    app.innerHTML='';app.append(header());}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[0,0,0,0];return tab===0
+      ?{n,v:p.best.reduce((a,b)=>a+b,0),t:tm.reduce((a,b,i)=>a+(p.best[i]>0?(b||0):0),0)}
+      :{n,v:p.best[tab-1],t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'成語大冒險 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:'世界 '+(i+1)+' '+w.name+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / 12'),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];
+  app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');
+  const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');
+  const stage=el('div',{class:'stage'});
+  const t0=Date.now();
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},'世界 '+(i+1)+'　'+w.name),tm,sc),el('div',{class:'bar'},bar),stage);
+  const token={};CUR=token;
+  const ctx={stage,score:0,alive:()=>CUR===token,add(n){this.score+=n;sc.textContent=this.score+' 分'},prog(k,n){bar.style.width=(k/n*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(max=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();const st=starsFor(score,max);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?'過關了！下一個世界已經打開。':'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs,st).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--sea)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,
+    up,
+    el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<3&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一個世界'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+
+/* 題目卡：單選 / 複選，回傳是否答對 */
+function ask(parent,{q,opts,ans,explain,multi=false,tag,onAnswer}){
+  return new Promise(res=>{
+    const box=el('div',{style:'display:flex;flex-direction:column;gap:10px'});
+    if(tag)box.append(el('div',{class:'tag'},tag));
+    box.append(el('div',{class:'q'},q));
+    const order=multi?shuffle(opts.map((_,i)=>i)):opts.map((_,i)=>i);
+    const wrap=el('div',{class:'opts'});const sel=new Set();let done=false;
+    const btns={};
+    const good=multi?new Set(ans):new Set([ans]);
+    function judge(){
+      done=true;
+      const ok=multi?(sel.size===good.size&&[...sel].every(x=>good.has(x))):sel.has(ans);
+      Object.entries(btns).forEach(([k,b])=>{k=+k;b.disabled=true;b.style.opacity=1;b.classList.remove('sel');if(good.has(k))b.classList.add('ok');else if(sel.has(k))b.classList.add('bad')});
+      sfx(ok);if(onAnswer)onAnswer(ok);
+      box.append(el('div',{class:'fb '+(ok?'ok':'bad')},(ok?'答對了！':'差一點！')+(explain?' '+explain:'')));
+      const nx=el('button',{onclick:()=>{box.remove();res(ok)}},'下一步 →');
+      if(okBtn)okBtn.remove();
+      box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true});
+    }
+    order.forEach(i=>{const b=el('button',{onclick:()=>{if(done)return;if(multi){sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle('sel')}else{sel.add(i);judge()}}},(multi?'□ ':'')+opts[i]);btns[i]=b;wrap.append(b)});
+    box.append(wrap);
+    let okBtn=null;
+    if(multi){box.insertBefore(el('div',{class:'small'},'可以選很多個，選好按「確定」'),wrap);okBtn=el('button',{onclick:()=>{if(!sel.size)return;judge()}},'確定');box.append(okBtn)}
+    parent.append(box);
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+}
+function waitBtn(parent,label,cls=''){return new Promise(r=>{const b=el('button',{class:'big '+cls,onclick:()=>{b.remove();r()}},label);parent.append(b)})}
+
+/* ================= 世界 1：成語配對 ================= */
+/* 意思很接近的成語，不放在同一組，免得配對時兩個都說得通 */
+const CLOSE=[['忠言逆耳','良藥苦口'],['忠言逆耳','耳提面命'],['良藥苦口','耳提面命'],['美輪美奐','無懈可擊'],['出奇制勝','捷足先登'],['拍案叫絕','有口皆碑']];
+function pickSets(n){for(let t=0;t<300;t++){const p=shuffle(ID);const sets=[];for(let r=0;r<n;r++)sets.push(p.slice(r*4,r*4+4));
+  if(sets.every(g=>!CLOSE.some(([a,b])=>g.some(x=>x.w===a)&&g.some(x=>x.w===b))))return sets}
+  const p=shuffle(ID);return [0,1,2].slice(0,n).map(r=>p.slice(r*4,r*4+4))}
+async function matchWorld(ctx){
+  const S=ctx.stage;const pool=pickSets(3);const ROUNDS=3;let max=0;
+  for(let r=0;r<ROUNDS;r++){
+    if(!ctx.alive())return max;
+    const set=pool[r];max+=set.length*10;
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'第 '+(r+1)+' / '+ROUNDS+' 組　先點一個成語，再點它的意思（反過來也可以）。一次就配對成功得 10 分。'));
+    const fb=el('div',{class:'fb',style:'display:none'});
+    const L=el('div',{class:'opts'}),R=el('div',{class:'opts'});
+    S.append(el('div',{class:'pair'},L,R),fb);
+    let pick=null;const miss={};let done=0;
+    const btn={};
+    await new Promise(res=>{
+      function tap(kind,w,b){
+        if(b.disabled)return;
+        if(!pick||pick.kind===kind){if(pick)pick.b.classList.remove('sel');pick={kind,w,b};b.classList.add('sel');return}
+        const a=pick;pick=null;a.b.classList.remove('sel');
+        const idiom=kind==='w'?w:a.w, meanW=kind==='m'?w:a.w;
+        const bi=btn['w'+idiom],bm=btn['m'+meanW];
+        if(idiom===meanW){
+          sfx(true);[bi,bm].forEach(x=>{x.classList.add('ok');x.disabled=true;x.style.opacity=1});
+          const pts=miss[idiom]?5:10;ctx.add(pts);done++;ctx.prog(r*4+done,ROUNDS*4);
+          fb.style.display='';fb.className='fb ok';fb.innerHTML='配對成功！<b>'+idiom+'</b>：'+byW(idiom).m+(pts<10?'（試了第二次，得 5 分）':'');
+          if(done===set.length)setTimeout(res,500);
+        }else{
+          sfx(false);miss[idiom]=1;
+          [bi,bm].forEach(x=>{x.classList.add('bad','shake');setTimeout(()=>x.classList.remove('bad','shake'),600)});
+          fb.style.display='';fb.className='fb bad';fb.innerHTML='不對喔！「'+idiom+'」的意思是「'+meanOf(idiom)+'」；你選的那句解釋是在說「'+meanW+'」。再找找看。';
+        }
+      }
+      set.forEach(x=>{const b=el('button',{onclick:()=>tap('w',x.w,b)},x.w);b.style.fontSize='20px';btn['w'+x.w]=b;L.append(b)});
+      shuffle(set).forEach(x=>{const b=el('button',{onclick:()=>tap('m',x.w,b)},x.m);b.style.fontSize='16px';b.style.lineHeight='1.4';btn['m'+x.w]=b;R.append(b)});
+    });
+    if(!ctx.alive())return max;
+    /* 課本造句複習 */
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'讀一讀：課本造句'),
+      el('div',{class:'opts'},set.map(x=>el('div',{class:'fb',style:'background:var(--air);color:var(--ink);border:2px solid var(--line)',html:'<b style="font-family:var(--display);font-size:19px;color:var(--sea)">'+x.w+'</b>　'+hl(x.s,x.w)}))));
+    await waitBtn(S,r<ROUNDS-1?'下一組 →':'看成績 →');
+  }
+  return max;
+}
+
+/* ================= 世界 2：成語拼字坊 ================= */
+async function buildWorld(ctx){
+  const S=ctx.stage;const list=shuffle(ID).slice(0,8);let max=0;
+  for(let k=0;k<list.length;k++){
+    if(!ctx.alive())return max;
+    const it=list[k];max+=10;
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'第 '+(k+1)+' / '+list.length+' 題　照順序點字，拼出成語。全對沒出錯得 10 分，有點錯得 5 分。'));
+    S.append(el('div',{class:'q'},'意思：'+it.m));
+    S.append(el('div',{class:'small',style:'font-size:16px',html:'句子：'+hl(it.s,it.w,'<span style="color:var(--sea)">＿＿＿＿</span>')}));
+    const slots=el('div',{class:'slots'});const cells=[...it.w].map(()=>{const c=el('span',{class:'slot'},'');slots.append(c);return c});
+    const fb=el('div',{class:'fb',style:'display:none'});
+    const tiles=el('div',{class:'tiles'});
+    S.append(slots,tiles,fb);
+    let pos=0,err=0;
+    await new Promise(res=>{
+      shuffle([...it.w,...it.fake]).forEach(ch=>{
+        const b=el('button',{onclick:()=>{
+          if(pos>=4||b.disabled)return;
+          const need=it.w[pos];
+          if(ch===need){sfx(true);b.disabled=true;b.classList.add('ok');b.style.opacity=.35;cells[pos].textContent=ch;cells[pos].classList.add('on');pos++;fb.style.display='none';
+            if(pos===4){const pts=err?5:10;ctx.add(pts);ctx.prog(k+1,list.length);
+              fb.style.display='';fb.className='fb ok';fb.innerHTML='拼好了！<b>'+it.w+'</b>（第 '+it.l+' 課）'+(err?'　這題得 5 分。':'　滿分 10 分！')+'<br>'+hl(it.s,it.w);
+              const nx=el('button',{onclick:()=>{nx.remove();res()}},'下一題 →');S.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})}}
+          else{sfx(false);err++;b.classList.add('bad','shake');setTimeout(()=>b.classList.remove('bad','shake'),600);
+            fb.style.display='';fb.className='fb bad';
+            fb.innerHTML=(it.w.includes(ch)?'「'+ch+'」是這個成語裡的字，但不是放在這一格。':'「'+ch+'」不是這個成語的字。')+'第 '+(pos+1)+' 個字是「<b>'+need+'</b>」，請點它。'+(it.fake.includes(ch)&&ch===it.wrong[1]?' '+it.why:'')}
+        }},ch);
+        tiles.append(b);
+      });
+    });
+  }
+  return max;
+}
+
+/* ================= 世界 3：錯字小偵探 ================= */
+async function fixWorld(ctx){
+  const S=ctx.stage;const list=shuffle(ID).slice(0,8);let max=0;
+  for(let k=0;k<list.length;k++){
+    if(!ctx.alive())return max;
+    const it=list[k];max+=15;
+    const [wi,bad]=it.wrong;
+    const start=it.s.indexOf(it.w);const errAt=start+wi;
+    const chars=[...it.s];chars[errAt]=bad;
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'第 '+(k+1)+' / '+list.length+' 題　這句話有一個錯字，點出來！（找對 10 分，改對再加 5 分）'));
+    const sent=el('div',{class:'sent'});S.append(sent);
+    const box=el('div',{style:'display:flex;flex-direction:column;gap:10px'});S.append(box);
+    const btns=[];
+    const found=await new Promise(res=>{
+      chars.forEach((c,i)=>{
+        if(/[，。、！？「」：；]/.test(c)){sent.append(c);return}
+        const b=el('button',{onclick:()=>{btns.forEach(x=>x.disabled=true);res(i===errAt?true:i)}},c);btns.push(b);b._i=i;sent.append(b);
+      });
+    });
+    btns.forEach(b=>{b.style.opacity=1;if(b._i===errAt)b.classList.add(found===true?'ok':'hint')});
+    if(found===true){sfx(true);ctx.add(10);box.append(el('div',{class:'fb ok'},'抓到了！「'+bad+'」寫錯了。'))}
+    else{sfx(false);btns.find(b=>b._i===found).classList.add('bad');
+      box.append(el('div',{class:'fb bad',html:'「'+chars[found]+'」沒有錯喔。錯字是黃色的「<b>'+bad+'</b>」，它在成語「'+it.w+'」裡面。'}))}
+    const fix=shuffle(it.fix);const right=fix.indexOf(it.w[wi]);
+    const ok=await ask(box,{tag:'改改看',q:'「'+bad+'」應該改成哪個字？',opts:fix,ans:right,explain:'正確寫法是「'+it.w+'」。'+it.why+'意思：'+it.m});
+    if(ok)ctx.add(5);
+    ctx.prog(k+1,list.length);
+  }
+  return max;
+}
+
+/* ================= 世界 4：對話小劇場 ================= */
+/* 每個故事 4 個成語；{f:對方說} {me:你直接說} {n:旁白} {ask:句子(＿＿是空格),a:答案,o:[干擾],why:理由} */
+const STORIES=[
+ {t:'才藝表演',who:'小宇',c:'#E0952B',lines:[
+  {f:'今天班際才藝表演，台下的同學都安安靜靜盯著舞台，連一點聲音都沒有。'},
+  {ask:'大家看得＿＿，好像怕錯過任何一個動作。',a:'聚精會神',o:['包羅萬象','騎虎難下'],why:'非常專心'},
+  {f:'我們這組本來只想唱歌，後來加上用寶特瓶做的樂器，評審都好驚喜！'},
+  {ask:'用寶特瓶樂器＿＿，這一招真是太聰明了！',a:'出奇制勝',o:['一曝十寒','目不識丁'],why:'用特別的方法獲得勝利'},
+  {f:'隔壁班的魔術也超厲害，變出一整串彩帶，台下一直叫好。'},
+  {ask:'連校長都＿＿，說這是今天最精采的節目！',a:'拍案叫絕',o:['淚如泉湧','天羅地網'],why:'非常讚賞，好到讓人忍不住叫好'},
+  {n:'最後公布成績……'},
+  {f:'我們跟隔壁班的分數只差一分！兩組都好強。'},
+  {ask:'兩班實力＿＿，下次再比一定也很精采！',a:'旗鼓相當',o:['唾手可得','疊床架屋'],why:'雙方實力差不多'},
+  {f:'下次我們一起想更厲害的點子吧！'}]},
+ {t:'新的圖書館',who:'小晴',c:'#8A5CC2',lines:[
+  {f:'我家附近新蓋的圖書館開放了！外面是整片玻璃，裡面還有木頭大樓梯。'},
+  {ask:'我也看過照片，建築外觀＿＿，好漂亮！',a:'美輪美奐',o:['咬牙切齒','循序漸進'],why:'建築高大華美、漂亮精緻'},
+  {f:'裡面的書好多，從恐龍、太空到做菜的書都有。'},
+  {ask:'館藏真是＿＿，什麼主題的書都找得到！',a:'包羅萬象',o:['返老還童','明鏡高懸'],why:'內容很多，什麼都有'},
+  {f:'我想借最新的那本偵探小說，可是聽說很多人都在搶。'},
+  {ask:'那明天一開門就去，才能＿＿借到喔！',a:'捷足先登',o:['疊床架屋','耳提面命'],why:'行動快的人先達到目的'},
+  {n:'隔天……'},
+  {f:'借到了！館員還幫我找書、教我用借書機，好親切。'},
+  {ask:'難怪這家圖書館在附近居民心中＿＿，大家都說讚！',a:'有口皆碑',o:['騎虎難下','一曝十寒'],why:'大家都稱讚，名聲很好'},
+  {f:'下次一起去看書吧！'}]},
+ {t:'練鋼琴',who:'小傑',c:'#2C6E63',lines:[
+  {f:'我學鋼琴快一年了，可是常常練三天就停一個禮拜，到現在還是彈不好。'},
+  {ask:'這樣＿＿，當然很難進步啦。',a:'一曝十寒',o:['旗鼓相當','包羅萬象'],why:'做事一下熱心、一下停下來，沒有恆心'},
+  {f:'老師說我太急了，一下子就想彈很難的曲子。'},
+  {ask:'學東西要＿＿，先把簡單的練熟，再挑戰難的。',a:'循序漸進',o:['淚如泉湧','捷足先登'],why:'按照順序一步一步來'},
+  {f:'我哥也說我只會偷懶，聽起來好刺耳喔……'},
+  {ask:'哥哥的話雖然＿＿，其實是真心想幫你。',a:'忠言逆耳',o:['美輪美奐','天羅地網'],why:'真心的提醒雖然不好聽，卻很有幫助'},
+  {f:'好吧，我每天都練！我想參加年底的比賽，第一名的獎盃應該很好拿吧？'},
+  {ask:'獎盃可不是＿＿的，要認真練習才拿得到喔！',a:'唾手可得',o:['明鏡高懸','聚精會神'],why:'非常容易得到'},
+  {f:'我知道了，從今天開始每天練半小時！'}]},
+ {t:'全家去露營',who:'阿哲',c:'#6B8E23',lines:[
+  {f:'週末要和家人去露營！出門前我媽一直提醒我帶外套、帶水壺、不要亂跑，講了好幾遍。'},
+  {ask:'媽媽這樣＿＿，是怕你在山上出事啦。',a:'耳提面命',o:['拍案叫絕','美輪美奐'],why:'當面反覆提醒、仔細教導'},
+  {f:'阿公也一起去，他跟我們比賽爬山，竟然第一個爬到山頂！'},
+  {ask:'阿公精神那麼好，簡直像＿＿一樣！',a:'返老還童',o:['疊床架屋','唾手可得'],why:'像變年輕一樣，精神很好、充滿活力'},
+  {f:'晚上阿公說，他小時候家裡窮沒辦法上學，一個字都不認識，長大後才自己學認字。'},
+  {ask:'阿公小時候＿＿，後來自己努力學，真了不起！',a:'目不識丁',o:['出奇制勝','有口皆碑'],why:'完全不識字，或幾乎沒有學問'},
+  {f:'我答應要自己搭帳篷，結果好難搭，搭到一半好想放棄，可是大家都在等我……'},
+  {ask:'都已經開始搭了，現在＿＿，只好努力搭完囉！',a:'騎虎難下',o:['旗鼓相當','包羅萬象'],why:'事情已經開始了，想停也停不下來'},
+  {f:'最後搭好了！晚上睡得超舒服。'}]},
+ {t:'教室風波',who:'小美',c:'#D9443A',lines:[
+  {f:'你知道嗎？我們班布置好的後牆，被人撕壞了！'},
+  {ask:'班長氣得＿＿，說一定要找出是誰做的。',a:'咬牙切齒',o:['捷足先登','循序漸進'],why:'非常生氣或怨恨'},
+  {f:'大家分頭去問人、看監視器，每個出入口都有人守著。'},
+  {ask:'大家布下＿＿，做壞事的人一定跑不掉。',a:'天羅地網',o:['返老還童','唾手可得'],why:'布置得非常嚴密，讓人無處可逃'},
+  {f:'結果是別班同學不小心弄壞的。老師聽了兩邊的說法，處理得很公平，沒有偏袒誰。'},
+  {ask:'老師真是＿＿，兩邊的同學都很服氣。',a:'明鏡高懸',o:['一曝十寒','騎虎難下'],why:'做事公正明白，不偏袒任何一方'},
+  {f:'老師還很嚴格地提醒那位同學，以後拿東西要小心，我覺得講得好兇喔。'},
+  {ask:'老師的話雖然不好聽，卻是＿＿，對他有好處啊。',a:'良藥苦口',o:['美輪美奐','目不識丁'],why:'有幫助的勸告雖然不好聽，卻對人有好處'},
+  {f:'也是啦，事情解決就好！'}]},
+ {t:'畢業典禮',who:'小安',c:'#2F9E8F',lines:[
+  {f:'我在幫六年級學長姐寫畢業祝福稿。第一段寫「祝你們快樂」，第二段寫「希望你們開心」，第三段又寫「願你們天天快樂」。'},
+  {ask:'三段都在說一樣的意思，有點＿＿，可以刪掉一些。',a:'疊床架屋',o:['拍案叫絕','咬牙切齒'],why:'內容重複太多，沒有新意'},
+  {f:'我改好了！最後一句想祝學長姐將來的前途非常遠大。'},
+  {ask:'那可以寫「祝你們＿＿」，聽起來更有力量！',a:'鵬程萬里',o:['天羅地網','一曝十寒'],why:'前途非常遠大'},
+  {f:'老師說我改完的稿子結構清楚、用詞恰當，一個缺點都挑不出來！'},
+  {ask:'哇，你的祝福稿＿＿，太厲害了！',a:'無懈可擊',o:['騎虎難下','目不識丁'],why:'非常完整，找不到缺點'},
+  {n:'畢業典禮當天……'},
+  {f:'我上台念祝福稿的時候，好多學長姐想到要分開，眼淚一直掉。'},
+  {ask:'大家都感動得＿＿，連我也想哭了。',a:'淚如泉湧',o:['捷足先登','返老還童'],why:'眼淚不停流出來，非常感動或傷心'},
+  {f:'畢業不是結束，是新的開始！'}]}
+];
+async function talkWorld(ctx){
+  const S=ctx.stage;const list=shuffle(STORIES).slice(0,3);let max=0;
+  const TOTAL=list.length*4;let step=0;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait=ms=>sleep(reduce?50:ms);
+  for(let k=0;k<list.length;k++){
+    if(!ctx.alive())return max;
+    const st=list[k];
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'故事 '+(k+1)+' / '+list.length+'：'+st.t+'　和'+st.who+'聊天，輪到你回話時，選出用對成語的那一句。一次就選對得 10 分，第二次選對得 5 分。'));
+        const chat=el('div',{class:'chat'});S.append(chat);
+    const area=el('div',{style:'display:flex;flex-direction:column;gap:10px'});S.append(area);
+    const av=el('span',{class:'av',style:'background:'+st.c},st.who.slice(-1));
+    const say=(who,html)=>{const b=who==='f'?el('div',{class:'msg f'},av.cloneNode(true),el('div',{class:'bub',html})):who==='me'?el('div',{class:'msg me'},el('div',{class:'bub',html})):el('div',{class:'msg n',html});chat.append(b);b.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});return b};
+    const typing=async()=>{const t=say('f','<span class="dots">● ● ●</span>');await wait(650);t.remove()};
+    for(const L of st.lines){
+      if(!ctx.alive())return max;
+      if(L.f){await typing();say('f',L.f);await wait(250);continue}
+      if(L.n){say('n',L.n);await wait(500);continue}
+      if(L.me){say('me',L.me);await wait(300);continue}
+      /* 輪到你回話 */
+      max+=10;
+      const fill=w=>L.ask.replace('＿＿','<b>'+w+'</b>');
+      let tries=0,left=shuffle([L.a,...L.o]);
+      while(true){
+        area.innerHTML='';
+        area.append(el('div',{class:'draft',html:'你想說：'+L.ask.replace('＿＿','<span style="color:var(--sea)">＿＿＿＿</span>')}));
+        const wrap=el('div',{class:'opts'});area.append(wrap);
+        const pick=await new Promise(res=>left.forEach(w=>{const b=el('button',{onclick:()=>res(w)},w);b.style.fontSize='20px';wrap.append(b)}));
+        area.innerHTML='';tries++;
+        if(pick===L.a){
+          sfx(true);const pts=tries===1?10:5;ctx.add(pts);
+          say('me',fill(pick));
+          if(pts<10)say('n','✓ 這次用對了！「'+L.a+'」就是「'+meanOf(L.a)+'」。');
+          await wait(500);
+          break;
+        }
+        sfx(false);
+        const bub=say('me',fill(pick));bub.classList.add('wrongmsg');
+        await typing();
+        say('f','咦？「'+pick+'」是「'+meanOf(pick)+'」的意思耶，用在這裡怪怪的……');
+        left=left.filter(w=>w!==pick);
+        if(tries>=2){
+          await wait(300);say('n','這裡在說「'+L.why+'」，要用「'+L.a+'」。你改口說：');await wait(500);say('me',fill(L.a));
+          await wait(1200);
+          break;
+        }
+        await wait(300);
+      }
+      ctx.prog(++step,TOTAL);area.innerHTML='';
+    }
+    if(!ctx.alive())return max;
+    await wait(300);
+    area.append(el('div',{class:'small'},'這段對話用到的成語：'+st.lines.filter(x=>x.a).map(x=>x.a).join('、')));
+    await waitBtn(area,k<list.length-1?'下一個故事 →':'看成績 →');
+  }
+  return max;
+}
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>環島交通王</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+[hidden]{display:none!important}
+/* 版面：公路灰底＋公車黃、路線藍；每個世界是一個交通站，舞台上方有東西在移動，下方是門／選項 */
+:root{
+  --bg:#E8EEF1; --panel:#FFFFFF; --panel2:#EEF3F6; --ink:#1F2A33; --soft:#5E6B76;
+  --brick:#2B6CB0; --brick-d:#1E4E82; --grain:#F2B705; --bamboo:#2F9E6B; --water:#4BA3D9;
+  --line:#D3DCE2; --ok:#2F9E6B; --bad:#D9483B; --road:#3A4450;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;
+  }
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+b{color:var(--brick)}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--brick);color:#fff;box-shadow:0 3px 0 var(--brick-d);transition:transform .08s;min-height:48px}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--brick-d)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+button.ghost{background:var(--panel);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--bad);box-shadow:0 3px 0 #8A3426}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--brick)}
+.chip{font-family:var(--display);background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--panel);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.players button{font-size:15px;padding:4px 12px;min-height:36px;box-shadow:none;background:var(--panel2);color:var(--ink)}
+.players button.on{background:var(--grain);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.worlds .boss{grid-column:1/-1}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-ico{display:none!important}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:46px;height:46px}}
+.world{position:relative;text-align:left;background:var(--panel);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world.boss{border-color:#E7A9A1;background:linear-gradient(120deg,var(--panel),#FBE3DF)}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:#E0A526;letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead .stats{display:flex;gap:14px;margin-left:auto;white-space:nowrap}
+@media (max-width:520px){.gamehead h2{font-size:20px;flex:1 1 0}.gamehead .stats{flex:1 1 100%;justify-content:space-between}}
+.gamehead h2{font-size:23px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--brick);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bamboo);width:0;transition:width .3s}
+.stage{background:var(--panel);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.qbox{display:flex;flex-direction:column;gap:10px}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts.imgs button{text-align:center;padding:8px 4px}
+.ib{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:16px;line-height:1.3}
+.ib svg{width:64px;height:64px}
+.ib.house svg{width:100%;max-width:120px;height:auto}
+.opts button.ok,.mover.ok,.lg.ok{background:var(--ok)!important;color:#fff;box-shadow:0 3px 0 #2A5E3A;opacity:1}
+.opts button.bad,.mover.bad,.lg.bad{background:var(--bad)!important;color:#fff;box-shadow:0 3px 0 #8A3426}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px;line-height:1.55}
+.fb.ok{background:#E2F1E5;color:#2A5E3A;border:2px solid #A9D3B4}
+.fb.bad{background:#FBE5DF;color:#8A3426;border:2px solid #EAB3A6}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.big{font-size:22px;padding:14px 26px}
+.small{font-size:14px;color:var(--soft)}
+.hero-ico{display:flex;justify-content:center}
+.focus{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--display);font-size:22px}
+.focus svg{width:110px;height:110px}
+/* 時光機 */
+.sky{position:relative;height:300px;border-radius:16px;overflow:hidden;background:linear-gradient(#DCEAF2,#F6EEDC);border:2px solid var(--line)}
+.mover{position:absolute;left:0;top:0;width:96px;height:96px;padding:4px;border-radius:50%;background:#ffffffd8;border:2px solid var(--line);box-shadow:0 4px 10px #7A655333;color:var(--ink);display:grid;place-items:center;will-change:transform}
+.mover .ib{font-size:13px}
+.mover .ib svg{width:50px;height:50px}
+/* 拼圖 */
+.tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tray button{background:var(--grain);color:var(--ink);box-shadow:0 3px 0 #B9973E;touch-action:none;user-select:none;-webkit-user-select:none}
+.tray button.sel{outline:3px solid var(--brick);outline-offset:2px}
+.ghost-chip{position:fixed;z-index:50;pointer-events:none;font-family:var(--display);font-size:18px;background:var(--grain);border-radius:14px;padding:10px 18px;box-shadow:0 6px 16px #0003;transform:translate(-50%,-60%)}
+.plan{width:100%;max-width:520px;margin:auto;touch-action:manipulation}
+/* 分類快答 */
+.flash{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--display);font-size:28px;padding:18px 10px;background:#fff;border:2px solid var(--line);border-radius:18px}
+.flash svg{width:90px;height:90px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two button{font-size:22px;padding:16px}
+.two .yuan{background:var(--bamboo);box-shadow:0 3px 0 #3E6A30}
+.two .han{background:var(--brick)}
+/* 地圖 */
+.mapwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:520px){.mapwrap{grid-template-columns:1fr}}
+.mapwrap svg{width:100%;max-width:300px;margin:auto}
+.legend{display:flex;flex-direction:column;gap:8px}
+.lg{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:16px;line-height:1.35}
+.lg .no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brick);color:#fff;margin-right:6px;font-size:15px}
+.card-clue{background:#fff;border:3px dashed var(--brick);border-radius:16px;padding:12px 14px;font-family:var(--display);font-size:20px}
+/* 魔王 */
+.hp{height:16px;border-radius:99px;background:#EBD7C7;overflow:hidden;border:2px solid #C9A27A}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,#E0A526,#B5412F);transition:width .3s}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:#E0A526;letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;min-height:40px;background:var(--panel2);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--brick);color:#fff}
+table.lb{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.lb td,.lb th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.lb th{font-family:var(--display);font-weight:400;color:var(--soft)}
+.lb td.n{text-align:right;font-family:var(--display);font-size:19px}
+.lb tr.me td{background:#FFF3C4}
+.card{border:3px dashed var(--brick);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--panel2)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--brick)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:pop .4s}
+@keyframes pop{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.belt{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(#CFE7F5 0 58%,var(--road) 58% 100%);border:2px solid var(--line)}
+.belt::after{content:"";position:absolute;left:0;right:0;top:79%;height:3px;background:repeating-linear-gradient(90deg,#F2B705 0 18px,transparent 18px 30px)}
+.rider{position:absolute;left:0;top:50%;will-change:transform;z-index:1}
+.ridebox{display:flex;flex-direction:column;align-items:center;gap:0;background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 10px;box-shadow:0 4px 10px #1F2A3322;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;max-width:200px;text-align:center}
+.ridebox svg{width:96px;height:56px}
+.ridebox b{font-family:var(--display);font-weight:400;font-size:15px;color:var(--ink);line-height:1.3}
+.ridebox.gone{transition:transform .45s,opacity .45s;opacity:0}
+.ghost-v{position:fixed;z-index:60;pointer-events:none;transform:translate(-50%,-50%) scale(.9);background:#fff;border:2px solid var(--grain);border-radius:14px;padding:4px 10px;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 18px #0003}
+.ghost-v svg{width:80px;height:46px}.ghost-v b{font-size:14px;font-weight:400}
+.gates{display:grid;gap:8px}
+.gate{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px dashed #9FB0BC;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:19px;padding:10px 6px;line-height:1.25}
+.gate small{font-family:var(--body);font-size:12px;color:var(--soft)}
+.gate .gi{font-size:26px}
+.gate.ok{background:#DDF2E5!important;border-color:var(--ok)}
+.gate.bad{background:#FBE3DF!important;border-color:var(--bad)}
+.small-g .gate{font-size:16px;padding:8px 4px}
+.twinsea{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px;border-radius:16px;background:linear-gradient(#CFE7F5 0 50%,#4BA3D9 50%)}
+.twin{background:#ffffffd0;color:var(--ink);box-shadow:0 3px 0 #2B6CB055;display:flex;flex-direction:column;align-items:center;padding:6px;overflow:hidden}
+.twin svg{width:100%;max-width:150px;height:auto}
+.twin b{font-weight:400;font-size:18px}
+.twin.ok{background:#DDF2E5!important;color:var(--ink)}.twin.bad{background:#FBE3DF!important;color:var(--ink)}
+.twin.sail svg{animation:sail 1.2s ease-in-out}
+@keyframes sail{50%{transform:translateX(30%)}}
+.podium{display:flex;gap:8px;min-height:84px;flex-wrap:wrap;padding:8px;border-radius:14px;background:var(--road);align-items:center}
+.pod{display:flex;align-items:center;gap:4px;background:#fff;border-radius:12px;padding:2px 8px}
+.pod b{font-family:var(--display);color:var(--brick);font-size:20px;font-weight:400}.pod svg{width:70px;height:40px}
+.vbtn{background:var(--panel2);color:var(--ink);box-shadow:0 3px 0 var(--line);padding:6px 10px}
+.vbtn .ib svg{width:80px;height:46px}
+.ib svg{width:84px;height:50px}
+.board{background:#141A20;border-radius:14px;padding:16px 0;overflow:hidden;border:4px solid #3A4450;box-shadow:inset 0 0 18px #000}
+.track{display:flex;white-space:nowrap;width:max-content;will-change:transform}
+.seg{background:transparent;color:#F2B705;box-shadow:none;font-size:24px;padding:6px 3px;border-radius:8px;min-height:52px;text-shadow:0 0 6px #F2B70588}
+.seg:active{transform:none}
+.seg.hit{background:#D9483B;color:#fff;text-shadow:none}
+.seg.fixed{background:#2F9E6B;color:#fff;text-shadow:none}
+.card-clue{background:#fff;border:3px dashed var(--brick);border-radius:16px;padding:12px 14px;font-family:var(--display);font-size:19px;line-height:1.5}
+@media (max-width:520px){.hero h2{font-size:19px!important}}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+</style>
+</head><body style="margin:0">
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.random()*a.length|0];
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function shake(e){e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake')}
+const NS='http://www.w3.org/2000/svg';
+function svgEl(vb,inner,css=''){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',vb);s.innerHTML=inner;if(css)s.style.cssText=css;return s}
+
+/* ---------- 交通工具圖示（側面，viewBox 0 0 120 70） ---------- */
+const wh=(x,y,r=7)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#2A2F36"/><circle cx="${x}" cy="${y}" r="${(r/2.4).toFixed(1)}" fill="#B9C3CC"/>`;
+const win=(xs,y,w,h,f='#CFE6F5')=>xs.map(x=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${f}"/>`).join('');
+const WAVE='<path d="M0 62 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#4BA3D9" stroke-width="3" fill="none"/>';
+const V={
+ car:['汽車','land','<path d="M14 48 L22 32 Q26 26 34 26 H70 Q78 26 84 32 L94 42 H104 Q110 42 110 48 V54 H14Z" fill="#D9483B"/><path d="M30 32 H52 V42 H24Z M58 32 H76 L86 42 H58Z" fill="#CFE6F5"/>'+wh(34,56)+wh(90,56)],
+ scooter:['機車','land','<path d="M26 52 Q32 38 48 40 H70 L80 22 H88" fill="none" stroke="#2B6CB0" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/><path d="M80 24 L94 52" stroke="#2B6CB0" stroke-width="6" stroke-linecap="round"/><path d="M40 38 H68 Q72 46 62 48 H44Z" fill="#2B6CB0"/><rect x="40" y="30" width="22" height="8" rx="3" fill="#2A2F36"/>'+wh(26,56,9)+wh(94,56,9)],
+ bus:['公車','land','<rect x="8" y="14" width="104" height="42" rx="7" fill="#2F9E6B"/>'+win([14,32,50,68],20,14,14)+'<rect x="88" y="20" width="16" height="30" rx="2" fill="#CFE6F5"/><rect x="8" y="40" width="80" height="4" fill="#F2B705"/>'+wh(28,58)+wh(92,58)],
+ yellowbus:['小黃公車','land','<path d="M16 50 L24 34 Q28 28 36 28 H74 Q82 28 88 34 L98 44 H104 V54 H16Z" fill="#F2B705"/><rect x="42" y="14" width="34" height="13" rx="2" fill="#2B6CB0"/><text x="59" y="24.5" font-size="10" text-anchor="middle" fill="#fff">公車</text><path d="M32 34 H52 V44 H26Z M58 34 H78 L88 44 H58Z" fill="#CFE6F5"/>'+wh(36,56)+wh(88,56)],
+ lowbus:['低底盤公車','land','<rect x="8" y="12" width="104" height="48" rx="7" fill="#2B6CB0"/>'+win([14,32,50],18,14,16)+'<rect x="88" y="18" width="16" height="40" rx="2" fill="#CFE6F5"/><circle cx="76" cy="40" r="9" fill="#fff"/><path d="M74 34 v6 h5 l2 4 M72 38 a6 6 0 1 0 8 6" stroke="#2B6CB0" stroke-width="2" fill="none"/>'+wh(26,60,6)+wh(96,60,6)],
+ train:['火車（臺鐵）','land','<rect x="6" y="16" width="108" height="36" rx="8" fill="#F2F4F6" stroke="#3A4450" stroke-width="2"/>'+win([14,32,50,68,86],22,13,12)+'<rect x="6" y="40" width="108" height="5" fill="#2B6CB0"/><path d="M0 63 H120" stroke="#3A4450" stroke-width="3"/>'+wh(22,56,5)+wh(38,56,5)+wh(82,56,5)+wh(98,56,5)],
+ hsr:['高鐵','land','<path d="M4 52 V30 Q4 22 14 22 H80 Q104 22 117 48 Q118 52 112 52Z" fill="#F7F7F7" stroke="#3A4450" stroke-width="2"/><path d="M4 42 H114" stroke="#E8762C" stroke-width="4"/><path d="M84 26 Q100 28 107 37 H84Z" fill="#2A2F36"/>'+win([12,28,44,60],28,12,9,'#2A2F36')+'<path d="M0 63 H120" stroke="#3A4450" stroke-width="3"/>'+wh(22,56,4)+wh(36,56,4)+wh(84,56,4)+wh(98,56,4)],
+ mrt:['捷運','land','<rect x="6" y="14" width="108" height="40" rx="10" fill="#E9EEF3" stroke="#3A4450" stroke-width="2"/>'+win([16,40,64],20,18,16)+'<rect x="88" y="20" width="14" height="30" rx="2" fill="#CFE6F5"/><rect x="6" y="40" width="108" height="6" fill="#1D8FD9"/><text x="60" y="51" font-size="8" text-anchor="middle" fill="#fff">METRO</text><path d="M0 63 H120" stroke="#3A4450" stroke-width="3"/>'+wh(24,57,4)+wh(96,57,4)],
+ diesel:['柴油火車','land','<rect x="8" y="20" width="104" height="32" rx="6" fill="#E8762C"/><rect x="14" y="26" width="18" height="12" fill="#CFE6F5"/><rect x="40" y="26" width="60" height="6" fill="#B85A1E"/><rect x="40" y="36" width="60" height="4" fill="#B85A1E"/><path d="M30 20 V12 h8 v8" fill="#3A4450"/><circle cx="34" cy="8" r="3" fill="#9AA4B0"/><path d="M0 63 H120" stroke="#3A4450" stroke-width="3"/>'+wh(24,56,6)+wh(44,56,6)+wh(78,56,6)+wh(98,56,6)],
+ electric:['電氣化火車','land','<path d="M0 4 H120" stroke="#3A4450" stroke-width="2"/><path d="M50 18 L60 6 L70 18" stroke="#3A4450" stroke-width="2" fill="none"/><rect x="6" y="18" width="108" height="34" rx="8" fill="#F2F4F6" stroke="#3A4450" stroke-width="2"/>'+win([14,32,50,68,86],24,13,12)+'<rect x="6" y="42" width="108" height="4" fill="#D9483B"/><path d="M0 63 H120" stroke="#3A4450" stroke-width="3"/>'+wh(22,56,5)+wh(38,56,5)+wh(82,56,5)+wh(98,56,5)],
+ steam:['蒸汽火車','land','<rect x="10" y="30" width="70" height="22" rx="4" fill="#2A2F36"/><rect x="70" y="16" width="34" height="36" rx="3" fill="#3A4450"/><rect x="78" y="22" width="16" height="12" fill="#F2B705"/><rect x="22" y="14" width="10" height="16" fill="#2A2F36"/><circle cx="26" cy="8" r="6" fill="#B9C3CC"/><circle cx="14" cy="4" r="4" fill="#D5DBE0"/><path d="M0 63 H120" stroke="#3A4450" stroke-width="3"/>'+wh(30,54,8)+wh(54,54,8)+wh(86,54,8)],
+ tricycle:['三輪車','land','<path d="M14 26 H54 V46 H14Z" fill="#D9483B"/><path d="M10 26 Q34 8 58 26" fill="#F2B705"/><path d="M56 46 L76 30 H84 L96 52 M76 30 L70 52" stroke="#2A2F36" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="78" cy="22" r="5" fill="#F2C9A0"/>'+wh(24,54,9)+wh(46,54,9)+wh(96,54,9)],
+ ferry:['渡輪','water','<path d="M6 40 H114 L104 56 H16Z" fill="#2B6CB0"/><rect x="22" y="22" width="76" height="18" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/>'+win([28,42,56,70,84],27,9,8)+'<rect x="50" y="12" width="20" height="10" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/><circle cx="36" cy="48" r="3" fill="#F2B705"/><circle cx="52" cy="48" r="3" fill="#F2B705"/><circle cx="68" cy="48" r="3" fill="#F2B705"/>'+WAVE],
+ cruise:['郵輪','water','<path d="M2 40 H118 L106 58 H12Z" fill="#F7F7F7" stroke="#3A4450" stroke-width="2"/><rect x="12" y="28" width="94" height="12" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/><rect x="22" y="17" width="72" height="11" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/><rect x="34" y="8" width="44" height="9" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/><rect x="82" y="2" width="10" height="15" fill="#D9483B"/>'+[16,24,32,40,48,56,64,72,80,88,96].map(x=>`<circle cx="${x}" cy="34" r="1.8" fill="#1D8FD9"/><circle cx="${x+4}" cy="47" r="1.8" fill="#1D8FD9"/>`).join('')+WAVE],
+ cargo:['貨輪','water','<path d="M2 42 H118 L108 58 H10Z" fill="#9C3A2E"/><rect x="88" y="16" width="18" height="26" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/>'+[[10,'#2F9E6B'],[26,'#F2B705'],[42,'#2B6CB0'],[58,'#D9483B'],[10,'#D9483B',1],[26,'#2B6CB0',1],[42,'#2F9E6B',1],[58,'#F2B705',1]].map(([x,c,r])=>`<rect x="${x}" y="${r?20:31}" width="15" height="11" fill="${c}" stroke="#3A4450" stroke-width=".8"/>`).join('')+WAVE],
+ boat:['交通船','water','<path d="M14 42 H106 L96 56 H22Z" fill="#E8762C"/><rect x="34" y="24" width="50" height="18" rx="3" fill="#F7F7F7" stroke="#3A4450" stroke-width="1.5"/>'+win([40,54,68],29,10,8)+'<rect x="56" y="14" width="6" height="10" fill="#3A4450"/>'+WAVE],
+ warship:['軍艦','water','<path d="M2 42 H118 L104 56 H8Z" fill="#7D8794"/><path d="M40 42 V28 H74 V42Z" fill="#9AA4B0"/><path d="M54 28 V10 M48 16 H60" stroke="#3A4450" stroke-width="3"/><path d="M88 38 H112" stroke="#3A4450" stroke-width="4"/><rect x="80" y="34" width="10" height="8" fill="#9AA4B0"/>'+WAVE],
+ lakeboat:['遊湖船','water','<path d="M18 44 H102 L94 56 H26Z" fill="#F7F7F7" stroke="#3A4450" stroke-width="2"/><path d="M26 44 V28 M94 44 V28" stroke="#3A4450" stroke-width="2"/><path d="M20 28 Q60 14 100 28Z" fill="#2F9E6B"/><circle cx="46" cy="38" r="4" fill="#F2C9A0"/><circle cx="62" cy="38" r="4" fill="#F2C9A0"/><circle cx="78" cy="38" r="4" fill="#F2C9A0"/>'+WAVE.replace('#4BA3D9','#3FA37A')],
+ plane:['飛機','air','<path d="M8 36 Q8 30 18 30 H96 Q114 30 116 36 Q114 42 96 42 H18 Q8 42 8 36Z" fill="#F7F7F7" stroke="#3A4450" stroke-width="2"/><path d="M50 36 L36 60 H48 L72 36Z M50 36 L38 14 H48 L70 36Z" fill="#2B6CB0"/><path d="M12 32 L6 18 H16 L24 30Z" fill="#2B6CB0"/>'+[30,40,80,88,96].map(x=>`<circle cx="${x}" cy="35" r="2" fill="#1D8FD9"/>`).join('')+'<path d="M100 32 Q108 32 112 35 H100Z" fill="#2A2F36"/>'],
+ heli:['直升機','air','<path d="M30 34 Q30 22 50 22 H70 Q86 22 86 38 Q86 48 70 48 H44 Q30 48 30 34Z" fill="#D9483B"/><path d="M30 34 H6 L2 26" stroke="#D9483B" stroke-width="5" fill="none"/><path d="M62 26 Q78 26 80 38 H62Z" fill="#CFE6F5"/><path d="M58 22 V14 M24 14 H96" stroke="#2A2F36" stroke-width="3"/><path d="M44 48 V56 M70 48 V56 M36 56 H80" stroke="#2A2F36" stroke-width="3"/><rect x="42" y="30" width="12" height="4" fill="#fff"/><rect x="46" y="26" width="4" height="12" fill="#fff"/>']
+};
+const vSvg=(k,css='')=>`<svg viewBox="0 0 120 70" aria-hidden="true" ${css?`style="${css}"`:''}>${V[k][2]}</svg>`;
+const vLab=k=>`<span class="ib">${vSvg(k)}<span>${V[k][0]}</span></span>`;
+const KIND={land:'陸上',water:'水上',air:'空中'};
+const LOGO=V.bus[2];
+
+/* ---------- 世界 ---------- */
+const WORLDS=[
+ {name:'交通轉運站',sub:'交通工具一台台開過來，把它們送進車庫、碼頭或機場',color:'#DCEBF5',ico:V.bus[2],vb:'0 0 120 70',run:w1},
+ {name:'出發任務',sub:'看任務選交通工具，選對才能順利開到目的地',color:'#FCEFC4',ico:V.hsr[2],vb:'0 0 120 70',run:w2},
+ {name:'交通旅行家',sub:'在地圖上一段一段接路線，高鐵不是哪裡都能到喔',color:'#D7EEDF',ico:'<path d="M20 6 L32 10 L34 26 L28 44 L22 56 L16 48 L12 30 L14 14Z" fill="#9BCB8A" stroke="#2F9E6B" stroke-width="2"/><path d="M26 16 Q40 26 30 44" stroke="#D9483B" stroke-width="3" fill="none" stroke-dasharray="4 3"/><circle cx="26" cy="16" r="4" fill="#2B6CB0"/><circle cx="30" cy="44" r="4" fill="#D9483B"/>',run:w3},
+ {name:'港口調度員',sub:'限時調度！船、車、飛機要在離開前送到對的地方',color:'#D5E8F5',ico:V.cargo[2],vb:'0 0 120 70',run:w4},
+ {name:'交通廣播站',sub:'跑馬燈播出錯誤的消息，點中錯字再換上正確的',color:'#F1E3D3',ico:'<rect x="4" y="16" width="56" height="28" rx="4" fill="#1F2A33"/><text x="32" y="35" font-size="12" text-anchor="middle" fill="#F2B705">廣播</text><path d="M14 44 V56 M50 44 V56" stroke="#3A4450" stroke-width="3"/>',run:w5},
+ {name:'魔王關：大塞車怪',sub:'大塞車怪把馬路堵住了！限時快答，一台一台把車清掉',color:'#F6D7D2',ico:'<rect x="2" y="36" width="60" height="20" fill="#3A4450"/><path d="M2 46 h60" stroke="#F2B705" stroke-dasharray="6 4"/><rect x="6" y="26" width="16" height="12" rx="3" fill="#D9483B"/><rect x="24" y="26" width="16" height="12" rx="3" fill="#2B6CB0"/><rect x="42" y="26" width="16" height="12" rx="3" fill="#F2B705"/><circle cx="30" cy="12" r="9" fill="#8A7FB0"/><circle cx="27" cy="11" r="2" fill="#fff"/><circle cx="33" cy="11" r="2" fill="#fff"/>',run:w6,boss:true}
+];
+
+/* 移動的條（交通工具或卡片）：從左邊開到右邊，循環；回傳控制物件 */
+function lane(ctx,host,{speed=55,h=120}={}){
+  const belt=el('div',{class:'belt',style:`height:${h}px`});host.append(belt);
+  let item=null,x=-160,raf=0,paused=false,last=performance.now();
+  function loop(now){if(!ctx.alive()||!belt.isConnected)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+    if(item&&!paused){x+=speed*dt;const W=belt.clientWidth;if(x>W+10)x=-item.offsetWidth-10;item.style.transform=`translate(${x}px,-50%)`}raf=requestAnimationFrame(loop)}
+  raf=requestAnimationFrame(loop);
+  return{belt,set(node){if(item)item.remove();item=node;node.classList.add('rider');belt.append(node);x=8;if(REDUCE){x=Math.max(8,(belt.clientWidth-node.offsetWidth)/2)}node.style.transform=`translate(${x}px,-50%)`},
+    pause(v){paused=v},get item(){return item},clear(){if(item)item.remove();item=null},stop(){cancelAnimationFrame(raf)}};
+}
+/* 拖曳一個東西到 .gate 上（也可直接點 gate） */
+function dragTo(node,onDrop){
+  node.addEventListener('pointerdown',e=>{e.preventDefault();const sx=e.clientX,sy=e.clientY;let ghost=null;try{node.setPointerCapture(e.pointerId)}catch(_){}
+    const mv=ev=>{if(!ghost&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){ghost=node.cloneNode(true);ghost.className='ghost-v';document.body.append(ghost)}if(ghost){ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px'}};
+    const up=ev=>{node.removeEventListener('pointermove',mv);node.removeEventListener('pointerup',up);node.removeEventListener('pointercancel',up);
+      if(ghost){ghost.remove();const t=document.elementFromPoint(ev.clientX,ev.clientY);const g=t&&t.closest&&t.closest('.gate');if(g)onDrop(g.dataset.id)}};
+    node.addEventListener('pointermove',mv);node.addEventListener('pointerup',up);node.addEventListener('pointercancel',up)});
+}
+
+/* 輸送帶分類：一次一個，送進對的門 */
+function sortBelt(ctx,S,{title,items,gates,pts=5}){
+  return new Promise(res=>{
+    tagLine(S,title);
+    const L=lane(ctx,S,{speed:50,h:items[0].tall?150:120});
+    const prog=el('div',{class:'small'});const fb=el('div',{class:'fb',hidden:''});
+    const gw=el('div',{class:'gates',style:`grid-template-columns:repeat(${gates.length},minmax(0,1fr))`});
+    const gb={};gates.forEach(g=>{const b=el('button',{class:'gate',html:g.html});b.dataset.id=g.id;b.onclick=()=>choose(g.id);gb[g.id]=b;gw.append(b)});
+    S.append(prog,gw,fb);
+    let i=0,total=0,T=null,busy=false;
+    const show=()=>{const it=items[i];prog.textContent='第 '+(i+1)+' / '+items.length+' 個　把它拖到下面的門，或直接點門';
+      const n=el('div',{class:'ridebox',html:it.html});dragTo(n,choose);L.set(n);T=tiered(fb,{hints:it.hints,explain:it.explain});fb.hidden=true;Object.values(gb).forEach(b=>b.classList.remove('bad','ok'))};
+    show();
+    async function choose(id){if(busy)return;const it=items[i];
+      if(id===it.ans){busy=true;gb[id].classList.add('ok');T.good();total+=ptsFor(pts,T.wrong);L.pause(true);const n=L.item;n.classList.add('gone');await sleep(REDUCE?100:450);L.pause(false);
+        const nx=el('button',{},i+1<items.length?'下一個 →':'下一步 →');S.append(nx);await new Promise(r=>nx.onclick=r);nx.remove();busy=false;i++;
+        if(i<items.length)show();else{L.stop();L.belt.remove();res(total)}}
+      else{gb[id].classList.add('bad');shake(gb[id]);if(T.bad(it.why&&it.why[id]||'')){busy=true;gb[it.ans].classList.add('ok');T.reveal(gates.find(g=>g.id===it.ans).label);L.pause(true);
+        const nx=el('button',{},i+1<items.length?'下一個 →':'下一步 →');S.append(nx);await new Promise(r=>nx.onclick=r);nx.remove();busy=false;L.pause(false);i++;if(i<items.length)show();else{L.stop();L.belt.remove();res(total)}}}
+    }
+  });
+}
+
+/* ================= 世界 1：交通轉運站 ================= */
+const GATE3=[{id:'land',label:'車庫（陸上）',html:'<span class="gi">🚗</span>車庫<small>陸上交通</small>'},{id:'water',label:'碼頭（水上）',html:'<span class="gi">⚓</span>碼頭<small>水上交通</small>'},{id:'air',label:'機場（空中）',html:'<span class="gi">✈️</span>機場<small>空中交通</small>'}];
+const RIVERSEA=[
+ {t:'淡水往八里的渡輪',k:'ferry',a:'river',ex:'淡水和八里隔著淡水河，渡輪往返兩地，是河運。'},
+ {t:'日月潭的遊湖船',k:'lakeboat',a:'river',ex:'日月潭是湖泊，遊湖船讓民眾遊覽湖岸風光，課本把它放在河運。'},
+ {t:'早期在新莊河邊載貨的船',k:'boat',a:'river',ex:'臺灣早期河運發達，新莊就是河港。'},
+ {t:'臺南月津港的燈節遊船',k:'lakeboat',a:'river',ex:'月津港河道淤積後轉型觀光，舉辦燈節，是河運的例子。'},
+ {t:'帶旅客去日本玩的郵輪',k:'cruise',a:'sea',ex:'郵輪開到國內外觀光，在海上航行，是海運。'},
+ {t:'把商品運到國外的貨輪',k:'cargo',a:'sea',ex:'貨輪在海上運送商品進行國內外交易，是海運。'},
+ {t:'往返澎湖和本島的交通船',k:'boat',a:'sea',ex:'交通船協助居民往返離島與本島，是海運。'},
+ {t:'巡航保衛國家的軍艦',k:'warship',a:'sea',ex:'國軍駕駛軍艦在海上保衛國家，是海運。'}
+];
+const TWIN=[
+ {q:'短距離在兩岸之間來來回回，載民眾往返兩地',a:'ferry',ex:'渡輪是短距離往返兩地的船。'},
+ {q:'上層載旅客，下層還可以載機車',a:'ferry',ex:'像高雄鼓山到旗津的渡輪，上層載旅客、下層載機車。'},
+ {q:'提供國內外旅客觀光服務，促進觀光發展',a:'cruise',ex:'郵輪提供國內外旅客觀光服務。'},
+ {q:'新北市淡水區和八里區之間，民眾搭它過河',a:'ferry',ex:'淡水和八里之間有渡輪。'},
+ {q:'船很大，可以載旅客開到別的國家去玩',a:'cruise',ex:'郵輪可以載旅客到國內外觀光。'},
+ {q:'旗津的居民要到高雄市區上班、上學，每天搭它',a:'ferry',ex:'旗津居民常搭渡輪往返市區。'}
+];
+async function w1(ctx){
+  const S=ctx.stage;ctx.N=3;
+  const pool=shuffle(Object.keys(V));const pick8=[...pool.filter(k=>V[k][1]==='air'),...pool.filter(k=>V[k][1]==='water').slice(0,3),...pool.filter(k=>V[k][1]==='land').slice(0,3)];
+  const items=shuffle(pick8).map(k=>({html:vSvg(k)+'<b>'+V[k][0]+'</b>',ans:V[k][1],hints:['它是在陸地上、水上，還是天空中移動？','看看它有沒有輪子、會不會浮在水上、有沒有機翼或螺旋槳。'],explain:V[k][0]+'是'+KIND[V[k][1]]+'交通工具。'}));
+  S.innerHTML='';ctx.tick(await sortBelt(ctx,S,{title:'第 1 站：陸、水、空分類',items,gates:GATE3}),items.length*5);
+  if(!ctx.alive())return;S.innerHTML='';
+  const rs=shuffle(RIVERSEA.filter(r=>r.a==='river')).slice(0,3).concat(shuffle(RIVERSEA.filter(r=>r.a==='sea')).slice(0,3));
+  const it2=shuffle(rs).map(r=>({html:vSvg(r.k)+'<b>'+r.t+'</b>',ans:r.a,hints:['它是在河流、湖泊，還是大海上航行？','河運在河流和湖泊；海運在海上，到離島或國外。'],explain:r.ex}));
+  ctx.tick(await sortBelt(ctx,S,{title:'第 2 站：水上交通再細分，河運還是海運？',items:it2,gates:[{id:'river',label:'河運',html:'<span class="gi">🏞️</span>河運<small>河流、湖泊</small>'},{id:'sea',label:'海運',html:'<span class="gi">🌊</span>海運<small>海上、離島、國外</small>'}]}),it2.length*5);
+  /* 雙胞胎船 */
+  if(!ctx.alive())return;S.innerHTML='';tagLine(S,'第 3 站：雙胞胎船　渡輪和郵輪，這句話說的是哪一艘？點那艘船！');
+  const sea=el('div',{class:'twinsea'});const bf=el('button',{class:'twin',html:vSvg('ferry')+'<b>渡輪</b>'}),bc=el('button',{class:'twin',html:vSvg('cruise')+'<b>郵輪</b>'});sea.append(bf,bc);
+  const qEl=el('div',{class:'card-clue'});const fb=el('div',{class:'fb',hidden:''});S.append(qEl,sea,fb);
+  let tot=0;
+  for(const t of shuffle(TWIN).slice(0,4)){if(!ctx.alive())return;
+    qEl.textContent='📢 '+t.q;fb.hidden=true;bf.className='twin';bc.className='twin';
+    const T=tiered(fb,{hints:['渡輪：短距離、往返兩岸。郵輪：大船、國內外觀光。','想一想距離是短還是長？是為了過河、上班，還是觀光旅遊？'],explain:t.ex});
+    const g=await new Promise(r=>{const ch=k=>{const b=k==='ferry'?bf:bc;if(k===t.a){b.classList.add('ok','sail');T.good();r(ptsFor(5,T.wrong))}else{b.classList.add('bad');shake(b);if(T.bad('')){(t.a==='ferry'?bf:bc).classList.add('ok');T.reveal(t.a==='ferry'?'渡輪':'郵輪');r(0)}}};bf.onclick=()=>ch('ferry');bc.onclick=()=>ch('cruise')});
+    bf.onclick=bc.onclick=null;tot+=g;await waitBtn(S,'下一句 →');}
+  ctx.tick(tot,20);
+}
+
+/* ================= 世界 2：出發任務 ================= */
+const MISSION=[
+ {q:'媽媽要從桃園去高雄出差，想要節省搭車時間，搭什麼？',from:'桃園',to:'高雄',a:'hsr',d:{bus:'公車可以到，但要坐很久，媽媽想節省時間。',yellowbus:'小黃公車是在偏鄉服務的，不跑長途。',ferry:'桃園到高雄走陸路就好，渡輪是往返兩岸的。'},hints:['西部的城市之間，哪一種陸上交通最快？','它讓臺北、高雄可以一日來回。'],ex:'高鐵是西部主要的交通設施，速度快，可以節省時間。'},
+ {q:'住在山上偏鄉的阿公，要到鎮上看醫生，可以搭什麼？',from:'山上',to:'鎮上',a:'yellowbus',d:{hsr:'山上的偏鄉沒有高鐵站。',mrt:'捷運只在都會區，偏鄉沒有捷運。',cruise:'郵輪是在海上載旅客觀光的。'},hints:['偏鄉人比較少，有一種黃色的小車提供公共運輸。','小「黃」公車。'],ex:'小黃公車深入偏鄉，提供公共運輸服務。'},
+ {q:'坐輪椅的奶奶要在市區搭公車，哪一種公車最方便？',from:'公車站',to:'市場',a:'lowbus',d:{tricycle:'三輪車不方便載輪椅。',scooter:'坐輪椅不能騎機車。',yellowbus:'小黃公車主要在偏鄉服務。'},hints:['車子的地板要很低，輪椅才推得上去。','低「底盤」。'],ex:'市區有低底盤公車，方便行動不便的民眾搭乘。'},
+ {q:'澎湖有人受重傷，颱風讓海上交通中斷了，怎麼送去本島醫院？',from:'澎湖',to:'本島醫院',a:'heli',d:{boat:'海上交通中斷了，船不能開！',ferry:'海上交通中斷了，渡輪也不能開！',hsr:'高鐵不能開過海。'},hints:['海上不能走，那就走空中。','緊急危難時刻，離島居民可以搭的特殊交通工具。'],ex:'離島居民遇到緊急危難或海上交通中斷時，可以搭直升機。'},
+ {q:'金門的大哥哥要回臺灣本島讀書，想要最快到，搭什麼？',from:'金門',to:'臺灣本島',a:'plane',d:{hsr:'高鐵不能開過海。',mrt:'捷運不能開過海。',warship:'軍艦是國軍保衛國家用的。'},hints:['要過海，而且要最快。','陸、海、空交通工具中速度最快的。'],ex:'飛機速度最快，聯繫本島和離島很便捷。'},
+ {q:'住在臺北的爸爸每天上班，怕塞車，搭什麼最方便？',from:'家',to:'公司',a:'mrt',d:{cruise:'郵輪是去觀光旅遊的。',heli:'直升機是緊急危難時才搭的。',yellowbus:'小黃公車主要在偏鄉服務。'},hints:['它主要蓋在交通容易壅塞的都市。','有自己的軌道，不會被汽車塞住。'],ex:'捷運興建在交通容易壅塞的都市，便利性高。'},
+ {q:'想從新北市淡水到對岸的八里吃小吃，可以搭什麼？',from:'淡水',to:'八里',a:'ferry',d:{cruise:'郵輪是到國內外觀光的大船，不是過河用的。',plane:'這麼近，不用搭飛機。',warship:'軍艦是保衛國家用的。'},hints:['淡水和八里隔著一條河。','短距離往返兩岸的船。'],ex:'淡水區與八里區有渡輪提供民眾往返兩地。'},
+ {q:'全家想到南投日月潭，欣賞湖岸風光，可以搭什麼？',from:'碼頭',to:'湖對岸',a:'lakeboat',d:{cargo:'貨輪是運送商品的。',warship:'軍艦是保衛國家用的。',plane:'要欣賞湖岸風光，坐飛機看不到湖邊喔。'},hints:['日月潭是一個湖。','可以遊覽湖岸風光的船。'],ex:'日月潭有遊湖船提供民眾遊覽湖岸風光。'},
+ {q:'工廠要把一大批商品運到國外賣，用什麼運？',from:'港口',to:'國外',a:'cargo',d:{cruise:'郵輪是載旅客觀光的。',ferry:'渡輪是短距離載旅客往返兩岸的。',scooter:'機車載不了一大批商品，也不能過海。'},hints:['要運很多「貨」。','貨「輪」。'],ex:'貨輪運輸商品進行國內外交易，促進商業發展。'},
+ {q:'一家人想搭船到國外玩，還要在船上吃喝玩樂，搭什麼？',from:'港口',to:'國外',a:'cruise',d:{cargo:'貨輪載的是商品，不是旅客。',ferry:'渡輪只在兩岸之間短距離來回。',boat:'交通船是往返離島和本島的。'},hints:['這艘船是為了觀光旅遊。','提供國內外旅客觀光服務的大船。'],ex:'郵輪提供國內外旅客觀光服務。'},
+ {q:'小琉球的居民要到本島買東西，平常搭什麼？',from:'小琉球',to:'本島',a:'boat',d:{hsr:'高鐵不能開過海。',warship:'軍艦是保衛國家用的。',cruise:'郵輪是觀光旅遊用的。'},hints:['平常、不是緊急狀況，坐船就可以。','協助居民往返離島與本島的船。'],ex:'交通船協助居民往返離島與本島。'},
+ {q:'到了旗津，想慢慢欣賞沿途的風景，可以租什麼？',from:'旗津渡輪站',to:'旗津燈塔',a:'tricycle',d:{hsr:'旗津沒有高鐵。',plane:'這麼近，不用坐飛機，也看不到沿途風景。',cargo:'貨輪是運送商品的。'},hints:['要能邊走邊聊天、看風景。','有三個輪子，有車夫伯伯幫你騎。'],ex:'在旗津可以租三輪車，遊覽旗津的風光。'}
+];
+function mission(ctx,S,m){
+  return new Promise(res=>{
+    const med=V[m.a][1];
+    const bg=med==='air'?'<rect width="360" height="130" fill="#BFE0F5"/><circle cx="80" cy="30" r="12" fill="#fff"/><circle cx="94" cy="30" r="15" fill="#fff"/><circle cx="250" cy="40" r="10" fill="#fff"/><circle cx="262" cy="38" r="13" fill="#fff"/><rect y="112" width="360" height="18" fill="#4BA3D9"/>'
+      :med==='water'?'<rect width="360" height="130" fill="#DCEFF8"/><rect y="70" width="360" height="60" fill="#4BA3D9"/><path d="M0 80 q15 -6 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/><rect x="0" y="64" width="44" height="12" fill="#8A6A44"/><rect x="316" y="64" width="44" height="12" fill="#8A6A44"/>'
+      :'<rect width="360" height="130" fill="#E6F2E0"/><rect y="80" width="360" height="34" fill="#3A4450"/><path d="M0 97 h360" stroke="#F2B705" stroke-width="3" stroke-dasharray="14 10"/>';
+    const sc=svgEl('0 0 360 130','','width:100%;display:block;border-radius:14px');
+    sc.innerHTML=bg+`<g transform="translate(6 10)"><rect width="${m.from.length*14+16}" height="24" rx="12" fill="#fff" stroke="#1F2A33"/><text x="${(m.from.length*14+16)/2}" y="17" font-size="13" text-anchor="middle" fill="#1F2A33">${m.from}</text></g><g transform="translate(${354-(m.to.length*14+16)} 10)"><rect width="${m.to.length*14+16}" height="24" rx="12" fill="#1F2A33"/><text x="${(m.to.length*14+16)/2}" y="17" font-size="13" text-anchor="middle" fill="#fff">${m.to} 🏁</text></g><g id="veh"></g><g id="mark"></g>`;
+    const veh=sc.querySelector('#veh'),mark=sc.querySelector('#mark');
+    const vy=med==='air'?44:med==='water'?50:52;
+    const put=(k,x)=>{veh.innerHTML=k?`<g transform="translate(${x} ${vy}) scale(.62)">${V[k][2]}</g>`:''};
+    S.append(el('div',{class:'q',html:m.q}),sc);
+    const keys=shuffle([m.a,...Object.keys(m.d)]);
+    const wrap=el('div',{class:'opts imgs'});wrap.style.gridTemplateColumns='repeat('+(innerWidth<520?2:4)+',minmax(0,1fr))';
+    const fb=el('div',{class:'fb',hidden:''});S.append(wrap,fb);
+    const T=tiered(fb,{hints:m.hints,explain:m.ex});let busy=false;const bs={};
+    const drive=(from,to,ms)=>new Promise(r=>{if(REDUCE){put(cur,to);return r()}const t0=performance.now();(function f(n){const q=Math.min(1,(n-t0)/ms);const e=1-Math.pow(1-q,2);put(cur,from+(to-from)*e);if(q<1)requestAnimationFrame(f);else r()})(t0)});
+    let cur=null;
+    keys.forEach(k=>{const b=el('button',{html:vLab(k)});bs[k]=b;wrap.append(b);
+      b.onclick=async()=>{if(busy||b.disabled)return;busy=true;cur=k;mark.innerHTML='';
+        if(k===m.a){b.classList.add('ok');await drive(0,284,1300);T.good();mark.innerHTML='<text x="320" y="60" font-size="26">🎉</text>';fin(ptsFor(10,T.wrong))}
+        else{await drive(0,120,800);mark.innerHTML='<text x="186" y="64" font-size="30" fill="#D9483B">✖</text>';b.classList.add('bad');b.disabled=true;
+          if(T.bad(m.d[k])){T.reveal(V[m.a][0]);bs[m.a].classList.add('ok');cur=m.a;await sleep(500);mark.innerHTML='';await drive(0,284,1000);fin(0)}else{busy=false}}}});
+    function fin(g){Object.values(bs).forEach(b=>b.disabled=true);waitBtn(S,'下一個任務 →').then(()=>res(g))}
+  });
+}
+async function w2(ctx){
+  const S=ctx.stage;ctx.N=9;
+  for(const m of shuffle(MISSION).slice(0,8)){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'出發任務　選一個交通工具，帶他出發！');ctx.tick(await mission(ctx,S,m),10)}
+  if(!ctx.alive())return;S.innerHTML='';const qa=el('div');S.append(qa);
+  ctx.tick(await pick(qa,{tag:'搭機小叮嚀',q:'國人搭乘國內線飛機時，要記得帶什麼，方便辦理登機手續？',opts:['身分證明文件（例如身分證）','電報','遊湖船票'],hints:['登機時要證明「你是誰」。','國人出示身分證，外籍人士出示護照。'],explain:'搭飛機要攜帶身分證明文件，國人出示身分證、外籍人士出示護照。'}),10);
+}
+
+/* ================= 世界 3：交通旅行家 ================= */
+const TWP=[[121.53,25.3],[121.75,25.15],[122.0,25.0],[121.86,24.75],[121.85,24.55],[121.65,24.2],[121.6,23.98],[121.5,23.6],[121.4,23.2],[121.18,22.8],[121.0,22.55],[120.9,22.3],[120.85,21.92],[120.72,21.95],[120.7,22.2],[120.6,22.38],[120.45,22.5],[120.28,22.62],[120.18,22.9],[120.1,23.1],[120.12,23.4],[120.18,23.7],[120.3,24.0],[120.48,24.3],[120.68,24.6],[120.88,24.85],[121.05,25.05],[121.3,25.15]];
+const LL=(lon,lat)=>[(lon-119.3)*118,(25.45-lat)*112];
+const TRIPS=[
+ {title:'林口的家 → 臺南奇美博物館',goal:'想要快一點到，而且不開車',map:'tw',nodes:{a:['林口的家',272,30],b:['高鐵站',236,66],c:['臺南高鐵站',118,294],d:['奇美博物館',150,322]},
+  legs:[{f:'a',t:'b',a:'mrt',d:{hsr:'家附近沒有高鐵站，要先想辦法到高鐵站。',plane:'這麼近不用坐飛機，而且附近沒有機場。',ferry:'這段路走陸路就到了，不用搭船。'},hint:'捷運可以連接機場、鐵道，快速往來各地。'},
+   {f:'b',t:'c',a:'hsr',d:{bus:'公車也能到，但比較慢。你的目標是要快！',yellowbus:'小黃公車是在偏鄉服務的，不跑長途。',mrt:'捷運只在都會區裡跑，不會從桃園開到臺南。'},hint:'西部城市之間，陸上最快的交通工具。'},
+   {f:'c',t:'d',a:'bus',d:{mrt:'臺南捷運還在興建規畫中，現在還不能搭。',hsr:'已經下高鐵了，博物館不在高鐵路線上。',plane:'這麼近，不用坐飛機。'},hint:'公車機動性高，服務區域很廣。'}]},
+ {title:'臺北 → 花蓮山上的部落',goal:'不開車，去部落找朋友',map:'tw',nodes:{a:['臺北',278,50],b:['花蓮',290,170],c:['山上的部落',262,212]},
+  legs:[{f:'a',t:'b',a:'train',d:{hsr:'高鐵只走西部，沒有開到花蓮！',mrt:'捷運只在都會區，不會開到花蓮。',cargo:'貨輪是運送商品的，不載旅客。'},hint:'環島鐵路可以到東部。'},
+   {f:'b',t:'c',a:'yellowbus',d:{hsr:'高鐵沒有開到花蓮，更不會上山。',mrt:'花蓮沒有捷運。',cruise:'郵輪是在海上觀光的。'},hint:'偏鄉有黃色的小車提供公共運輸。'}]},
+ {title:'高雄 → 澎湖',goal:'要用最快的方式到達',map:'tw',nodes:{a:['高雄',128,330],b:['澎湖',36,232]},
+  legs:[{f:'a',t:'b',a:'plane',d:{boat:'交通船也到得了，但比較慢。你的目標是最快！',hsr:'高鐵不能開過海！',ferry:'渡輪是短距離往返兩岸的，到澎湖要搭交通船或飛機。'},hint:'陸、海、空交通工具中，速度最快的是哪一個？'}]},
+ {title:'金門 → 臺北讀書',goal:'要用最快的方式到學校',map:'tw',nodes:{a:['金門',24,96],b:['臺北的機場',270,58],c:['學校',294,40]},
+  legs:[{f:'a',t:'b',a:'plane',d:{boat:'坐船比較慢。你的目標是最快！',hsr:'高鐵不能開過海！',warship:'軍艦是國軍保衛國家用的。'},hint:'飛機可以快速聯繫本島、離島。'},
+   {f:'b',t:'c',a:'mrt',d:{hsr:'臺北市區很近，不用搭高鐵。',heli:'直升機是緊急危難時才搭的。',lakeboat:'遊湖船是在湖上遊覽的。'},hint:'臺北的這種交通工具可以連接機場。'}]},
+ {title:'高雄市區的家 → 旗津',goal:'全家不開車也不騎車，搭大眾運輸去旗津玩',map:'harbor',nodes:{a:['家',300,70],b:['鼓山渡輪站',200,150],c:['旗津',120,250],d:['旗後燈塔',60,300]},
+  legs:[{f:'a',t:'b',a:'mrt',d:{hsr:'高鐵是跑長途的，不會停在渡輪站旁邊。',plane:'這麼近，不用坐飛機。',cruise:'郵輪是到國內外觀光的大船。'},hint:'高雄市區有一種大眾運輸，不怕塞車。'},
+   {f:'b',t:'c',a:'ferry',d:{cruise:'郵輪是國內外觀光的大船，不是短距離過港的。',cargo:'貨輪載商品，不載旅客。',plane:'這麼近，不用坐飛機。'},hint:'旗津隔著高雄港，居民常搭這種船往返市區。'},
+   {f:'c',t:'d',a:'tricycle',d:{hsr:'旗津沒有高鐵。',mrt:'旗津島上沒有捷運。',heli:'直升機是緊急危難時才搭的。'},hint:'沒開車也沒騎車，可以租一種有車夫伯伯幫你騎、邊騎邊介紹風光的車。'}]},
+ {title:'蘭嶼 → 臺東的大醫院',goal:'颱風過後海上交通中斷，有人受重傷',map:'tw',nodes:{a:['蘭嶼',258,388],b:['臺東的醫院',232,300]},
+  legs:[{f:'a',t:'b',a:'heli',d:{boat:'海上交通中斷了，船不能開！',plane:'颱風剛過、情況緊急，課本說這時候要搭另一種空中交通工具。',hsr:'高鐵不能開過海。'},hint:'緊急危難、海上交通中斷時，離島居民可以搭的特殊交通工具。'}]}
+];
+function tripMap(ctx,S,T){
+  return new Promise(res=>{
+    S.append(el('div',{class:'card-clue',html:'🧳 <b>'+T.title+'</b><br><span class="small">任務目標：'+T.goal+'</span>'}));
+    const s=svgEl('0 0 360 420','','width:100%;max-width:400px;margin:auto;display:block;border-radius:16px');
+    let base='';
+    if(T.map==='tw'){const pts=TWP.map(p=>LL(...p).map(v=>v.toFixed(1)).join(',')).join(' ');
+      base=`<rect width="360" height="420" fill="#CFE7F5"/><polygon points="${pts}" fill="#CFE6B8" stroke="#2F9E6B" stroke-width="2"/><ellipse cx="38" cy="222" rx="10" ry="15" fill="#CFE6B8" stroke="#2F9E6B" stroke-width="2"/><ellipse cx="258" cy="388" rx="7" ry="5" fill="#CFE6B8" stroke="#2F9E6B" stroke-width="2"/><rect x="6" y="70" width="44" height="44" fill="none" stroke="#7D8794" stroke-dasharray="4 3"/><ellipse cx="24" cy="96" rx="12" ry="7" fill="#CFE6B8" stroke="#2F9E6B" stroke-width="2"/><path d="M180 120 Q160 220 150 300" stroke="#9BCB8A" stroke-width="18" fill="none" opacity=".5"/><text x="340" y="24" font-size="12" text-anchor="end" fill="#1F2A33">北 ↑</text>`}
+    else base=`<rect width="360" height="420" fill="#CFE7F5"/><path d="M180 0 H360 V200 Q300 170 250 160 Q210 150 180 120Z" fill="#E3E9EE" stroke="#7D8794"/><path d="M0 220 Q60 200 110 230 Q150 260 120 300 Q90 360 0 380Z" fill="#E8DDB8" stroke="#B99A5A"/><text x="300" y="30" font-size="13" fill="#1F2A33">高雄市區</text><text x="40" y="350" font-size="13" fill="#1F2A33">旗津</text><text x="200" y="230" font-size="12" fill="#2B6CB0">高雄港</text>`;
+    const nodes=T.nodes;
+    const legLine=T.legs.map((l,i)=>{const [,x1,y1]=nodes[l.f],[,x2,y2]=nodes[l.t];return `<line id="lg${i}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#7D8794" stroke-width="4" stroke-dasharray="7 6"/>`}).join('');
+    const nd=Object.entries(nodes).map(([id,[n,x,y]],i)=>`<circle cx="${x}" cy="${y}" r="8" fill="${i===0?'#2B6CB0':'#D9483B'}" stroke="#fff" stroke-width="2"/><text x="${x+(x>250?-12:12)}" y="${y+5}" font-size="13" text-anchor="${x>250?'end':'start'}" fill="#1F2A33" stroke="#fff" stroke-width="3" paint-order="stroke">${n}</text>`).join('');
+    s.innerHTML=base+legLine+nd+'<g id="v"></g><g id="mk"></g>';
+    const vg=s.querySelector('#v'),mk=s.querySelector('#mk');
+    S.append(s);
+    const legBox=el('div');const fb=el('div',{class:'fb',hidden:''});S.append(legBox,fb);
+    let li=0,total=0;
+    const put=(k,x,y)=>{vg.innerHTML=`<g transform="translate(${x-26} ${y-20}) scale(.44)"><rect x="-6" y="-6" width="132" height="82" rx="14" fill="#fff" opacity=".9"/>${V[k][2]}</g>`};
+    const mv=(k,l,frac,ms)=>new Promise(r=>{const [,x1,y1]=nodes[l.f],[,x2,y2]=nodes[l.t];if(REDUCE){put(k,x1+(x2-x1)*frac,y1+(y2-y1)*frac);return r()}const t0=performance.now();(function f(n){const q=Math.min(1,(n-t0)/ms)*frac;put(k,x1+(x2-x1)*q,y1+(y2-y1)*q);if(q<frac)requestAnimationFrame(f);else r()})(t0)});
+    function doLeg(){const l=T.legs[li];legBox.innerHTML='';fb.hidden=true;
+      s.querySelector('#lg'+li).setAttribute('stroke','#F2B705');
+      legBox.append(el('div',{class:'q',html:'第 '+(li+1)+' 段：從「'+nodes[l.f][0]+'」到「'+nodes[l.t][0]+'」，要搭什麼？'}));
+      const wrap=el('div',{class:'opts imgs'});wrap.style.gridTemplateColumns='repeat('+(innerWidth<520?2:4)+',minmax(0,1fr))';legBox.append(wrap);
+      const Tq=tiered(fb,{hints:[l.hint,'再看一次任務目標：'+T.goal+'。'],explain:V[l.a][0]+'。'});let busy=false;const bs={};
+      shuffle([l.a,...Object.keys(l.d)]).forEach(k=>{const b=el('button',{html:vLab(k)});bs[k]=b;wrap.append(b);
+        b.onclick=async()=>{if(busy||b.disabled)return;busy=true;mk.innerHTML='';
+          if(k===l.a){b.classList.add('ok');await mv(k,l,1,1200);Tq.good();s.querySelector('#lg'+li).setAttribute('stroke','#2F9E6B');s.querySelector('#lg'+li).removeAttribute('stroke-dasharray');total+=ptsFor(10,Tq.wrong);next()}
+          else{await mv(k,l,.45,700);const [,x1,y1]=nodes[l.f],[,x2,y2]=nodes[l.t];mk.innerHTML=`<text x="${x1+(x2-x1)*.45}" y="${y1+(y2-y1)*.45-18}" font-size="26" text-anchor="middle" fill="#D9483B">✖</text>`;b.classList.add('bad');b.disabled=true;
+            if(Tq.bad(l.d[k])){Tq.reveal(V[l.a][0]);bs[l.a].classList.add('ok');await sleep(400);mk.innerHTML='';await mv(l.a,l,1,900);s.querySelector('#lg'+li).setAttribute('stroke','#2F9E6B');next()}else{vg.innerHTML='';busy=false}}}});
+      function next(){Object.values(bs).forEach(b=>b.disabled=true);li++;const nx=el('button',{},li<T.legs.length?'下一段 →':'抵達！下一趟 →');legBox.append(nx);nx.onclick=()=>{if(li<T.legs.length){mk.innerHTML='';doLeg()}else res(total)}}
+    }
+    doLeg();
+  });
+}
+function speedOrder(ctx,S){
+  return new Promise(res=>{
+    const ks=['plane','hsr','train','tricycle'];
+    tagLine(S,'速度大賽　從「最快」到「最慢」依序點出來');
+    const track=el('div',{class:'podium'});const tray=el('div',{class:'tray'});const fb=el('div',{class:'fb',hidden:''});
+    S.append(track,tray,fb);let pos=0,mis=0;
+    shuffle(ks).forEach(k=>{const b=el('button',{class:'vbtn',html:vLab(k)});tray.append(b);
+      b.onclick=()=>{if(k===ks[pos]){sfx(true);b.remove();track.append(el('div',{class:'pod',html:'<b>'+(pos+1)+'</b>'+vSvg(k)}));pos++;fb.hidden=true;
+          if(pos===ks.length){fb.hidden=false;fb.className='fb ok';fb.textContent='飛機最快、票價也最高；高鐵比臺鐵快；三輪車最慢，適合慢慢看風景。';waitBtn(S,'下一步 →').then(()=>res(Math.max(0,10-3*mis)))}}
+        else{mis++;sfx(false);shake(b);fb.hidden=false;fb.className='fb bad';fb.textContent=pos===0?'💡 陸、海、空交通工具中，誰的速度最快？':'💡 還剩下的交通工具中，哪一個最快？'}}});
+  });
+}
+const RAILQ=[
+ {q:'民國 45 年，臺灣鐵路局從哪一個國家引進「飛快車」？',opts:['日本','美國','法國'],hints:['是臺灣附近的國家。','課本說臺鐵「從＿＿引進飛快車」。'],explain:'民國 45 年，臺灣鐵路局從日本引進飛快車，時速破百。'},
+ {q:'臺鐵曾在列車上首創了什麼服務？',opts:['隨車的車勤服務員','機器人送餐','免費搭車'],hints:['是「人」在火車上提供服務。','車「勤」服務員。'],explain:'臺鐵首創隨車車勤服務員制度。'},
+ {q:'高鐵通車後速度更快，打造了什麼？',opts:['一日生活圈','一年生活圈','海底生活圈'],hints:['臺北、高雄可以當天來回。','一「日」。'],explain:'高鐵通車後速度更快，打造一日生活圈。'},
+ {q:'火車站和高鐵站蓋好以後，對附近有什麼影響？',opts:['帶動周邊商圈發展','附近的商店都關門','附近變得很安靜'],hints:['很多人進出車站，會需要買東西、吃飯。','商「圈」。'],explain:'火車站及高鐵站帶動周邊商圈發展。'},
+ {q:'下面哪一個「不是」鐵路演變的原因？',opts:['大家都不想出門了','臺灣產業與生活型態改變','不同的交通設施及替代路線出現','創新求變'],hints:['課本列了三個原因。','鐵路一直在「進步」，不是因為沒人坐。'],explain:'原因是產業與生活型態改變、替代路線出現、創新求變。'},
+ {q:'鐵路演變的結果，下面哪一個正確？',opts:['出現不同的車種，觀光鐵路興起','火車全部停駛','只剩下蒸汽火車'],hints:['現在除了通勤，還有專門載人去玩的火車。','觀光鐵路「興起」。'],explain:'鐵路演變後，出現不同車種，觀光鐵路興起。'},
+ {q:'臺灣的交通網路中，「國道」指的是什麼？',opts:['高速公路','地方道路','環島鐵路'],hints:['公路分成地方道路和國道。','國道（＿＿公路）。'],explain:'公路分成地方道路和國道（高速公路）。'},
+ {q:'下面哪一個「不是」建設完整交通網路的原因？',opts:['讓大家花更多時間通勤','運輸需求增加，連接不同城鄉','快速進行長途運輸','節能減碳'],hints:['建設交通網路是為了更方便。','課本說要「減少」通勤時間。'],explain:'原因：連接城鄉、快速長途運輸、減少通勤時間、節能減碳。'}
+];
+function railTrain(ctx,S){
+  return new Promise(res=>{
+    const seq=['steam','diesel','electric','hsr'];
+    tagLine(S,'鐵道時光列車　依照鐵路演變的順序，從最早的開始點，接成一列時光列車！');
+    const track=el('div',{class:'podium',style:'overflow:hidden'});const tray=el('div',{class:'tray'});const fb=el('div',{class:'fb',hidden:''});
+    S.append(track,tray,fb);let pos=0,mis=0;
+    shuffle(seq).forEach(k=>{const b=el('button',{class:'vbtn',html:vLab(k)});tray.append(b);
+      b.onclick=async()=>{if(k===seq[pos]){sfx(true);b.remove();track.append(el('div',{class:'pod',html:'<b>'+(pos+1)+'</b>'+vSvg(k)}));pos++;fb.hidden=true;
+          if(pos===seq.length){fb.hidden=false;fb.className='fb ok';fb.textContent='蒸汽火車 → 柴油火車 → 鐵路電氣化 → 高速鐵路，時光列車出發！';
+            if(!REDUCE){track.style.transition='transform 1.2s ease-in';track.style.transform='translateX(110%)';await sleep(1250);track.style.transition='none';track.style.transform='translateX(-110%)';await sleep(30);track.style.transition='transform .8s ease-out';track.style.transform='none'}
+            waitBtn(S,'下一步 →').then(()=>res(Math.max(0,10-3*mis)))}}
+        else{mis++;sfx(false);shake(b);fb.hidden=false;fb.className='fb bad';fb.textContent=pos===0?'💡 最早的火車要燒煤、冒白煙。':'💡 想想看，下一代火車改用什麼動力？柴油 → 電 → 更快的高鐵。'}}});
+  });
+}
+async function w3(ctx){
+  const S=ctx.stage;const trips=[TRIPS[0],...shuffle(TRIPS.slice(1)).slice(0,3)];
+  ctx.N=trips.reduce((a,t)=>a+t.legs.length,0)+5;
+  for(const t of trips){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'交通旅行家　看任務目標，一段一段選交通工具');
+    const g=await tripMap(ctx,S,t);ctx.max+=t.legs.length*10;ctx.add(g);ctx.step+=t.legs.length-1;ctx.tick(0,0)}
+  if(!ctx.alive())return;S.innerHTML='';ctx.tick(await speedOrder(ctx,S),10);
+  if(!ctx.alive())return;S.innerHTML='';ctx.tick(await railTrain(ctx,S),10);
+  if(!ctx.alive())return;S.innerHTML='';const qr=el('div');S.append(qr);
+  for(const t of shuffle(RAILQ).slice(0,2)){if(!ctx.alive())return;ctx.tick(await pick(qr,{tag:'鐵道與交通網路',q:t.q,opts:t.opts,hints:t.hints,explain:t.explain}),10)}
+  if(!ctx.alive())return;S.innerHTML='';const qa=el('div');S.append(qa);
+  ctx.tick(await pick(qa,{tag:'想一想',q:'為什麼現在臺灣都市之間的飛機班次越來越少？',opts:['客運、火車、高鐵等陸上交通工具越來越發達','飛機變得比較慢','大家都不喜歡出門'],hints:['大家改搭什麼了？','高鐵通車以後，臺北、高雄可以一日來回。'],explain:'因為客運、火車、高鐵等陸上交通日益發達，搭飛機的需求減少。'}),10);
+}
+
+/* ================= 世界 4：港口調度員 ================= */
+const PORT={title:'港口調度　船開進來了！在它開走前，送到對的碼頭',gates:[{id:'tour',label:'觀光碼頭',html:'觀光碼頭<small>國內外旅客觀光</small>'},{id:'trade',label:'貨櫃碼頭',html:'貨櫃碼頭<small>運輸商品、國內外交易</small>'},{id:'isle',label:'離島碼頭',html:'離島碼頭<small>往返離島與本島</small>'},{id:'navy',label:'軍港',html:'軍港<small>保衛國家</small>'},{id:'cross',label:'渡輪碼頭',html:'渡輪碼頭<small>短距離往返兩岸</small>'}],
+ items:[['cruise','tour'],['cargo','trade'],['boat','isle'],['warship','navy'],['ferry','cross']]};
+const HUB={title:'轉運站調度　車子和飛機來了！送到它最主要的工作',gates:[{id:'rural',label:'偏鄉服務',html:'偏鄉服務<small>深入偏鄉</small>'},{id:'access',label:'無障礙',html:'無障礙<small>行動不便的民眾</small>'},{id:'west',label:'西部長途',html:'西部長途<small>一日來回北高</small>'},{id:'city',label:'都市通勤',html:'都市通勤<small>不怕塞車</small>'},{id:'sos',label:'緊急救援',html:'緊急救援<small>離島危難</small>'},{id:'intl',label:'跨國航班',html:'跨國航班<small>飛到國外</small>'}],
+ items:[['yellowbus','rural'],['lowbus','access'],['hsr','west'],['mrt','city'],['heli','sos'],['plane','intl']]};
+function dispatch(ctx,S,cfg){
+  return new Promise(res=>{
+    const TL=40;tagLine(S,cfg.title+'（'+TL+' 秒，答對一個 3 分）');
+    const hud=el('div',{class:'ctrl'});const tEl=el('span',{class:'score'},'⏱ '+TL);const cEl=el('span',{class:'tag'},'送對 0');hud.append(tEl,cEl);S.append(hud);
+    const L=lane(ctx,S,{speed:62,h:110});
+    const gw=el('div',{class:'gates small-g',style:`grid-template-columns:repeat(${innerWidth<520?2:3},minmax(0,1fr))`});const gb={};
+    cfg.gates.forEach(g=>{const b=el('button',{class:'gate',html:g.html});b.dataset.id=g.id;b.onclick=()=>choose(g.id);gb[g.id]=b;gw.append(b)});
+    const fb=el('div',{class:'fb',hidden:''});S.append(gw,fb);
+    let ok=0,cur=null,over=false,lock=false,order=[];
+    const nextItem=()=>{if(!order.length)order=shuffle(cfg.items);cur=order.pop();const n=el('div',{class:'ridebox',html:vSvg(cur[0])+'<b>'+V[cur[0]][0]+'</b>'});dragTo(n,choose);L.set(n);Object.values(gb).forEach(b=>b.classList.remove('bad','ok'))};
+    const startBtn=el('button',{class:'big'},'開始調度！');S.insertBefore(startBtn,gw);
+    startBtn.onclick=()=>{startBtn.remove();nextItem();const t0=Date.now();
+      const tk=setInterval(()=>{if(!ctx.alive()){clearInterval(tk);return}const left=Math.max(0,TL-(Date.now()-t0)/1000);tEl.textContent='⏱ '+Math.ceil(left);if(left<=0){clearInterval(tk);over=true;L.stop();L.clear();fb.hidden=false;fb.className='fb ok';fb.textContent='時間到！一共送對 '+ok+' 個。';waitBtn(S,'下一步 →').then(()=>res(Math.min(ok,10)*3))}},200)};
+    async function choose(id){if(over||lock||!cur)return;const gname=cfg.gates.find(g=>g.id===cur[1]).label;
+      if(id===cur[1]){ok++;sfx(true);gb[id].classList.add('ok');cEl.textContent='送對 '+ok;fb.hidden=false;fb.className='fb ok';fb.textContent='✔ '+V[cur[0]][0]+' → '+gname;lock=true;L.item&&L.item.classList.add('gone');await sleep(300);lock=false;if(!over)nextItem()}
+      else{sfx(false);gb[id].classList.add('bad');shake(gb[id]);fb.hidden=false;fb.className='fb bad';fb.textContent='✘ '+V[cur[0]][0]+'不是去那裡喔！它應該去「'+gname+'」。';lock=true;await sleep(900);lock=false;if(!over)nextItem()}}
+  });
+}
+async function w4(ctx){
+  const S=ctx.stage;ctx.N=2;
+  for(const cfg of [PORT,HUB]){if(!ctx.alive())return;S.innerHTML='';ctx.tick(await dispatch(ctx,S,cfg),30)}
+}
+
+/* ================= 世界 5：交通廣播站 ================= */
+/* 每句：片段陣列，* 開頭的是錯誤片段；fix 正確說法、d 其他選項 */
+const NEWS=[
+ {p:['民國 45 年，','臺灣鐵路局從','*美國','引進飛快車。'],fix:'日本',d:['韓國','法國'],ex:'民國 45 年，臺灣鐵路局從日本引進飛快車。'},
+ {p:['臺鐵','首創隨車','*機器人','服務制度。'],fix:'車勤服務員',d:['廚師','警察'],ex:'臺鐵首創隨車車勤服務員制度。'},
+ {p:['高鐵通車後','速度更快，','打造','*一週生活圈','。'],fix:'一日生活圈',d:['一年生活圈','海底生活圈'],ex:'高鐵通車後速度更快，打造一日生活圈。'},
+ {p:['火車站及高鐵站','*讓周邊商圈消失','，','改善了生活。'],fix:'帶動周邊商圈發展',d:['讓附近不能開店','讓火車變慢'],ex:'火車站及高鐵站帶動周邊商圈發展。'},
+ {p:['鐵路演變後，','出現不同的車種，','*觀光鐵路漸漸消失','。'],fix:'觀光鐵路興起',d:['火車全部停駛','只剩蒸汽火車'],ex:'鐵路演變的結果：出現不同車種，觀光鐵路興起。'},
+ {p:['公路的特色是','*機動性低','，','服務區域廣。'],fix:'機動性高',d:['只在都市','只能載貨'],ex:'公路機動性高、服務區域廣。'},
+ {p:['捷運','*不符合環保','，','還能促進所在地的產業發展。'],fix:'符合環保',d:['很危險','不能轉乘'],ex:'捷運符合環保，可促進所在地的產業發展。'},
+ {p:['建設完整的交通網路，','可以','*增加通勤時間','，','也能節能減碳。'],fix:'減少通勤時間',d:['增加塞車','讓城鄉分開'],ex:'建設完整交通網路可以減少通勤時間、節能減碳。'},
+ {p:['空運的特色是','速度最快、','*票價最便宜','。'],fix:'票價最高',d:['最慢','不能載人'],ex:'空運速度最快、票價最高。'},
+ {p:['臺灣早期河運發達，','例如新北市的','*日月潭','。'],fix:'新莊',d:['旗津','蘭嶼'],ex:'臺灣早期河運發達，例如新北市新莊。'},
+ {p:['高鐵','主要用來','*運送貨物','，是臺灣西部重要的交通設施。'],fix:'載運旅客',d:['運送軍艦','捕魚'],ex:'高鐵主要載運旅客，提供快速的運輸服務。'},
+ {p:['在陸、海、空交通工具中，','以','*火車','的速度最快。'],fix:'飛機',d:['渡輪','公車'],ex:'在陸、海、空交通工具中，以飛機的速度最快。'},
+ {p:['捷運主要興建在','*人口很少的鄉村','，','可以快速往來各地。'],fix:'交通容易壅塞的都市',d:['高山上','離島'],ex:'捷運主要興建於交通較易壅塞的都市地區。'},
+ {p:['鐵路的演變是：','*柴油火車→蒸汽火車','→鐵路電氣化','→高速鐵路。'],fix:'蒸汽火車→柴油火車',d:['高速鐵路→蒸汽火車','電報→手機'],ex:'演變過程：蒸汽火車→柴油火車→鐵路電氣化→高速鐵路。'},
+ {p:['小黃公車','深入','*大都市的市中心','，提供公共運輸服務。'],fix:'偏鄉',d:['海底','機場'],ex:'小黃公車深入偏鄉，提供公共運輸服務。'},
+ {p:['市區提供','*雙層觀光巴士','，','以利行動不便的民眾搭乘。'],fix:'低底盤公車',d:['貨輪','直升機'],ex:'市區提供低底盤公車，以利行動不便的民眾搭乘。'},
+ {p:['因為客運、火車、高鐵日益發達，','都市之間的飛機班次','*越來越多','。'],fix:'日漸減少',d:['全部免費','只剩貨機'],ex:'陸上交通發達，都市之間的飛機班次日漸減少及沒落。'},
+ {p:['臺灣早期','河運','*不發達','，有些河道淤積後轉型推動觀光。'],fix:'發達',d:['不存在','只能載貨'],ex:'臺灣早期河運發達，但有些河道淤積，轉型推動觀光。'},
+ {p:['郵輪','提供觀光服務，','貨輪','*保衛國家','。'],fix:'運輸商品進行國內外交易',d:['載旅客往返離島','遊覽湖岸風光'],ex:'貨輪運輸商品進行國內外交易；保衛國家的是軍艦。'},
+ {p:['離島居民遇到緊急危難時，','可以搭乘','*郵輪','外出就醫。'],fix:'直升機',d:['高鐵','三輪車'],ex:'緊急危難或海上交通中斷時，離島居民可以搭直升機。'},
+ {p:['國人搭飛機','要記得帶','*悠遊卡','，方便辦理登機手續。'],fix:'身分證明文件',d:['雨傘','電報'],ex:'搭機要攜帶身分證明文件，國人出示身分證。'},
+ {p:['過去人們打','電報','傳遞訊息，','*便宜又方便','。'],fix:'貴且不便',d:['不用錢','比手機快'],ex:'過去打電報，貴且不便。'},
+ {p:['看到可疑訊息，','可以撥打','*119','反詐騙專線詢問。'],fix:'165',d:['113','104'],ex:'遇到可疑訊息，可撥打 165 反詐騙專線詢問。'},
+ {p:['假消息的常見特徵：','標題','*平淡無聊','，來源是無名或陌生的機關團體。'],fix:'聳動驚人',d:['字很小','有很多圖片'],ex:'假訊息常見特徵：標題聳動驚人、來源無名或陌生。'},
+ {p:['使用完公共電腦後','*不用登出','，','避免資料被盜用。'],fix:'要記得登出',d:['要把電腦關掉帶走','要把密碼告訴別人'],ex:'使用完公共電腦後就登出，避免資料被盜用。'},
+ {p:['地震警報、防災演練','是由','*網友','發布的警報訊息。'],fix:'政府',d:['電視節目主持人','鄰居'],ex:'警報訊息由政府發布，例如地震警報、防災演練。'},
+ {p:['網路很方便，','*只要用手機聊天就好','，','不用和親友面對面交流。'],fix:'也要和親友面對面交流',d:['不能和親友聊天','只能寫信'],ex:'除了透過訊息傳播與人互動，也要與親友面對面交流。'},
+ {p:['智能手錶','可以','*傳送假消息','，隨時監控身體狀況。'],fix:'即時記錄健康狀況',d:['載運旅客','打電報'],ex:'智能手錶可以隨時監控身體狀況，即時記錄健康狀況。'}
+];
+const isInfo=n=>/電報|反詐騙|假消息|公共電腦|地震警報|面對面|智能手錶/.test(n.p.join(''));
+function marquee(ctx,S,n){
+  return new Promise(res=>{
+    const board=el('div',{class:'board'});const track=el('div',{class:'track'});board.append(track);
+    const hint=el('div',{class:'small'},'跑馬燈裡有一個地方說錯了！看準了點它（點錯會被扣分）。');
+    const fb=el('div',{class:'fb',hidden:''});const qa=el('div');S.append(board,hint,fb,qa);
+    let mis=0,found=false;
+    n.p.forEach(t=>{const bad=t[0]==='*';const b=el('button',{class:'seg'},bad?t.slice(1):t);track.append(b);
+      b.onclick=async()=>{if(found)return;
+        if(bad){found=true;sfx(true);b.classList.add('hit');track.classList.add('stop');fb.hidden=false;fb.className='fb ok';fb.textContent='抓到了！這裡要換成什麼？';
+          const g=await pick(qa,{q:'「'+t.slice(1)+'」應該換成？',opts:[n.fix,...n.d],hints:['回想課本的說法。',n.ex.slice(0,Math.max(6,n.ex.indexOf(n.fix)))+'……'],explain:n.ex,pts:6});
+          b.textContent=n.fix;b.classList.remove('hit');b.classList.add('fixed');res(Math.max(0,4-mis)+g)}
+        else{mis++;sfx(false);shake(b);fb.hidden=false;fb.className='fb bad';fb.textContent='「'+t+'」沒有錯喔，再找找看！'}}});
+    let x=0,last=performance.now();
+    (function loop(now){if(!ctx.alive()||!board.isConnected)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+      if(!found&&!REDUCE){x-=42*dt;if(x<-track.scrollWidth)x=board.clientWidth}else if(found){x=Math.min(0,Math.max(x,board.clientWidth-track.scrollWidth-8));if(x<0&&track.scrollWidth<board.clientWidth)x=4}
+      if(REDUCE&&!found)x=4;track.style.transform=`translateX(${x}px)`;requestAnimationFrame(loop)})(last);
+    x=board.clientWidth*.35;
+  });
+}
+async function w5(ctx){
+  const S=ctx.stage;ctx.N=7;
+  const tr=shuffle(NEWS.filter(n=>!isInfo(n))).slice(0,5),info=shuffle(NEWS.filter(isInfo)).slice(0,2);
+  const list=shuffle(tr.concat(info));
+  for(let i=0;i<list.length;i++){if(!ctx.alive())return;S.innerHTML='';tagLine(S,'交通廣播站 '+(i+1)+'/'+list.length+'　'+(isInfo(list[i])?'📱 訊息快報':'🚉 交通快報'));
+    const g=await marquee(ctx,S,list[i]);ctx.tick(g,10);if(!ctx.alive())return;await waitBtn(S,i+1<list.length?'下一則 →':'看成績 →')}
+}
+
+/* ================= 魔王關：大塞車怪 ================= */
+function bossQ(){
+  const g=rnd(['mis','kind','port','news','news','trip','rail']);
+  if(g==='rail'){const t=rnd(RAILQ);return{q:t.q,opts:[t.opts[0],...t.opts.slice(1)],why:t.explain}}
+  const mk=(q,ans,ds,why)=>({q,opts:[ans,...shuffle(ds).slice(0,3)],why});
+  if(g==='mis'){const m=rnd(MISSION);return mk(m.q,V[m.a][0],Object.keys(m.d).map(k=>V[k][0]),m.ex)}
+  if(g==='kind'){const k=rnd(Object.keys(V));return mk(V[k][0]+'是哪一類交通工具？',KIND[V[k][1]]+'交通',Object.values(KIND).filter(x=>x!==KIND[V[k][1]]).map(x=>x+'交通'),V[k][0]+'是'+KIND[V[k][1]]+'交通工具。')}
+  if(g==='port'){const cfg=rnd([PORT,HUB]);const it=rnd(cfg.items);const gl=g2=>cfg.gates.find(z=>z.id===g2).label;return mk(V[it[0]][0]+'最主要的工作是？',gl(it[1]),cfg.gates.filter(z=>z.id!==it[1]).map(z=>z.label),V[it[0]][0]+'：'+gl(it[1])+'。')}
+  if(g==='trip'){const t=rnd(TRIPS);const l=rnd(t.legs);return mk(t.title.replace('→','到')+'（'+t.goal+'），從「'+t.nodes[l.f][0]+'」到「'+t.nodes[l.t][0]+'」要搭？',V[l.a][0],Object.keys(l.d).map(k=>V[k][0]),l.hint)}
+  const n=rnd(NEWS);const wrongs=n.p.filter(t=>t[0]==='*').map(t=>t.slice(1));
+  const right=n.p.map(t=>t[0]==='*'?n.fix:t).join('');const wrong=n.p.map(t=>t[0]==='*'?t.slice(1):t).join('');
+  return{q:'哪一句是正確的？',opts:[right,wrong],why:n.ex};
+}
+async function w6(ctx){
+  const S=ctx.stage;ctx.N=10;const HP=10,TL=60;let hp=HP,left=TL;
+  const hpb=el('i',{style:'width:100%'});const tEl=el('span',{class:'score'},'⏱ '+TL);
+  const s=svgEl('0 0 360 170','','width:100%;max-width:440px;margin:auto;display:block');
+  const colors=['#D9483B','#2B6CB0','#F2B705','#2F9E6B','#8A7FB0','#E8762C','#1D8FD9','#9C3A2E','#3FA37A','#7D8794'];
+  const draw=(state)=>{let h=`<rect width="360" height="170" rx="14" fill="#E6F2E0"/><rect y="96" width="360" height="56" fill="#3A4450"/><path d="M0 124 h360" stroke="#F2B705" stroke-width="3" stroke-dasharray="14 10"/>`;
+    const squeeze=1-Math.max(0,left)/TL;
+    for(let i=0;i<hp;i++){const gap=34-squeeze*10;const x=320-i*gap;h+=`<g transform="translate(${x-30} 100) scale(.5)">${V.car[2].replace('#D9483B',colors[i%colors.length])}</g>`}
+    const mx=state==='win'?-80:10+squeeze*20;
+    h+=`<g transform="translate(${mx} ${state==='lose'?38:20})"><circle cx="34" cy="40" r="30" fill="#8A7FB0"/><circle cx="18" cy="52" r="20" fill="#8A7FB0"/><circle cx="52" cy="54" r="20" fill="#8A7FB0"/><circle cx="24" cy="36" r="6" fill="#fff"/><circle cx="44" cy="36" r="6" fill="#fff"/><circle cx="24" cy="37" r="3" fill="#1F2A33"/><circle cx="44" cy="37" r="3" fill="#1F2A33"/><path d="${state==='hit'?'M24 54 q10 -8 20 0':'M24 50 q10 10 20 0'}" stroke="#1F2A33" stroke-width="3" fill="none"/></g>`;
+    if(state==='lose')h+=`<text x="200" y="60" font-size="26" text-anchor="middle" fill="#D9483B">叭叭叭！塞爆了！</text>`;
+    if(state==='win')h+=`<g transform="translate(220 92) scale(.6)">${V.bus[2]}</g><text x="180" y="50" font-size="22" text-anchor="middle" fill="#2F9E6B">道路暢通！</text>`;
+    s.innerHTML=h};draw();
+  const warn=el('div',{class:'small',style:'text-align:center;min-height:1.6em;color:var(--bad);font-family:var(--display)'});
+  S.append(el('div',{class:'ctrl'},el('span',{class:'tag'},'還塞著的車'),tEl),el('div',{class:'hp'},hpb),s,warn,el('div',{class:'small'},'60 秒內答對 10 題，把車一台一台清掉！答錯會扣 5 秒。'));
+  await waitBtn(S,'疏通道路！');
+  const qa=el('div');S.append(qa);const t0=Date.now();let over=false,pen=0,mood='';
+  const tick=setInterval(()=>{left=Math.max(0,TL-(Date.now()-t0)/1000-pen);tEl.textContent='⏱ '+Math.ceil(left);tEl.style.color=left<=10?'var(--bad)':'';warn.textContent=left<=10?'⚠ 車越來越擠了！快一點！':'';draw(mood);if(left<=0||!ctx.alive()){over=true;clearInterval(tick)}},200);
+  ctx.max=HP*10;
+  while(hp>0&&!over&&ctx.alive()){
+    const Q=bossQ();qa.innerHTML='';const box=el('div',{class:'qbox'},el('div',{class:'q',html:Q.q}));const wrap=el('div',{class:'opts'});const fb=el('div',{class:'fb',hidden:''});box.append(wrap,fb);qa.append(box);
+    const ok=await new Promise(r=>{const bs=[];
+      shuffle(Q.opts.map((_,i)=>i)).forEach(i=>{const b=el('button',{},Q.opts[i]);bs[i]=b;wrap.append(b);
+        b.onclick=()=>{bs.forEach(x=>x.disabled=true);if(i===0){b.classList.add('ok');r(true)}else{b.classList.add('bad');bs[0].classList.add('ok');bs[0].disabled=false;fb.hidden=false;fb.className='fb bad';fb.textContent='正確答案是「'+Q.opts[0]+'」。'+Q.why+'（扣 5 秒）';r(false)}}});
+      const iv=setInterval(()=>{if(over||!ctx.alive()){clearInterval(iv);r(null)}},150)});
+    if(ok===null)break;
+    if(ok){hp--;ctx.add(10);ctx.step++;sfx(true);hpb.style.width=(hp/HP*100)+'%';mood='hit';draw(mood);await sleep(350);mood=''}
+    else{sfx(false);pen+=5;shake(s);await sleep(1300)}
+  }
+  clearInterval(tick);if(!ctx.alive())return;
+  qa.innerHTML='';
+  if(hp<=0){draw('win');sfx(true);qa.append(el('div',{class:'fb ok'},'大塞車怪被趕跑了，道路暢通！還剩 '+Math.ceil(left)+' 秒。'))}
+  else{draw('lose');sfx(false);warn.textContent='';qa.append(el('div',{class:'fb bad'},'叭叭叭！整條路塞爆了……還有 '+hp+' 台車沒清掉。再挑戰一次！'))}
+  await waitBtn(S,'看成績 →');
+}
+
+/* ---------- 紀錄 ---------- */
+const KEY='traffic_v1',NW=6;
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:Array(NW).fill(0),stars:Array(NW).fill(0),time:Array(NW).fill(0),plays:0};const p=DB.players[n];['best','stars','time'].forEach(k=>{while(p[k].length<NW)p[k].push(0)});return p}
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase（和其他遊戲同一個專案，資料存在 traffic_scores 表） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+const WKEY=['w1','w2','w3','w4','w5','w6'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/traffic_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4,w5,w6)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+async function pushScore(i,secs){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_traffic',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_traffic',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/traffic_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 首頁 ---------- */
+function header(){const p=DB.current;
+  return el('div',{class:'top'},el('div',{class:'logo'},el('span',{html:'<svg width="52" height="30" viewBox="0 0 120 70">'+LOGO+'</svg>'}),el('h1',{},'環島交通王')),p?el('span',{class:'chip'},'玩家：'+p):null)}
+function shakeInput(i){i.focus();shake(i)}
+function home(){
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'四上社會 第一單元：認識家鄉的交通'),
+      el('p',{},'五個世界加一個魔王關，答對拿分數和星星，每關都會計時。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v)return shakeInput(input);DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      names.length&&!bzN?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null),
+    el('div',{class:'hero-ico',html:'<svg viewBox="0 0 120 70" style="width:100%;height:auto">'+V.hsr[2]+'</svg>'})));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(w.boss?' boss':'')+(unlocked?'':' locked'),onclick:()=>{if(!pl)return shakeInput(input);if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="'+(w.vb||'0 0 64 64')+'">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b)});
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.boss?'魔王關':w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}app.innerHTML='';app.append(header())}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[];const b=p.best;return tab===0?{n,v:b.reduce((a,c)=>a+c,0),t:tm.reduce((a,c,i)=>a+(b[i]>0?(c||0):0),0)}:{n,v:b[tab-1]||0,t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{class:'lb'},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'環島交通王 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:(w.boss?'魔王關':'世界 '+(i+1)+' '+w.name)+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / '+(NW*3)),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');const stage=el('div',{class:'stage'});const t0=Date.now();
+  const token={};CUR=token;
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},(w.boss?'':'世界 '+(i+1)+'　')+w.name),el('div',{class:'stats'},tm,sc)),el('div',{class:'bar'},bar),stage);
+  const ctx={stage,score:0,max:0,step:0,N:1,alive:()=>CUR===token,
+    add(n){this.score+=n;sc.textContent=this.score+' 分'},
+    tick(got,pts){this.max+=pts;this.add(got);bar.style.width=(Math.min(1,++this.step/this.N)*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(()=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,ctx.max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();score=Math.max(0,score);let st=starsFor(score,max||1);if(WORLDS[i].boss&&score<max)st=Math.min(st,2);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=(i===NW-1&&score<max)?'道路塞爆了……再挑戰一次，把大塞車怪趕走！':st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?(i<NW-1?'過關了！下一關已經打開。':'過關了！道路暢通了！'):'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--brick)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,up,el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<NW-1&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一關'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+function waitBtn(parent,label){return new Promise(r=>{const b=el('button',{class:'big'},label);b.onclick=()=>{b.remove();r()};parent.append(b);b.focus({preventScroll:true})})}
+const ptsFor=(pts,wrong)=>[pts,Math.round(pts*.6),Math.round(pts*.3)][wrong]||0;
+const lab=o=>o.label||String(o.html||o).replace(/<[^>]+>/g,'');
+const tagLine=(S,t)=>S.append(el('div',{class:'tag'},t));
+
+/* 答錯不給答案：第 1、2 次錯給提示可重答（得分遞減），第 3 次才揭曉 */
+function tiered(fb,{hints=[],explain=''}){
+  let wrong=0;
+  return{get wrong(){return wrong},
+    bad(why){wrong++;sfx(false);fb.hidden=false;fb.className='fb bad';if(wrong>=3)return true;
+      fb.innerHTML=(why?why+'<br>':'')+'💡 提示：'+(hints[Math.min(wrong-1,hints.length-1)]||'再想一想！')+' 再試一次！';return false},
+    good(){sfx(true);fb.hidden=false;fb.className='fb ok';fb.innerHTML='答對了！'+(explain?' '+explain:'')},
+    reveal(ans){fb.className='fb bad';fb.innerHTML='答案是「'+ans+'」。'+(explain?' '+explain:'')}}
+}
+function pick(parent,{q,tag,top,opts,ans=0,hints,explain,pts=10,img=false}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(tag)box.append(el('div',{class:'tag'},tag));if(top)box.append(el('div',{class:'focus',html:top}));if(q)box.append(el('div',{class:'q',html:q}));
+    const wrap=el('div',{class:'opts'+(img?' imgs':'')});if(img)wrap.style.gridTemplateColumns='repeat('+(opts.length===4&&innerWidth<520?2:opts.length)+',minmax(0,1fr))';
+    const fb=el('div',{class:'fb',hidden:''});
+    const T=tiered(fb,{hints,explain});const btns=[];let done=false;
+    const end=got=>{done=true;btns.forEach(b=>b.disabled=true);btns[ans].classList.add('ok');btns[ans].disabled=false;
+      const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})};
+    shuffle(opts.map((_,i)=>i)).forEach(i=>{const o=opts[i];
+      const b=el('button',{html:o.html||o});b.onclick=()=>{if(done||b.disabled)return;
+        if(i===ans){b.classList.add('ok');T.good();end(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');b.disabled=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));end(0)}}};
+      btns[i]=b;wrap.append(b)});
+    box.append(wrap,fb);parent.append(box);
+  });
+}
+/* 飄來飄去的泡泡選項 */
+function chase(parent,ctx,{q,top,opts,ans=0,hints,explain,pts=10}){
+  return new Promise(res=>{
+    const box=el('div',{class:'qbox'});if(top)box.append(el('div',{class:'focus',html:top}));box.append(el('div',{class:'q',html:q}));
+    const sky=el('div',{class:'sky'});const fb=el('div',{class:'fb',hidden:''});box.append(sky,fb);parent.append(box);
+    const T=tiered(fb,{hints,explain});let done=false;const S=96,H=300;const W=()=>Math.max(220,sky.clientWidth);
+    const ms=shuffle(opts.map((_,i)=>i)).map((i,k)=>{const o=opts[i];const b=el('button',{class:'mover',html:o.html});sky.append(b);
+      const m={b,i,x:(k%2)*(W()-S),y:(k>>1)*(H-S),vx:(Math.random()<.5?-1:1)*(30+Math.random()*25),vy:(Math.random()<.5?-1:1)*(25+Math.random()*20),dead:false};
+      b.onclick=()=>{if(done||m.dead)return;
+        if(i===ans){b.classList.add('ok');T.good();fin(ptsFor(pts,T.wrong))}
+        else{b.classList.add('bad');m.dead=true;if(T.bad(o.why)){T.reveal(lab(opts[ans]));ms.find(z=>z.i===ans).b.classList.add('ok');fin(0)}}};
+      return m});
+    let last=performance.now();const place=m=>{m.b.style.transform=`translate(${m.x}px,${m.y}px)`};ms.forEach(place);
+    function loop(now){if(done||!ctx.alive())return;const dt=Math.min(.05,(now-last)/1000);last=now;const w=W();
+      ms.forEach(m=>{if(m.dead)return;m.x+=m.vx*dt;m.y+=m.vy*dt;if(m.x<0){m.x=0;m.vx*=-1}if(m.x>w-S){m.x=w-S;m.vx*=-1}if(m.y<0){m.y=0;m.vy*=-1}if(m.y>H-S){m.y=H-S;m.vy*=-1}});
+      for(let a=0;a<ms.length;a++)for(let c=a+1;c<ms.length;c++){const A=ms[a],B=ms[c];const dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy)||1;if(d<S){const o=(S-d)/2,nx=dx/d,ny=dy/d;if(!A.dead){A.x-=nx*o;A.y-=ny*o}if(!B.dead){B.x+=nx*o;B.y+=ny*o}if(!A.dead&&!B.dead){[A.vx,B.vx]=[B.vx,A.vx];[A.vy,B.vy]=[B.vy,A.vy]}}}
+      ms.forEach(m=>{m.x=Math.max(0,Math.min(w-S,m.x));m.y=Math.max(0,Math.min(H-S,m.y));place(m)});requestAnimationFrame(loop)}
+    if(!REDUCE)requestAnimationFrame(loop);
+    function fin(got){done=true;const nx=el('button',{},'下一步 →');nx.onclick=()=>{box.remove();res(got)};box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true})}
+  });
+}
+
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body></html>

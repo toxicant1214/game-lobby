@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
+<script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+
+<title>空氣和水大冒險</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+/* 版面：一張「天空 × 水」的冒險地圖，四個世界卡片；遊戲畫面上方實驗台、下方題目卡 */
+:root{
+  --sky:#E3F2FA; --paper:#FFFFFF; --ink:#173349; --soft:#5C7A8E;
+  --sea:#1C8DB7; --sea-l:#BFE4F3; --leaf:#2F9E5F; --sun:#F2AE2E; --coral:#E25A45;
+  --line:#CCE2EE; --air:#F3FAFE;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--sky);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--sea);color:#fff;box-shadow:0 3px 0 #0E5F7E;transition:transform .08s}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #0E5F7E}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button.ghost{background:var(--paper);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--coral);box-shadow:0 3px 0 #9E3727}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--sea)}
+.chip{font-family:var(--display);background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--paper);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:block}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.players button{font-size:15px;padding:4px 12px;box-shadow:none;background:var(--sky);color:var(--ink)}
+.players button.on{background:var(--sun);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:44px;height:44px}}
+.world{position:relative;text-align:left;background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:var(--sun);letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--coral)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead h2{font-size:24px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--sea);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);width:0;transition:width .3s}
+.stage{background:var(--paper);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{width:100%;height:auto;max-height:360px;display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.5}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--sky);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts button.sel{background:var(--sun)}
+.opts button.ok{background:var(--leaf);color:#fff;box-shadow:0 3px 0 #1E6B40}
+.opts button.bad{background:var(--coral);color:#fff;box-shadow:0 3px 0 #9E3727}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px}
+.fb.ok{background:#E3F5EA;color:#1E6B40}
+.fb.bad{background:#FCE8E4;color:#9E3727}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sent{font-family:var(--display);font-size:22px;line-height:2.1}
+.sent button{font-size:22px;padding:2px 8px;margin:2px;background:var(--sky);color:var(--ink);box-shadow:0 2px 0 var(--line);border-radius:10px}
+.sent button.ok{background:var(--leaf);color:#fff}
+.sent button.bad{background:var(--coral);color:#fff}
+.sent button.hint{background:var(--sun)}
+.meter{position:relative;height:22px;border-radius:99px;background:linear-gradient(90deg,#D7EEF8,#7CC6E6,#1C8DB7);border:2px solid var(--line);overflow:hidden;flex:1 1 200px}
+.meter i{position:absolute;top:0;bottom:0;width:6px;background:var(--ink);border-radius:3px;left:0}
+.big{font-size:22px;padding:14px 26px}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:var(--sun);letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;background:var(--sky);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--sea);color:#fff}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-family:var(--display);font-weight:400;color:var(--soft)}
+td.n{text-align:right;font-family:var(--display);font-size:19px}
+tr.me td{background:#FFF5DD}
+.card{border:3px dashed var(--sea);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--air)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--sea)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.small{font-size:14px;color:var(--soft)}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+</style>
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+const NS='http://www.w3.org/2000/svg';
+function svg(viewBox,inner){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',viewBox);s.innerHTML=inner;return s}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function tween(ms,fn){return new Promise(res=>{const t0=performance.now();const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;function f(now){let p=reduce?1:Math.min(1,(now-t0)/ms);fn(p);if(p<1)requestAnimationFrame(f);else res()}requestAnimationFrame(f)})}
+const ease=p=>1-Math.pow(1-p,3);
+
+/* ---------- 紀錄（存在這台裝置） ---------- */
+const KEY='airwater_v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:[0,0,0,0],stars:[0,0,0,0],plays:0};const p=DB.players[n];if(!p.time)p.time=[0,0,0,0];return p}
+/* 名次規則：分數高的在前；同分時，秒數少的在前 */
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase 設定（和水生植物、第 1 單元同一個專案，資料存在 air_water_scores 表） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"; /* anon / publishable key，可以公開 */
+const WKEY=['w1','w2','w3','w4'];
+const REMOTE=/*CLOUD_ON*/true;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+/* 換裝置時，從資料庫把自己的進度接回來 */
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/air_water_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+/* 送出這一關和總分，回傳這一關的名次 */
+async function pushScore(i,secs,stars){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_air_water',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_air_water',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/air_water_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];
+  return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 世界設定 ---------- */
+const WORLDS=[
+ {name:'實驗模擬室',sub:'壓注射筒、刺破氣球、杯子壓進水裡，先猜再動手',color:'#BFE4F3',ico:'<rect x="26" y="8" width="20" height="44" rx="4" fill="#fff" stroke="#173349" stroke-width="3"/><rect x="29" y="30" width="14" height="19" fill="#7CC6E6"/><rect x="33" y="52" width="6" height="8" fill="#173349"/><rect x="20" y="4" width="32" height="6" rx="3" fill="#173349"/>',run:labWorld},
+ {name:'改錯小偵探',sub:'每句話藏了一個錯，找出來再說出正確說法',color:'#FDE7B8',ico:'<circle cx="30" cy="30" r="16" fill="#fff" stroke="#173349" stroke-width="4"/><line x1="42" y1="42" x2="58" y2="58" stroke="#173349" stroke-width="6" stroke-linecap="round"/><text x="30" y="37" font-size="18" text-anchor="middle" fill="#E25A45" font-weight="700">?</text>',run:detectiveWorld},
+ {name:'風力推推樂',sub:'控制風和水柱的力量，把帆船、紙杯車送到終點',color:'#D4F0DE',ico:'<path d="M14 48 L50 48 L44 56 L20 56Z" fill="#E25A45"/><path d="M32 12 L32 46 L14 46Z" fill="#fff" stroke="#173349" stroke-width="3"/><path d="M36 18 Q52 30 36 44" fill="none" stroke="#1C8DB7" stroke-width="3"/>',run:windWorld},
+ {name:'颱風防災任務',sub:'颱風要來了！答對題目幫家裡加上防護罩',color:'#FAD6CF',ico:'<path d="M32 10 C50 10 56 26 44 32 C56 38 46 56 32 54 C14 54 8 38 20 32 C8 26 14 10 32 10Z" fill="none" stroke="#173349" stroke-width="4"/><circle cx="32" cy="32" r="6" fill="#E25A45"/>',run:typhoonWorld}
+];
+
+/* ---------- 畫面：首頁 ---------- */
+function header(){
+  const p=DB.current;
+  return el('div',{class:'top'},
+    el('div',{class:'logo'},el('span',{html:'<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="16" cy="18" r="11" fill="#fff" stroke="#1C8DB7" stroke-width="3"/><path d="M28 8 C34 16 36 22 36 26 a8 8 0 0 1-16 0 c0-4 2-10 8-18z" fill="#7CC6E6" stroke="#1C8DB7" stroke-width="3"/></svg>'}),el('h1',{},'空氣和水大冒險')),
+    p?el('span',{class:'chip'},'玩家：'+p):null);
+}
+function home(){
+  const bzN=(function(){try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})();
+  if(bzN&&DB.current!==bzN){DB.current=bzN;player();save();if(REMOTE)pullMine().then(home);}
+  app.innerHTML='';
+  app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||''});if(bzN)input.readOnly=true;
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},
+    el('div',{},el('h2',{style:'font-size:22px'},'三上自然 第 2 單元：空氣和水'),
+      el('p',{},'四個世界，答對拿分數和星星，每關都會計時。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v){input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);input.focus();return}DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      (names.length&&!bzN)?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null
+    )));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(unlocked?'':' locked'),onclick:()=>{if(!pl){input.focus();input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);return}if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="0 0 64 64">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},'世界 '+(i+1)+'　'+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b);
+  });
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));
+    try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}
+    app.innerHTML='';app.append(header());}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[0,0,0,0];return tab===0
+      ?{n,v:p.best.reduce((a,b)=>a+b,0),t:tm.reduce((a,b,i)=>a+(p.best[i]>0?(b||0):0),0)}
+      :{n,v:p.best[tab-1],t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'空氣和水大冒險 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:'世界 '+(i+1)+' '+w.name+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / 12'),
+    null)));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];
+  app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');
+  const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');
+  const stage=el('div',{class:'stage'});
+  const t0=Date.now();
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},'世界 '+(i+1)+'　'+w.name),tm,sc),el('div',{class:'bar'},bar),stage);
+  const token={};CUR=token;
+  const ctx={stage,score:0,alive:()=>CUR===token,add(n){this.score+=n;sc.textContent=this.score+' 分'},prog(k,n){bar.style.width=(k/n*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(max=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();const st=starsFor(score,max);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?'過關了！下一個世界已經打開。':'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs,st).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--sea)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,
+    up,
+    el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<3&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一個世界'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+
+/* 題目卡：單選 / 複選，回傳是否答對 */
+function ask(parent,{q,opts,ans,explain,multi=false,tag}){
+  return new Promise(res=>{
+    const box=el('div',{style:'display:flex;flex-direction:column;gap:10px'});
+    if(tag)box.append(el('div',{class:'tag'},tag));
+    box.append(el('div',{class:'q'},q));
+    const order=multi?shuffle(opts.map((_,i)=>i)):opts.map((_,i)=>i);
+    const wrap=el('div',{class:'opts'});const sel=new Set();let done=false;
+    const btns={};
+    const good=multi?new Set(ans):new Set([ans]);
+    function judge(){
+      done=true;
+      const ok=multi?(sel.size===good.size&&[...sel].every(x=>good.has(x))):sel.has(ans);
+      Object.entries(btns).forEach(([k,b])=>{k=+k;b.disabled=true;b.style.opacity=1;b.classList.remove('sel');if(good.has(k))b.classList.add('ok');else if(sel.has(k))b.classList.add('bad')});
+      sfx(ok);
+      box.append(el('div',{class:'fb '+(ok?'ok':'bad')},(ok?'答對了！':'差一點！')+(explain?' '+explain:'')));
+      const nx=el('button',{onclick:()=>{box.remove();res(ok)}},'下一步 →');
+      if(okBtn)okBtn.remove();
+      box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true});
+    }
+    order.forEach(i=>{const b=el('button',{onclick:()=>{if(done)return;if(multi){sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle('sel')}else{sel.add(i);judge()}}},(multi?'□ ':'')+opts[i]);btns[i]=b;wrap.append(b)});
+    box.append(wrap);
+    let okBtn=null;
+    if(multi){box.insertBefore(el('div',{class:'small'},'可以選很多個，選好按「確定」'),wrap);okBtn=el('button',{onclick:()=>{if(!sel.size)return;judge()}},'確定');box.append(okBtn)}
+    parent.append(box);
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+}
+function waitBtn(parent,label,cls=''){return new Promise(r=>{const b=el('button',{class:'big '+cls,onclick:()=>{b.remove();r()}},label);parent.append(b)})}
+
+/* ================= 世界 1：實驗模擬室 ================= */
+async function labWorld(ctx){
+  const S=ctx.stage;const N=9;let k=0;const step=()=>ctx.prog(++k,N);
+  const Q=async o=>{const ok=await ask(qa,o);if(ok)ctx.add(10);step();return ok};
+  let qa;
+  /* ---- 實驗一：注射筒 ---- */
+  async function syringe(kind){
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'實驗 1　注射筒 ─ 裝'+(kind==='air'?'空氣':'水')+'，用橡皮擦堵住出口'));
+    const s=svg('0 -60 200 415',`
+      <defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2" fill="#9CCDE3"/><circle cx="10" cy="9" r="1.5" fill="#9CCDE3"/></pattern></defs>
+      <g id="plg"><rect x="40" y="-48" width="120" height="14" rx="7" fill="#173349"/><rect x="94" y="-36" width="12" height="116" fill="#5C7A8E"/><rect x="73" y="78" width="54" height="12" rx="3" fill="#173349"/></g>
+      <rect id="fill" x="73" y="90" width="54" height="198" fill="${kind==='air'?'url(#dots)':'#7CC6E6'}"/>
+      <rect x="70" y="60" width="60" height="230" rx="6" fill="none" stroke="#173349" stroke-width="3"/>
+      ${[0,1,2,3,4,5].map(i=>`<line x1="130" x2="${i%2?140:146}" y1="${110+i*34}" y2="${110+i*34}" stroke="#173349" stroke-width="2"/>`).join('')}
+      <rect x="93" y="290" width="14" height="14" fill="#173349"/><rect x="76" y="304" width="48" height="18" rx="5" fill="#E25A45"/>
+      <text x="100" y="345" text-anchor="middle" font-size="14" fill="#5C7A8E">橡皮擦堵住出口</text>`);
+    S.append(s);
+    const plg=s.querySelector('#plg'),fill=s.querySelector('#fill');
+    let off=0;const max=kind==='air'?105:6;
+    const draw=()=>{plg.setAttribute('transform',`translate(${kind==='water'&&holding?(Math.random()*2-1):0},${off})`);fill.setAttribute('y',90+off);fill.setAttribute('height',198-off)};
+    qa=el('div');S.append(qa);
+    await Q(kind==='air'
+      ?{tag:'先猜猜看',q:'注射筒裡裝空氣、出口堵住，往下壓活塞會怎樣？',opts:['很容易壓下去','完全壓不下去'],ans:0}
+      :{tag:'先猜猜看',q:'換成裝水、出口堵住，往下壓活塞會怎樣？',opts:['很容易壓下去','不容易壓下去'],ans:1});
+    const ctrl=el('div',{class:'ctrl'});const hint=el('span',{class:'small'},'按住「用力壓」，再放開看看');
+    let holding=false,pressedEnough=false,raf=0;
+    const btn=el('button',{class:'big'},'用力壓 ⬇');
+    const loop=()=>{if(holding){off=Math.min(max,off+(kind==='air'?2.4:0.3));if(off>=max*0.9)pressedEnough=true}else if(kind==='air'&&off>0){off=Math.max(0,off-6)}draw();raf=requestAnimationFrame(loop)};
+    raf=requestAnimationFrame(loop);
+    const down=e=>{e.preventDefault();holding=true;btn.setPointerCapture?.(e.pointerId)};
+    const up=()=>{if(!holding)return;holding=false;if(pressedEnough)setTimeout(()=>doneR(),kind==='air'?700:400)};
+    btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);
+    btn.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();holding=true}});btn.addEventListener('keyup',up);
+    ctrl.append(btn,hint);S.insertBefore(ctrl,qa);
+    let doneR;await new Promise(r=>doneR=r);
+    hint.textContent=kind==='air'?'放開後，活塞彈回去了！':'用力壓，活塞幾乎不動，放開後也停在原位。';
+    btn.disabled=true;
+    await Q(kind==='air'
+      ?{tag:'看結果',q:'放開手之後，活塞怎麼了？',opts:['彈回原來的位置','停在下面不動'],ans:0,explain:'空氣容易被壓縮，放開後會彈回原位。'}
+      :{tag:'看結果',q:'這個實驗告訴我們什麼？',opts:['水不容易被壓縮','水很容易被壓縮'],ans:0,explain:'水不容易被壓縮，所以活塞壓不下去。'});
+    cancelAnimationFrame(raf);
+  }
+  await syringe('air');if(!ctx.alive())return N*10;
+  await syringe('water');if(!ctx.alive())return N*10;
+
+  /* ---- 實驗二：天平與氣球 ---- */
+  S.innerHTML='';S.append(el('div',{class:'tag'},'實驗 2　天平兩邊各放一顆一樣重、吹飽的氣球'));
+  const bs=svg('0 0 400 270','');S.append(bs);
+  function drawBal(th,popped){
+    const r=th*Math.PI/180,c=Math.cos(r),sn=Math.sin(r);
+    const L=[200-130*c,62+130*sn],R=[200+130*c,62-130*sn];
+    const pan=(p,lab,inflated)=>`<line x1="${p[0]}" y1="${p[1]}" x2="${p[0]-34}" y2="${p[1]+100}" stroke="#5C7A8E" stroke-width="2"/><line x1="${p[0]}" y1="${p[1]}" x2="${p[0]+34}" y2="${p[1]+100}" stroke="#5C7A8E" stroke-width="2"/>
+      ${inflated?`<circle cx="${p[0]}" cy="${p[1]+68}" r="30" fill="#E8789A"/><circle cx="${p[0]-10}" cy="${p[1]+58}" r="7" fill="#fff" opacity=".5"/>`:`<path d="M${p[0]-24} ${p[1]+98} q12 -14 24 -4 q12 10 26 -2" stroke="#E8789A" stroke-width="7" fill="none" stroke-linecap="round"/>`}
+      <ellipse cx="${p[0]}" cy="${p[1]+102}" rx="42" ry="8" fill="#1C8DB7"/><text x="${p[0]}" y="${p[1]+128}" text-anchor="middle" font-size="18" fill="#173349">${lab}</text>`;
+    bs.innerHTML=`<rect x="194" y="62" width="12" height="180" fill="#C98A4B"/><rect x="140" y="238" width="120" height="16" rx="6" fill="#C98A4B"/>
+      <line x1="${L[0]}" y1="${L[1]}" x2="${R[0]}" y2="${R[1]}" stroke="#C98A4B" stroke-width="8" stroke-linecap="round"/><circle cx="200" cy="62" r="10" fill="#F2AE2E"/>`+pan(L,'A',true)+pan(R,'B',!popped);
+  }
+  drawBal(0,false);
+  qa=el('div');S.append(qa);
+  await Q({tag:'先猜猜看',q:'用針刺破 B 氣球，空氣跑掉以後，哪一邊會變高？',opts:['A 邊變高','B 邊變高','兩邊一樣高'],ans:1});
+  const pb=el('div',{class:'ctrl'});S.insertBefore(pb,qa);
+  await waitBtn(pb,'📍 刺破 B 氣球');
+  drawBal(0,true);sfx(false);await tween(1200,p=>drawBal(12*ease(p),true));
+  pb.append(el('span',{class:'small'},'B 氣球的空氣跑掉，變輕了，所以 B 邊升高。'));
+  await Q({tag:'看結果',q:'這個實驗可以證明空氣有什麼特性？',opts:['空氣有重量','空氣沒有重量','空氣是圓形的'],ans:0,explain:'氣球裝的空氣愈多，重量愈重。'});
+  if(!ctx.alive())return N*10;
+
+  /* ---- 實驗三：杯子壓入水中 ---- */
+  S.innerHTML='';S.append(el('div',{class:'tag'},'實驗 3　紙團塞進透明杯底，杯口向下壓進水裡'));
+  const cs=svg('0 0 300 300','');S.append(cs);
+  function drawCup(y,rot,airY,wet,bub){
+    const mouthW=40+(airY+50)/10;
+    cs.innerHTML=`<rect x="30" y="140" width="240" height="140" fill="#7CC6E6"/><rect x="30" y="90" width="240" height="190" fill="none" stroke="#173349" stroke-width="3"/>
+      ${bub.map(b=>`<circle cx="${b[0]}" cy="${b[1]}" r="${b[2]}" fill="#fff" stroke="#1C8DB7" stroke-width="2"/>`).join('')}
+      <g transform="translate(150 ${y}) rotate(${rot})">
+        ${y+50>140?`<path d="M-31 -48 L31 -48 L${30+(airY+50)/10} ${airY} L-${30+(airY+50)/10} ${airY}Z" fill="#F3FAFE"/>`:''}
+        <ellipse cx="0" cy="-36" rx="20" ry="10" fill="${wet?'#6F9FC4':'#F4A9B8'}"/>
+        <path d="M-40 50 L-30 -50 L30 -50 L40 50" fill="none" stroke="#173349" stroke-width="3"/>
+        <rect x="-14" y="-90" width="28" height="40" rx="6" fill="#F2C9A0"/>
+      </g>`;
+  }
+  drawCup(40,0,40,false,[]);
+  qa=el('div');S.append(qa);
+  await Q({tag:'先猜猜看',q:'杯口向下、垂直壓進水裡，杯底的紙團會怎樣？',opts:['會溼掉','不會溼'],ans:1});
+  const cb=el('div',{class:'ctrl'});S.insertBefore(cb,qa);
+  await waitBtn(cb,'⬇ 垂直壓下去');
+  await tween(1400,p=>{const y=40+150*ease(p);drawCup(y,0,y+50>140?40-Math.min(8,(y+50-140)/12):40,false,[])});
+  cb.append(el('span',{class:'small'},'紙團沒有溼！水只進來一點點。'));
+  await Q({tag:'看結果',q:'紙團為什麼沒有溼？',opts:['杯子裡的空氣占有空間，水進不去','杯子會防水','紙團不怕水'],ans:0,explain:'空氣占有空間，所以水無法進入杯中。'});
+  cb.innerHTML='';
+  await waitBtn(cb,'↘ 換成斜斜放進去');
+  drawCup(40,0,40,false,[]);
+  const bubs=[];
+  await tween(2200,p=>{const y=40+150*Math.min(1,p*1.6);const sub=y+50>140;let airY=40;
+    if(sub){const q=Math.max(0,(p-.35)/.65);airY=40-95*q;if(Math.random()<.35&&q<1)bubs.push([178+Math.random()*10,y+30,4+Math.random()*5])}
+    bubs.forEach(b=>b[1]-=3);for(let i=bubs.length-1;i>=0;i--)if(bubs[i][1]<145)bubs.splice(i,1);
+    drawCup(y,35,airY,airY<-30,bubs)});
+  cb.append(el('span',{class:'small'},'冒出好多氣泡，紙團溼掉了！'));
+  await Q({tag:'想一想',q:'為什麼做實驗時，杯子一定要「垂直」壓進水裡？',opts:['這樣杯子裡的空氣才不會跑出來','這樣比較好看','這樣水會比較冷'],ans:0,explain:'斜斜放，空氣會變成氣泡跑掉，水就進來了。'});
+  return N*10;
+}
+
+/* ================= 世界 2：改錯小偵探 ================= */
+const CASES=[
+ {p:['水和空氣一樣，','都容易被壓縮','。'],w:1,f:['空氣容易被壓縮，水不容易被壓縮','水和空氣都不能被壓縮','水比空氣更容易被壓縮']},
+ {p:['因為','空氣不占有空間','，用扇子搧動空氣時，紙杯車才會移動。'],w:1,f:['空氣可以傳送動力，所以紙杯車會移動','紙杯車有裝電池，所以會移動','扇子很重，所以紙杯車會移動']},
+ {p:['空氣看不見也摸不到，','所以無法證明它的存在','。'],w:1,f:['可以用鼓起的氣球、水中的氣泡證明空氣存在','只有大人才看得到空氣','空氣只存在氣球裡']},
+ {p:['空氣看不到也摸不到，','所以空氣沒有重量','。'],w:1,f:['空氣也有重量，氣球裝愈多空氣愈重','空氣比石頭還重','空氣的重量會不見']},
+ {p:['天氣晴朗，','沒有風的天氣','最適合放風箏。'],w:1,f:['要有風，風箏才能飛上天','下雨天最適合放風箏','晚上最適合放風箏']},
+ {p:['風對人類生活的影響','都是好的','。'],w:1,f:['風有好的影響，也有不好的影響','風對人類都是壞的影響','風和人類生活沒有關係']},
+ {p:['杯子垂直壓入水中，紙團沒有溼，','證明杯子裡沒有空氣','。'],w:1,f:['杯子裡有空氣占有空間，水進不去','杯子會自己防水','紙團不怕水']},
+ {p:['水可以倒入各種形狀的容器，','證明水有固定的形狀','。'],w:1,f:['證明水沒有固定的形狀','證明水沒有重量','證明水不占有空間']},
+ {p:['裝上','壓扁紙杯','的玩具車，被搧動後移動得比較遠。'],w:1,f:['裝上完整紙杯的玩具車移動得比較遠','兩種玩具車一樣遠','紙杯車都不會動']},
+ {p:['注射筒裝水、堵住出口，','活塞很容易往下壓','。'],w:1,f:['活塞不容易往下壓，因為水不容易被壓縮','活塞會自己跑出來','水會變顏色']},
+ {p:['吹葉機吹走路面的落葉，','是利用水的力量','。'],w:1,f:['是利用空氣（風）的力量','是利用火的力量','是利用磁鐵的力量']},
+ {p:['我們生活的地方到處都有空氣，','太空中也充滿空氣','。'],w:1,f:['太空中幾乎沒有空氣','太空中只有水','太空中的空氣特別多']}
+];
+async function detectiveWorld(ctx){
+  const S=ctx.stage;const list=shuffle(CASES).slice(0,6);const N=list.length;
+  for(let i=0;i<N;i++){
+    if(!ctx.alive())break;
+    const c=list[i];S.innerHTML='';
+    S.append(el('div',{class:'tag'},'案件 '+(i+1)+' / '+N+'　點一下句子裡「錯的地方」'));
+    const sent=el('div',{class:'sent'});const parts=[];
+    await new Promise(res=>{
+      c.p.forEach((t,j)=>{const b=el('button',{onclick:()=>{if(sent.dataset.done)return;sent.dataset.done=1;
+        if(j===c.w){b.classList.add('ok');sfx(true);ctx.add(10);S.insertBefore(el('div',{class:'fb ok'},'抓到了！就是這裡錯了。'),fixBox)}
+        else{b.classList.add('bad','shake');parts[c.w].classList.add('hint');sfx(false);S.insertBefore(el('div',{class:'fb bad'},'不是這裡喔，錯的是黃色那一段。'),fixBox)}
+        res()}},t);parts.push(b);sent.append(b)});
+      S.append(sent);var fixBox=el('div');S.append(fixBox);
+    });
+    const fb=el('div');S.append(fb);
+    const order=shuffle([0,1,2]);
+    const ok=await ask(fb,{tag:'第二步',q:'正確的說法應該是？',opts:order.map(k=>c.f[k]),ans:order.indexOf(0)});
+    if(ok)ctx.add(10);
+    ctx.prog(i+1,N);
+  }
+  return N*20;
+}
+
+/* ================= 世界 3：風力推推樂 ================= */
+async function windWorld(ctx){
+  const S=ctx.stage;let max=0;
+  const rounds=[
+    {kind:'boat',title:'把帆船吹進港口',zone:[.55,.7],tip:'帆船利用空氣的力量前進。'},
+    {kind:'car',title:'紙杯車衝過終點線',zone:[.78,.94],tip:'選好紙杯，再控制風力。'},
+    {kind:'ball',title:'用水槍把海灘球推到旗子區',zone:[.36,.46],tip:'水也可以傳送動力！'}
+  ];
+  let done=0;const TOTAL=rounds.length+1+3;
+  for(const R of rounds){
+    if(!ctx.alive())return 100;
+    max+=20;
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},R.title+'　'+R.tip));
+    const W=640,X0=40,TL=540;
+    const s=svg('0 0 640 200','');S.append(s);
+    let cup='full';
+    function draw(x,blow){
+      const zx=X0+R.zone[0]*TL,zw=(R.zone[1]-R.zone[0])*TL;
+      const ground=R.kind==='car'?`<rect x="0" y="150" width="640" height="50" fill="#D9CDB8"/><line x1="0" y1="150" x2="640" y2="150" stroke="#B8A88E" stroke-width="3"/>`:`<rect x="0" y="140" width="640" height="60" fill="#7CC6E6"/><path d="M0 140 q20 -6 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#fff" stroke-width="2"/>`;
+      const zone=`<rect x="${zx}" y="30" width="${zw}" height="${R.kind==='car'?120:110}" fill="#2F9E5F" opacity=".16"/><line x1="${zx}" y1="30" x2="${zx}" y2="150" stroke="#2F9E5F" stroke-width="2" stroke-dasharray="6 5"/><line x1="${zx+zw}" y1="30" x2="${zx+zw}" y2="150" stroke="#2F9E5F" stroke-width="2" stroke-dasharray="6 5"/><path d="M${zx+zw/2} 30 v-20 l18 6 l-18 6" fill="#E25A45" stroke="#173349" stroke-width="2"/><text x="${zx+zw/2}" y="${R.kind==='car'?172:186}" text-anchor="middle" font-size="15" fill="#173349">${R.kind==='car'?'終點':R.kind==='boat'?'港口':'旗子區'}</text>`;
+      let obj='';
+      if(R.kind==='boat')obj=`<g transform="translate(${x} 0)"><path d="M-30 128 L30 128 L22 142 L-22 142Z" fill="#E25A45"/><path d="M0 64 L0 126 L-28 126Z" fill="#fff" stroke="#173349" stroke-width="2"/><path d="M2 70 L2 126 L24 126Z" fill="#fff" stroke="#173349" stroke-width="2"/></g>`;
+      if(R.kind==='car')obj=`<g transform="translate(${x} 0)"><rect x="-28" y="126" width="56" height="10" rx="3" fill="#F2AE2E"/><circle cx="-18" cy="140" r="8" fill="#173349"/><circle cx="18" cy="140" r="8" fill="#173349"/>${cup==='full'?`<path d="M-26 96 L-26 126 L6 120 L6 102Z" fill="#fff" stroke="#173349" stroke-width="2"/><ellipse cx="-26" cy="111" rx="5" ry="15" fill="#E3F2FA" stroke="#173349" stroke-width="2"/>`:`<path d="M-24 116 L-24 126 L6 124 L6 118Z" fill="#fff" stroke="#173349" stroke-width="2"/>`}</g>`;
+      if(R.kind==='ball')obj=`<g transform="translate(${x} 0)"><circle cx="0" cy="124" r="16" fill="#fff" stroke="#173349" stroke-width="2"/><path d="M-16 124 a16 16 0 0 1 32 0" fill="#E25A45"/><path d="M-6 109 a16 16 0 0 1 12 0 v30 a16 16 0 0 1 -12 0z" fill="#1C8DB7" opacity=".8"/></g>`;
+      const src=R.kind==='ball'
+        ?`<g><rect x="2" y="96" width="34" height="14" rx="4" fill="#F2AE2E" stroke="#173349" stroke-width="2"/><rect x="10" y="108" width="8" height="18" fill="#F2AE2E" stroke="#173349" stroke-width="2"/></g>${blow?`<path d="M36 103 Q${(x+36)/2} 96 ${x-16} 120" stroke="#1C8DB7" stroke-width="5" fill="none" opacity=".7"/>`:''}`
+        :`<g><circle cx="18" cy="100" r="16" fill="#fff" stroke="#173349" stroke-width="2"/><path d="M18 100 L18 86 M18 100 L30 108 M18 100 L6 108" stroke="#5C7A8E" stroke-width="4" stroke-linecap="round"/><rect x="15" y="116" width="6" height="30" fill="#5C7A8E"/></g>${blow?[0,1,2].map(i=>`<path d="M40 ${88+i*12} q20 -6 40 0 t40 0" stroke="#9CCDE3" stroke-width="3" fill="none"/>`).join(''):''}`;
+      s.innerHTML=ground+zone+src+obj;
+    }
+    draw(X0,false);
+    const info=el('div',{class:'small'},'按住「蓄力」，指針跑到適合的位置就放開。');
+    const meter=el('div',{class:'meter'},el('i'));
+    const charge=el('button',{class:'big'},R.kind==='ball'?'💦 按住蓄力':'🌀 按住蓄力');
+    const cupSel=R.kind==='car'?el('div',{class:'tabs'},
+      el('button',{class:'on',onclick:e=>{cup='full';[...cupSel.children].forEach(b=>b.classList.remove('on'));e.currentTarget.classList.add('on');draw(X0,false)}},'完整紙杯'),
+      el('button',{onclick:e=>{cup='flat';[...cupSel.children].forEach(b=>b.classList.remove('on'));e.currentTarget.classList.add('on');draw(X0,false)}},'壓扁紙杯')):null;
+    const tries=el('span',{class:'tag'},'剩 3 次機會');
+    S.append(el('div',{class:'ctrl'},cupSel,tries),el('div',{class:'ctrl'},charge,meter),info);
+    let left=3,got=0;
+    while(left>0&&ctx.alive()){
+      const pw=await new Promise(res=>{
+        let v=0,dir=1,on=false,raf;const nd=meter.firstChild;
+        const tick=()=>{if(on){v+=dir*.012;if(v>=1){v=1;dir=-1}if(v<=0){v=0;dir=1}nd.style.left='calc('+(v*100)+'% - 3px)';raf=requestAnimationFrame(tick)}};
+        const down=e=>{e.preventDefault();if(on)return;on=true;v=0;dir=1;raf=requestAnimationFrame(tick)};
+        const up=()=>{if(!on)return;on=false;cancelAnimationFrame(raf);cleanup();res(v)};
+        const kd=e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){down(e)}};
+        function cleanup(){charge.removeEventListener('pointerdown',down);charge.removeEventListener('pointerup',up);charge.removeEventListener('pointerleave',up);charge.removeEventListener('keydown',kd);charge.removeEventListener('keyup',up)}
+        charge.addEventListener('pointerdown',down);charge.addEventListener('pointerup',up);charge.addEventListener('pointerleave',up);charge.addEventListener('keydown',kd);charge.addEventListener('keyup',up);
+      });
+      charge.disabled=true;
+      const factor=R.kind==='car'?(cup==='full'?1:.5):1;
+      const d=Math.min(1,pw*factor);
+      await tween(1100,p=>draw(X0+d*TL*ease(p),p<.6));
+      left--;
+      const hit=d>=R.zone[0]&&d<=R.zone[1];
+      if(hit){got=[20,10,5][2-left];sfx(true);info.textContent='成功！得到 '+got+' 分。';break}
+      sfx(false);
+      if(d<R.zone[0])info.textContent=(R.kind==='car'&&cup==='flat')?'不夠遠！壓扁的紙杯接到的風比較少，換個紙杯試試？':'不夠遠，力量再大一點。';
+      else info.textContent='跑太遠了，力量小一點。';
+      tries.textContent='剩 '+left+' 次機會';
+      if(left>0){await sleep(900);draw(X0,false);charge.disabled=false}
+    }
+    if(!ctx.alive())return 100;
+    ctx.add(got);done++;ctx.prog(done,TOTAL);
+    if(!got)info.textContent='這關沒成功，沒關係，繼續下一關！';
+    charge.disabled=true;
+    const qa=el('div');S.append(qa);
+    if(R.kind==='car'){
+      max+=10;
+      const ok=await ask(qa,{tag:'想一想',q:'為什麼裝「完整紙杯」的車子跑比較遠？',opts:['接到空氣傳送的動力比較多','完整紙杯比較重','壓扁的紙杯有破洞'],ans:0,explain:'受到空氣傳送的動力愈多，移動的距離愈遠。'});
+      if(ok)ctx.add(10);done++;ctx.prog(done,TOTAL);
+    }else{await waitBtn(qa,'下一關 →')}
+  }
+  /* ---- 看旗猜風 ---- */
+  const levels=shuffle([0,1,2]);const names=['微風','中等的風','強風'];
+  for(let r=0;r<3;r++){
+    if(!ctx.alive())return 100;
+    max+=10;const L=levels[r];
+    S.innerHTML='';S.append(el('div',{class:'tag'},'看旗猜風 '+(r+1)+' / 3　看旗子和樹葉擺動的幅度，判斷風的強弱'));
+    const s=svg('0 0 400 230','');S.append(s);
+    let t=0,stop=false;
+    const droop=[62,28,4][L],amp=[3,7,14][L],spd=[.05,.1,.2][L],lean=[2,8,18][L];
+    (function frame(){if(stop)return;t+=1;
+      let pts=[];for(let i=0;i<=10;i++){const x=i*11;const y=Math.sin(t*spd*3-i*.7)*amp*(i/10);pts.push([x,y])}
+      const top=pts.map(p=>p[0]+','+p[1]).join(' L');const bot=pts.slice().reverse().map(p=>p[0]+','+(p[1]+60)).join(' L');
+      s.innerHTML=`<rect x="0" y="200" width="400" height="30" fill="#BFE0B5"/>
+        <rect x="118" y="40" width="6" height="165" fill="#5C7A8E"/>
+        <g transform="translate(124 44) rotate(${droop+Math.sin(t*spd)*2})"><path d="M${top} L${bot}Z" fill="#E25A45" stroke="#173349" stroke-width="2"/></g>
+        <g transform="translate(310 200) rotate(${lean*0.4+Math.sin(t*spd*1.3)*lean*0.3})"><rect x="-6" y="-70" width="12" height="70" fill="#8A5A34"/>
+        <g transform="rotate(${lean*0.6})"><ellipse cx="0" cy="-95" rx="44" ry="38" fill="#2F9E5F"/><ellipse cx="-20" cy="-108" rx="22" ry="18" fill="#3FB56E"/></g></g>`;
+      requestAnimationFrame(frame)})();
+    const qa=el('div');S.append(qa);
+    const ok=await ask(qa,{q:'現在吹的是哪一種風？',opts:names,ans:L,explain:['旗子垂下來、只輕輕晃：微風。','旗子斜斜飄起來：中等的風。','旗子被吹平、用力甩動：強風。'][L]});
+    stop=true;if(ok)ctx.add(10);done++;ctx.prog(done,TOTAL);
+  }
+  return max;
+}
+
+/* ================= 世界 4：颱風防災任務 ================= */
+async function typhoonWorld(ctx){
+  const S=ctx.stage;
+  const QS=[
+    {multi:true,q:'颱風是怎麼形成的？選出「兩個」主要條件',opts:['比較高的海洋溫度','充沛的水氣','冰冷的海水','閃亮的星光'],ans:[0,1],explain:'高溫的海洋加上充沛的水氣，空氣快速流動、旋轉，就形成颱風。'},
+    {multi:true,q:'颱風快來了！哪些是正確的準備？',opts:['把招牌固定好','收起店門口的布條','把陽台的盆栽搬進屋裡','到海邊看大浪','把衣服晾在外面'],ans:[0,1,2],explain:'固定、收好容易被吹走的東西，可以減少強風帶來的損害。'},
+    {q:'颱風常帶來的災害，哪一個是「錯」的？',opts:['吹倒路樹','豪雨造成水災','招牌被強風破壞','火山爆發'],ans:3,explain:'火山爆發和颱風沒有關係。'},
+    {q:'強風來的時候，哪件事最可能發生？',opts:['纜車暫停行駛','路樹完全不會晃動','風箏比較難飛起來'],ans:0,explain:'風太強時，纜車、飛機可能暫停，電線桿也可能被吹倒。'},
+    {q:'颱風也會帶來好處嗎？',opts:['會，帶來的雨水可以解除乾旱','不會，只有壞處','會，讓天氣變得又冷又乾'],ans:0,explain:'颱風帶來的雨量是重要的水資源。'},
+    {q:'「臺灣在夏天的時候，經常會有颱風。」這句話對嗎？',opts:['○ 對','× 錯'],ans:0},
+    {q:'「颱風的形成和植物有關。」這句話對嗎？',opts:['○ 對','× 錯'],ans:1,explain:'颱風和海洋溫度、水氣有關，和植物無關。'}
+  ];
+  const N=QS.length;let shield=0;
+  const hs=svg('0 0 400 210','');
+  function drawHouse(n,storm=0,res=null){
+    const sh=n>0?`<path d="M80 190 A120 ${70+n*12} 0 0 1 320 190" fill="#BFE4F3" opacity="${.25+n*.08}" stroke="#1C8DB7" stroke-width="${1+n*.6}"/>`:'';
+    const sw=storm?`<g transform="translate(${-80+storm*560} 70) rotate(${storm*900})"><path d="M0 -40 C30 -40 40 -10 18 0 C40 10 26 44 0 40 C-30 40 -40 10 -18 0 C-40 -10 -26 -44 0 -40Z" fill="none" stroke="#5C7A8E" stroke-width="6"/><circle r="8" fill="#173349"/></g>`:'';
+    hs.innerHTML=`<rect x="0" y="190" width="400" height="20" fill="#BFE0B5"/>${sh}
+      <rect x="150" y="120" width="100" height="70" fill="#fff" stroke="#173349" stroke-width="3"/><path d="M140 122 L200 78 L260 122Z" fill="#E25A45" stroke="#173349" stroke-width="3"/>
+      <rect x="188" y="150" width="24" height="40" fill="#F2AE2E"/><rect x="160" y="132" width="20" height="18" fill="#BFE4F3" stroke="#173349" stroke-width="2"/><rect x="220" y="132" width="20" height="18" fill="#BFE4F3" stroke="#173349" stroke-width="2"/>
+      ${res==='bad'?`<path d="M222 132 L240 150 M240 132 L222 150" stroke="#E25A45" stroke-width="3"/><path d="M150 100 l-20 -18" stroke="#8A5A34" stroke-width="5"/>`:''}
+      ${sw}<text x="200" y="30" text-anchor="middle" font-size="18" fill="#173349">防護罩 ${'🛡'.repeat(n)}${'·'.repeat(N-n)}</text>`;
+  }
+  for(let i=0;i<N;i++){
+    if(!ctx.alive())return N*10;
+    S.innerHTML='';S.append(el('div',{class:'tag'},'任務 '+(i+1)+' / '+N+'　答對一題，就幫家加一層防護罩'));
+    drawHouse(shield);S.append(hs);
+    const qa=el('div');S.append(qa);
+    const ok=await ask(qa,QS[i]);
+    if(ok){ctx.add(10);shield++}
+    ctx.prog(i+1,N);
+  }
+  S.innerHTML='';S.append(el('div',{class:'tag'},'颱風來了！'));S.append(hs);
+  const good=shield>=5;
+  await tween(2600,p=>drawHouse(shield,p,p>.55?(good?null:'bad'):null));
+  S.append(el('div',{class:'fb '+(good?'ok':'bad')},good?'防護罩夠強，家園平安度過颱風！':'防護罩不夠，窗戶和樹被吹壞了。再挑戰一次吧！'));
+  await waitBtn(S,'看成績 →');
+  return N*10;
+}
+
+home();
+if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()});
+})();
+</script>
+
+</body>
+</html>

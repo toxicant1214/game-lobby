@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>倍思學院 遊戲書房</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Serif+TC:wght@500;700;900&display=swap">
+<style>
+/* 版面：一本攤開的學習筆記，每個遊戲是一張貼在頁上的卡片；科目各有一個墨色 */
+:root{
+  --paper:#EEF0E8;      /* 淡灰綠紙 */
+  --sheet:#F8F9F3;      /* 卡片紙 */
+  --ink:#24302B;        /* 墨綠黑 */
+  --ink-soft:#5E6B63;
+  --line:#C9D0C4;
+  --moss:#4F6B4A;       /* 主色：苔綠 */
+  --rust:#A65A3A;       /* 點綴：鏽紅印章 */
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --hand:"LXGW WenKai TC","Kaiti TC","DFKai-SB",var(--serif);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--paper);color:var(--ink)}
+body{
+  margin:0;font-family:var(--hand);font-size:16px;line-height:1.7;
+  background-image:repeating-linear-gradient(0deg,transparent 0 31px,rgba(79,107,74,.07) 31px 32px);
+}
+.wrap{max-width:1040px;margin:0 auto;padding-block:48px 72px;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+/* ── 刊頭 ── */
+header{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;
+  padding-bottom:28px;border-bottom:1.5px solid var(--ink)}
+.eyebrow{font-family:var(--serif);font-size:13px;letter-spacing:.32em;color:var(--ink-soft);margin:0 0 10px}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,8vw,76px);line-height:1.05;margin:0;letter-spacing:.04em;text-wrap:balance}
+h1 .brand{display:block;font-size:.42em;font-weight:700;letter-spacing:.36em;margin-bottom:10px}
+h1 small{display:block;font-size:.34em;font-weight:500;letter-spacing:.28em;margin-top:14px;color:var(--moss)}
+.stamp{width:104px;height:104px;border:2px solid var(--rust);border-radius:50%;display:grid;place-items:center;
+  color:var(--rust);font-family:var(--serif);font-weight:700;text-align:center;line-height:1.25;font-size:14px;
+  transform:rotate(-12deg);opacity:.85}
+.stamp span{display:block;font-size:22px;letter-spacing:.1em}
+.intro{max-width:34em;margin:22px 0 0;color:var(--ink-soft);font-size:17px}
+
+/* ── 篩選 ── */
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:36px 0 0;align-items:center}
+.filters-2{margin:12px 0 28px}
+.filters .lbl{font-family:var(--serif);font-size:13px;letter-spacing:.2em;color:var(--ink-soft);margin-right:6px;width:2.6em}
+.chip{font:inherit;font-size:15px;padding:6px 18px;border:1px solid var(--ink);background:transparent;color:var(--ink);
+  border-radius:999px;cursor:pointer;transition:background .2s,color .2s}
+.chip:hover{background:rgba(79,107,74,.1)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.chip:focus-visible,.card:focus-visible{outline:2px solid var(--rust);outline-offset:3px}
+
+/* ── 標本卡 ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px}
+.card{position:relative;display:grid;grid-template-rows:auto 1fr auto;background:var(--sheet);color:inherit;text-decoration:none;
+  border:1px solid var(--line);padding:22px 22px 18px;min-width:0;
+  box-shadow:0 1px 0 var(--line),0 12px 24px -18px rgba(36,48,43,.35);
+  transition:transform .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-4px) rotate(-.3deg);box-shadow:0 1px 0 var(--line),0 22px 32px -20px rgba(36,48,43,.45)}
+.card::before{content:"";position:absolute;top:-9px;left:50%;width:74px;height:18px;transform:translateX(-50%) rotate(-2deg);
+  background:rgba(166,90,58,.18)}
+.card{grid-template-columns:minmax(0,1fr)}
+.card>*{min-width:0}
+.no{display:flex;justify-content:space-between;font-family:var(--serif);font-size:12px;letter-spacing:.18em;color:var(--ink-soft);
+  border-bottom:1px dashed var(--line);padding-bottom:10px;font-variant-numeric:tabular-nums}
+.art{aspect-ratio:16/10;max-width:100%;display:grid;place-items:center;margin:14px 0 6px}
+.art svg{width:68%;height:auto;overflow:visible}
+.card{--c:var(--moss)}
+.art svg *{fill:none;stroke:var(--c);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.art svg .fill{fill:color-mix(in srgb,var(--c) 14%,transparent)}
+.art svg .rust{stroke:var(--rust)}
+h2{font-family:var(--serif);font-weight:700;font-size:24px;margin:0;letter-spacing:.06em}
+.latin{font-size:13px;color:var(--c);letter-spacing:.14em;margin:2px 0 8px}
+.desc{margin:0;color:var(--ink-soft);font-size:15px}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{border:1px solid var(--c);color:var(--c);padding:0 8px;font-size:13px}
+.go{font-family:var(--serif);font-weight:700;color:var(--rust);letter-spacing:.1em;white-space:nowrap}
+.go::after{content:" →";transition:margin .2s}
+.card:hover .go::after{margin-left:4px}
+
+.empty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:40px 0}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  font-size:13px;color:var(--ink-soft);letter-spacing:.08em}
+
+@media (max-width:560px){
+  .wrap{padding-block:32px 56px}
+  header{grid-template-columns:1fr}
+  .stamp{position:absolute;right:20px;top:24px;width:76px;height:76px;font-size:11px}
+  .stamp span{font-size:16px}
+  .grid{grid-template-columns:1fr;gap:24px}
+}
+/* ── 學生代碼門 ── */
+.gate{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:rgba(238,240,232,.86);backdrop-filter:blur(6px);
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.gate-card{background:var(--sheet);border:1px solid var(--line);box-shadow:0 24px 40px -24px rgba(36,48,43,.5);padding:32px 28px;width:100%;max-width:380px;display:grid;gap:14px;position:relative}
+.gate-card::before{content:"";position:absolute;top:-9px;left:50%;width:74px;height:18px;transform:translateX(-50%) rotate(-2deg);background:rgba(166,90,58,.18)}
+.gate-card .eyebrow{margin:0}
+.gate-card h2{font-size:28px}
+.gate-card p{margin:0;color:var(--ink-soft);font-size:15px}
+.gate-card input{font-family:var(--serif);font-size:26px;letter-spacing:.4em;text-align:center;text-transform:uppercase;padding:12px;border:1px solid var(--ink);background:#fff;color:var(--ink);width:100%;min-height:56px}
+.gate-card button{font:inherit;font-size:17px;font-weight:700;letter-spacing:.2em;padding:12px;min-height:52px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);cursor:pointer}
+.gate-card button:disabled{opacity:.5}
+.gate-card input:focus-visible,.gate-card button:focus-visible{outline:2px solid var(--rust);outline-offset:3px}
+.gate-card input.name-in{font-family:var(--hand);letter-spacing:.1em;text-transform:none;font-size:22px}
+.gate-msg{min-height:1.5em;color:var(--rust)!important;font-weight:700}
+.who{font-size:13px;color:var(--ink-soft)}
+.who button{font:inherit;font-size:13px;background:none;border:0;color:var(--rust);cursor:pointer;text-decoration:underline;padding:0 0 0 6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" style="position:relative">
+  <header>
+    <div>
+      <h1><span class="brand">倍思學院</span>遊戲書房<small>A LITTLE LIBRARY OF LEARNING GAMES</small></h1>
+      <p class="intro">挑一張卡片，開始闖關拿星星！</p>
+    </div>
+    <div class="stamp" aria-hidden="true"><div>倍思<span>書房</span></div></div>
+  </header>
+
+  <nav class="filters" id="f-subject" aria-label="依科目篩選"></nav>
+  <nav class="filters filters-2" id="f-grade" aria-label="依年級篩選"></nav>
+
+  <main class="grid" id="grid"></main>
+
+  <div class="gate" id="gate" hidden>
+    <form class="gate-card" id="gateForm">
+      <p class="eyebrow">倍思學院・遊戲書房</p>
+      <h2 id="gateTitle">請輸入學生代碼</h2>
+      <p id="gateHint">代碼由老師發給每位同學，5 個英文或數字。</p>
+      <input id="codeIn" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="學生代碼">
+      <input id="nameIn" class="name-in" maxlength="12" autocomplete="off" aria-label="你的名字" hidden>
+      <button type="submit" id="codeBtn">進入書房</button>
+      <p class="gate-msg" id="gateMsg" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <footer>
+    <span>倍思學院 ® Since 2016</span>
+    <span class="who" id="who"></span>
+    <span id="count"></span>
+  </footer>
+</div>
+
+<script>
+/* ===== 遊戲清單：新增遊戲只要在這裡加一筆（順序＝卡片編號，新的加在最後） ===== */
+const GAMES = [
+  { folder:"G3上自然:植物大冒險小遊戲", file:"index.html", grade:3, term:"上", subject:"自然",
+    title:"植物大冒險", en:"PLANTAE", unit:"第 1 單元", levels:"7 關",
+    desc:"從生物大分類一路認識根、莖、葉、花、果實和種子，最後挑戰限時總決賽。", art:"leaf" },
+  { folder:"G3上自然:空氣小遊戲", file:"index.html", grade:3, term:"上", subject:"自然",
+    title:"空氣和水大冒險", en:"AER ET AQUA", unit:"空氣與水", levels:"4 個世界",
+    desc:"壓注射筒、刺破氣球、控制風力推帆船，再幫家裡做好颱風防災。", art:"wind" },
+  { folder:"G3上自然:磁力小遊戲", file:"index.html", grade:3, term:"上", subject:"自然",
+    title:"力量大冒險", en:"VIS MAGNETICA", unit:"力與磁鐵", levels:"4 個世界",
+    desc:"踢球進門、用磁鐵清掃桌面、捏黏土船，最後排好 N 極 S 極讓磁浮列車出發。", art:"magnet" },
+  { folder:"G4上自然:水生植物小遊戲", file:"plants.html", grade:4, term:"上", subject:"自然",
+    title:"水之國生存挑戰", en:"FLORA AQUATICA", unit:"水生植物", levels:"5 關",
+    desc:"把水生植物拖曳歸位、分成四大類，拆穿科學陷阱，看懂構造和作用。", art:"lotus" },
+  { folder:"G5上數學:因倍數小遊戲", file:"index.html", grade:5, term:"上", subject:"數學",
+    title:"因倍數大冒險", en:"FACTORS & MULTIPLES", unit:"因數與倍數", levels:"4 種玩法",
+    desc:"數字小怪獸登場！找因數、倍數、公因數、公倍數，分簡單、中等、困難三段。", art:"number" },
+  { folder:"G3上社會:家庭稱謂小遊戲", file:"index.html", grade:3, term:"上", subject:"社會",
+    title:"家庭稱謂大挑戰", en:"FAMILIA", unit:"家庭", levels:"闖關計時",
+    desc:"走進親戚家，認出爺爺奶奶、外公外婆、伯叔姑舅，叫對每一位家人的稱謂。", art:"family" },
+  { folder:"G4上自然:月相小遊戲", file:"index.html", grade:4, term:"上", subject:"自然",
+    title:"追月小偵探", en:"PHASES LUNAE", unit:"月亮與月相", levels:"4 個世界＋魔王關",
+    desc:"射流星認月相、送節慶天燈找月亮、抓出觀測日記的錯，最後打倒雲霧怪。", art:"moon" },
+  { folder:"G4上社會:老家大冒險小遊戲", file:"index.html", grade:4, term:"上", subject:"社會",
+    title:"阿嬤的三合院", en:"DOMUS ANTIQUA", unit:"住屋與器物", levels:"4 個世界＋魔王關",
+    desc:"拼出三合院、陪阿嬤過一天、在地圖上找部落，再坐時光機看器物怎麼變。", art:"courtyard" },
+  { folder:"G4上社會:交通大冒險小遊戲", file:"index.html", grade:4, term:"上", subject:"社會",
+    title:"環島交通王", en:"VIA ET VECTURA", unit:"家鄉的交通", levels:"5 個世界＋魔王關",
+    desc:"送交通工具進車庫碼頭機場、在地圖上接路線、調度港口，最後打倒大塞車怪。", art:"transit" },
+  { folder:"G4上數學:除法估商王小遊戲", file:"index.html", grade:4, term:"上", subject:"數學",
+    title:"除法估商王", en:"DIVISIO REGIA", unit:"整數的除法", levels:"5 個世界＋魔王關",
+    desc:"把除數想成整十來估商、一格一格完成直式、抓出同學的錯，每次題目都不一樣。", art:"divide" },
+  { folder:"G4上國語:成語大冒險小遊戲", file:"index.html", grade:4, term:"上", subject:"國語",
+    title:"成語大冒險", en:"VERBA ANTIQUA", unit:"115上 康軒第 1～6 課", levels:"4 個世界",
+    desc:"24 個成語配對、拼字、抓錯字，還要和同學 LINE 聊天時選對成語回話。", art:"idiom" },
+  { folder:"G4上國語:南一成語大冒險小遊戲", file:"index.html", grade:4, term:"上", subject:"國語",
+    title:"成語大冒險", en:"PROVERBIA", unit:"115上 南一第 1～6 課", levels:"4 個世界",
+    desc:"南一版 24 個成語：配對、拼字、抓錯字，再和同學聊天，選對成語接話。", art:"chat" },
+  { folder:"G4上國語:翰林成語大冒險小遊戲", file:"index.html", grade:4, term:"上", subject:"國語",
+    title:"成語大冒險", en:"SENTENTIAE", unit:"115上 翰林第 1～6 課", levels:"4 個世界",
+    desc:"翰林版 24 個成語：配對、拼字、抓錯字，再跟同學 LINE 聊天選對成語。", art:"brush" },
+];
+
+const ART = {
+  leaf:`<svg viewBox="0 0 200 120"><path class="fill" d="M100 108 C60 90 48 46 100 10 C152 46 140 90 100 108Z"/><path d="M100 118 V20"/><path d="M100 50 L76 36 M100 66 L70 52 M100 82 L74 70 M100 50 L124 36 M100 66 L130 52 M100 82 L126 70"/><path class="rust" d="M30 112 h140"/></svg>`,
+  wind:`<svg viewBox="0 0 200 120"><path d="M20 44 H130 a16 16 0 1 0 -16 -16"/><path d="M20 66 H158 a14 14 0 1 1 -14 14"/><path d="M40 88 H96"/><circle class="fill rust" cx="164" cy="34" r="12"/><path class="rust" d="M164 14v6 M164 48v6 M144 34h6 M178 34h6"/></svg>`,
+  magnet:`<svg viewBox="0 0 200 120"><path class="fill" d="M62 18 V68 a38 38 0 0 0 76 0 V18 H112 V68 a12 12 0 0 1 -24 0 V18Z"/><path class="rust" d="M62 18 h26 v16 h-26z M112 18 h26 v16 h-26z"/><path d="M40 96 q-12 -30 8 -56 M160 96 q12 -30 -8 -56 M28 104 q-20 -40 10 -78 M172 104 q20 -40 -10 -78"/></svg>`,
+  number:`<svg viewBox="0 0 200 120"><rect class="fill" x="34" y="20" width="56" height="56" rx="2"/><rect x="34" y="20" width="56" height="56" rx="2"/><path d="M34 48h56 M62 20v56"/><circle cx="134" cy="56" r="34"/><path class="rust" d="M134 34v44 M112 56h44"/><path class="rust" d="M30 102h140"/><path d="M30 96v12 M58 96v12 M86 96v12 M114 96v12 M142 96v12 M170 96v12"/></svg>`,
+  family:`<svg viewBox="0 0 200 120"><path class="fill" d="M60 60 L100 26 L140 60 V104 H60Z"/><path d="M48 68 L100 22 L152 68 M60 60 V104 H140 V60"/><circle cx="84" cy="74" r="7"/><path d="M74 104 v-12 a10 10 0 0 1 20 0 v12"/><circle cx="116" cy="78" r="5"/><path class="rust" d="M109 104 v-8 a7 7 0 0 1 14 0 v8"/><path class="rust" d="M30 104h140"/></svg>`,
+  moon:`<svg viewBox="0 0 200 120"><circle cx="100" cy="54" r="34"/><path class="fill" d="M100 20 A34 34 0 0 1 100 88 A14 34 0 0 0 100 20Z"/><circle cx="36" cy="38" r="9"/><path d="M36 29 A9 9 0 0 1 36 47Z"/><circle cx="164" cy="38" r="9"/><path d="M164 29 A9 9 0 0 0 164 47Z"/><path class="rust" d="M30 108 h140"/><path d="M52 30 l2 -6 M148 30 l-2 -6"/></svg>`,
+  courtyard:`<svg viewBox="0 0 200 120"><path class="fill" d="M70 64 H130 V96 H70Z"/><path d="M62 44 L72 30 H128 L138 44 M66 44 H134 V62 H66Z"/><path d="M40 62 L48 52 H64 V100 H40Z M136 52 H152 L160 62 V100 H136Z"/><path d="M96 50 v12"/><path class="rust" d="M24 108 h152"/></svg>`,
+  transit:`<svg viewBox="0 0 200 120"><rect class="fill" x="44" y="34" width="112" height="46" rx="8"/><rect x="44" y="34" width="112" height="46" rx="8"/><path d="M56 44 h20 v14 h-20z M86 44 h20 v14 h-20z M116 44 h20 v14 h-20z"/><circle cx="72" cy="84" r="8"/><circle cx="128" cy="84" r="8"/><path class="rust" d="M20 100 h40 M80 100 h40 M140 100 h40"/></svg>`,
+  divide:`<svg viewBox="0 0 200 120"><path d="M70 30 h100"/><path d="M70 30 q-10 30 0 60"/><path class="fill" d="M150 8 l8 14 l12 -10 l-4 18 h-32 l-4 -18 l12 10z"/><circle cx="40" cy="44" r="4"/><circle cx="40" cy="76" r="4"/><path d="M26 60 h28"/><path class="rust" d="M86 108 h80"/></svg>`,
+  idiom:`<svg viewBox="0 0 200 120"><path class="fill" d="M100 32 C84 24 62 22 40 26 V96 C62 92 84 94 100 102Z"/><path d="M100 32 C84 24 62 22 40 26 V96 C62 92 84 94 100 102 C116 94 138 92 160 96 V26 C138 22 116 24 100 32Z M100 32 V102"/><path d="M52 44 h34 M52 58 h34 M52 72 h26 M114 44 h34 M114 58 h34 M114 72 h26"/><path class="rust" d="M136 24 V50 l6 -6 l6 6 V24"/><path class="rust" d="M30 110 h140"/></svg>`,
+  chat:`<svg viewBox="0 0 200 120"><path class="fill" d="M30 24 h84 a12 12 0 0 1 12 12 v30 a12 12 0 0 1 -12 12 H62 l-16 14 v-14 H30 a12 12 0 0 1 -12 -12 V36 a12 12 0 0 1 12 -12Z"/><path d="M30 24 h84 a12 12 0 0 1 12 12 v30 a12 12 0 0 1 -12 12 H62 l-16 14 v-14 H30 a12 12 0 0 1 -12 -12 V36 a12 12 0 0 1 12 -12Z"/><path d="M38 44 h68 M38 58 h46"/><path d="M118 54 h52 a10 10 0 0 1 10 10 v20 a10 10 0 0 1 -10 10 h-8 v12 l-14 -12 H118 a10 10 0 0 1 -10 -10"/><path class="rust" d="M128 72 h8 M144 72 h8 M160 72 h8"/></svg>`,
+  brush:`<svg viewBox="0 0 200 120"><path class="fill" d="M132 14 l16 16 l-50 50 l-16 -16Z"/><path d="M132 14 l16 16 l-50 50 l-16 -16Z M140 22 l-48 48"/><path class="rust" d="M82 64 l16 16 q-12 18 -34 18 q4 -22 18 -34Z"/><path d="M24 106 q34 -12 66 -2 t80 -6"/></svg>`,
+  lotus:`<svg viewBox="0 0 200 120"><path class="fill" d="M100 78 C84 60 84 36 100 20 C116 36 116 60 100 78Z"/><path d="M100 78 C76 70 64 52 66 34 C84 40 96 56 100 78 M100 78 C124 70 136 52 134 34 C116 40 104 56 100 78"/><path d="M28 92 q18 -8 36 0 t36 0 t36 0 t36 0"/><path class="rust" d="M40 106 q18 -8 36 0 t36 0 t36 0"/></svg>`
+};
+
+/* ===== 科目設定：新科目在這裡加一個顏色 ===== */
+const SUBJECTS = { "自然":"#4F6B4A", "數學":"#3E5C7A", "國語":"#8A4B3A", "英文":"#6B5A86", "社會":"#8A6A2E" };
+const CN = ["零","一","二","三","四","五","六"];
+
+const grid = document.getElementById('grid');
+const hrefOf = g => './' + encodeURIComponent(g.folder) + '/' + g.file;
+const LS = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}} };
+const state = { subject:'all', grade: LS.get('bz_grade') || 'all' };
+
+function chips(el, label, key, values, fmt){
+  el.innerHTML = `<span class="lbl">${label}</span>` +
+    [['all','全部'], ...values.map(v=>[String(v), fmt(v)])].map(([v,t]) =>
+      `<button class="chip" id="f-${key}-${v}" data-k="${key}" data-v="${v}" aria-pressed="${state[key]===v}">${t}</button>`).join('');
+}
+function buildFilters(){
+  const subs = [...new Set(GAMES.map(g=>g.subject))];
+  const grades = [...new Set(GAMES.map(g=>g.grade))].sort((a,b)=>a-b);
+  chips(document.getElementById('f-subject'), '科目', 'subject', subs, v=>v);
+  chips(document.getElementById('f-grade'), '年級', 'grade', grades, v=>(CN[v]||v)+'年級');
+}
+function render(){
+  const list = GAMES.filter(g => (state.subject==='all'||g.subject===state.subject) && (state.grade==='all'||String(g.grade)===state.grade));
+  grid.innerHTML = list.length ? list.map(g=>`
+    <a class="card" href="${hrefOf(g)}" style="--c:${SUBJECTS[g.subject]||'var(--moss)'}">
+      <div class="no"><span>No. ${String(GAMES.indexOf(g)+1).padStart(3,'0')}</span><span>${CN[g.grade]||g.grade}${g.term}・${g.subject}</span></div>
+      <div class="art" aria-hidden="true">${ART[g.art]||''}</div>
+      <div>
+        <h2>${g.title}</h2>
+        <p class="latin">${g.en}</p>
+        <p class="desc">${g.desc}</p>
+      </div>
+      <div class="foot">
+        <span class="tags"><span class="tag">${g.unit}</span><span class="tag">${g.levels}</span></span>
+        <span class="go">進入</span>
+      </div>
+    </a>`).join('') : '<p class="empty">這裡的遊戲還在準備中。</p>';
+  document.getElementById('count').textContent = `目前收錄 ${GAMES.length} 個遊戲`;
+}
+document.querySelector('.wrap').addEventListener('click', e=>{
+  const b = e.target.closest('.chip'); if(!b) return;
+  state[b.dataset.k] = b.dataset.v; if(b.dataset.k==='grade') LS.set('bz_grade', b.dataset.v); buildFilters(); render();
+});
+if(!GAMES.some(g=>String(g.grade)===state.grade)) state.grade='all';
+buildFilters(); render();
+
+/* ===== 學生代碼 ===== */
+const SUPABASE_URL = "https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY = "sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";
+const $id = x => document.getElementById(x);
+const gate = $id('gate'), codeIn = $id('codeIn'), nameIn = $id('nameIn'), gateMsg = $id('gateMsg');
+let step = 'code', pending = '';
+/* 同一組代碼只能在一台裝置用：每台裝置有自己的編號，後登入的會把前一台踢掉 */
+const SID = (()=>{ let v = LS.get('bz_sid'); if(!v){ v = Date.now().toString(36) + Math.random().toString(36).slice(2,10); LS.set('bz_sid', v); v = LS.get('bz_sid'); } return v || null; })();
+function claim(code){ return SID ? rpc('claim_code', { p_code: code, p_sid: SID }).catch(()=>rpc('enter_code', { p_code: code })) : rpc('enter_code', { p_code: code }); }
+function kickOut(msg){ ['bz_code','bz_name','yb_name'].forEach(k=>LS.set(k,null)); showWho(''); openGate(msg); }
+async function ping(){
+  const c = LS.get('bz_code'); if(!c || !SID || document.hidden) return;
+  try{ const r = await rpc('ping_code', { p_code: c, p_sid: SID });
+    if(r && r.ok === false) kickOut('這組代碼已停用，請向老師確認。');
+    else if(r && r.mine === false) kickOut('這組代碼已經在其他裝置登入，這台裝置先登出了。');
+  }catch(e){}
+}
+setInterval(ping, 60000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) ping(); });
+async function rpc(fn, args){
+  const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, { method:'POST',
+    headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify(args) });
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+/* 排行榜只顯示遮掉中間的名字（王小明 → 王○明），完整姓名只存在主任室 */
+function maskName(n){
+  const c = Array.from(String(n).trim());
+  if(c.length <= 1) return c.join('');
+  if(c.length === 2) return c[0] + '○';
+  return c[0] + '○'.repeat(c.length - 2) + c[c.length - 1];
+}
+function rememberName(n){
+  if(!n) return;
+  const m = maskName(n);
+  LS.set('bz_name', m);   // 各遊戲名字欄自動帶入的就是這個
+  LS.set('yb_name', m);
+}
+function showWho(code, name){
+  $id('who').innerHTML = code ? `${name ? name + '・' : ''}代碼 ${code}<button type="button" id="logout">換人</button>` : '';
+  const lo = $id('logout');
+  if(lo) lo.addEventListener('click', ()=>{ ['bz_code','bz_name','yb_name'].forEach(k=>LS.set(k,null)); showWho(''); openGate(); });
+}
+function setStep(s){
+  step = s;
+  codeIn.hidden = s !== 'code'; nameIn.hidden = s !== 'name';
+  $id('gateTitle').textContent = s === 'code' ? '請輸入學生代碼' : '你叫什麼名字？';
+  $id('gateHint').textContent = s === 'code' ? '代碼由老師發給每位同學，5 個英文或數字。' : '請寫完整姓名，老師才認得出你。排行榜上只會顯示部分名字，例如「王○明」。填好之後不能自己改喔。';
+  $id('codeBtn').textContent = s === 'code' ? '下一步' : '進入書房';
+  setTimeout(()=> (s==='code'?codeIn:nameIn).focus(), 50);
+}
+function openGate(msg){ gate.hidden = false; codeIn.value = ''; nameIn.value = ''; setStep('code'); gateMsg.textContent = msg || ''; }
+function enter(code, name){ LS.set('bz_code', code); rememberName(name); gate.hidden = true; showWho(code, name); }
+
+$id('gateForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const btn = $id('codeBtn'); btn.disabled = true;
+  try{
+    if(step === 'code'){
+      const code = codeIn.value.trim().toUpperCase();
+      if(code.length !== 5){ gateMsg.textContent = '代碼是 5 個字，再檢查一次。'; return; }
+      gateMsg.textContent = '確認中…';
+      const r = await claim(code);
+      if(!r.ok){ gateMsg.textContent = '這組代碼不能用，請向老師確認。'; return; }
+      if(r.name){ enter(code, r.name); return; }
+      pending = code; gateMsg.textContent = ''; setStep('name');
+    }else{
+      const name = nameIn.value.trim();
+      if(!name){ gateMsg.textContent = '請寫上你的名字。'; return; }
+      gateMsg.textContent = '登記中…';
+      await rpc('set_code_name', { p_code: pending, p_name: name });
+      const r = await claim(pending);   // 以資料庫裡的名字為準
+      enter(pending, (r && r.name) || name);
+    }
+  }catch(err){ gateMsg.textContent = '連不上網路，請稍後再試。'; }
+  finally{ btn.disabled = false; }
+});
+(async ()=>{
+  const saved = LS.get('bz_code');
+  const kicked = LS.get('bz_msg'); if(kicked) LS.set('bz_msg', null);
+  if(!saved){ openGate(kicked || ''); return; }
+  showWho(saved, LS.get('bz_name'));
+  try{
+    const r = await claim(saved);
+    if(!r.ok){ ['bz_code','bz_name'].forEach(k=>LS.set(k,null)); showWho(''); openGate('這組代碼已停用，請向老師確認。'); }
+    else if(!r.name){ pending = saved; gate.hidden = false; gateMsg.textContent=''; setStep('name'); }
+    else { rememberName(r.name); showWho(saved, r.name); }
+  }catch(err){ /* 暫時連不上就先讓孩子玩 */ }
+})();
+</script>
+</body>
+</html>
