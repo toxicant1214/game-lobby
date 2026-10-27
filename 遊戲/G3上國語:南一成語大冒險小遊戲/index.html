@@ -157,6 +157,12 @@ svg.lov{position:absolute;inset:0;width:100%;height:100%;max-height:none;pointer
 .essay .aw.bad{background:var(--coral);color:#fff;border-style:solid}
 .essay .aw.ok{background:var(--leaf);color:#fff;border-style:solid;opacity:1}
 .essay .aw.fine{background:#fff;color:var(--soft);border-color:var(--line);opacity:1}
+.art{display:block;width:100%;max-width:440px;aspect-ratio:1/1;object-fit:cover;border-radius:14px;margin:0 auto;background:var(--line)}
+.panel2 .art{max-width:none;aspect-ratio:4/3}
+.art,.art-s,.art-h{-webkit-user-drag:none;user-select:none}
+.art-s{pointer-events:none;display:block;width:100%;max-width:160px;aspect-ratio:1/1;object-fit:cover;border-radius:10px;margin:0 auto}
+.hintrow{display:flex;gap:12px;align-items:center}
+.art-h{width:110px;height:110px;object-fit:cover;border-radius:12px;flex:0 0 auto}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -276,6 +282,10 @@ const ID=[
   wrong:[1,'推'],fix:['退','推','腿'],why:'「退」是退還的退；「推」有提手旁，是推開的推。'}
 ];
 const byW=w=>ID.find(x=>x.w===w);
+/* ChatGPT 畫的插圖（img/01.jpg～30.jpg） */
+const IMGORDER=["離鄉背井", "不學無術", "多才多藝", "扭扭捏捏", "身手不凡", "一視同仁", "參差不齊", "齊心協力", "一線生機", "誤打誤撞", "有備無患", "良藥苦口", "不藥而癒", "滴水穿石", "體無完膚", "包羅萬象", "追根究柢", "物極必反", "冰天雪地", "如虎添翼", "萬紫千紅", "虎頭蛇尾", "占為己有", "獨一無二", "咄咄逼人", "雕蟲小技", "如臨大敵", "一技之長", "多退少補", "有備而來"];
+const imgOf=w=>'img/'+String(IMGORDER.indexOf(w)+1).padStart(2,'0')+'.jpg';
+const picEl=(w,cls='art')=>el('img',{class:cls,src:imgOf(w),alt:'成語插圖',loading:'lazy'});
 const meanOf=w=>byW(w).m.replace(/。$/,'');
 /* 在句子中把成語標出來 */
 const hl=(s,w,rep)=>s.replace(w,rep!=null?rep:'<b style="color:var(--sea)">'+w+'</b>');
@@ -459,7 +469,7 @@ async function picWorld(ctx){
     const it=list[k];max+=10;
     S.innerHTML='';
     S.append(el('div',{class:'tag'},'第 '+(k+1)+' / '+list.length+' 題　看圖和小故事，選出它在說哪個成語。一次答對 10 分，第二次答對 5 分。'));
-    S.append(el('div',{class:'pic'},el('div',{class:'emo'},it.pic),el('div',{class:'cap'},it.cap)));
+    S.append(el('div',{class:'pic'},picEl(it.w),el('div',{class:'cap'},it.cap)));
     S.append(el('div',{class:'q'},'這張圖在說哪個成語？'));
     const area=el('div',{style:'display:flex;flex-direction:column;gap:10px'});S.append(area);
     const opts=shuffle([it.w,...others(it.w,3)]);
@@ -539,7 +549,7 @@ async function comicWorld(ctx){
       if(!ctx.alive())return max;
       const P=cm.p[j];max+=10;
       const line=el('div',{class:'say',html:P.ask.replace('＿＿','<span class="blank">＿＿＿＿</span>')});
-      const panel=el('div',{class:'panel2 pop'},el('div',{class:'num'},String(j+1)),el('div',{class:'emo'},P.e),el('div',{class:'nar'},P.n),line);
+      const panel=el('div',{class:'panel2 pop'},el('div',{class:'num'},String(j+1)),picEl(P.a),el('div',{class:'nar'},P.n),line);
       strip.append(panel);panel.scrollIntoView({behavior:reduceMo()?'auto':'smooth',block:'nearest'});
       await pause(700);
       let tries=0;const used=[];const opts=shuffle([P.a,...P.o]);
@@ -570,7 +580,7 @@ async function lineWorld(ctx){
   const MODES=[
     {t:'把成語連到它的「意思」',get:x=>x.m},
     {t:'把成語連到可以填進去的「句子」',get:x=>hl(x.s,x.w,'<span class="blank">＿＿＿＿</span>')},
-    {t:'把成語連到符合的「圖」',get:x=>'<span class="emo-s">'+x.pic+'</span><span class="small">'+x.cap+'</span>'}];
+    {t:'把成語連到符合的「圖」',get:x=>'<img class="art-s" src="'+imgOf(x.w)+'" alt="成語插圖" draggable="false">'}];
   const ROUNDS=sets.length;
   for(let r=0;r<ROUNDS;r++){
     if(!ctx.alive())return max;
@@ -643,7 +653,7 @@ async function repairWorld(ctx){
     const [wi,bad]=it.wrong;const chars=[...it.w];chars[wi]=bad;
     S.innerHTML='';
     S.append(el('div',{class:'tag'},'第 '+(k+1)+' / '+list.length+' 題　這個成語有一個字寫錯了，點出錯字（10 分），再選對的字修好它（5 分）。'));
-    S.append(el('div',{class:'q',style:'font-size:18px'},'提示：'+it.m));
+    S.append(el('div',{class:'hintrow'},picEl(it.w,'art-h'),el('div',{class:'q',style:'font-size:18px'},'提示：'+it.m)));
     const row=el('div',{class:'slots'});S.append(row);
     const box=el('div',{style:'display:flex;flex-direction:column;gap:10px'});S.append(box);
     const btns=chars.map((c,i)=>{const b=el('button',{class:'tilebtn'},c);b._i=i;row.append(b);return b});
