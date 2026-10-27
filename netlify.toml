@@ -1,0 +1,4 @@
+# Netlify 從這個倉庫自動部署：網站內容就是「遊戲」資料夾
+[build]
+  publish = "遊戲"
+  command = ""
