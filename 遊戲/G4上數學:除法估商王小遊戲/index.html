@@ -167,6 +167,7 @@ input[type=range]{accent-color:var(--brick);width:100%;height:40px}
 <a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
 <script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
 <script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+<script src="../bz-stats.js"></script>
 
 
 <div class="wrap" id="app"></div>
@@ -624,17 +625,17 @@ async function board(tab=0){
   app.innerHTML='';app.append(header());
   const tabs=['總分',...WORLDS.map(w=>w.boss?'魔王關':w.name)];
   let rows=[],failed=false;
-  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}app.innerHTML='';app.append(header())}
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}if(window.bzStats)await bzStats('divking');app.innerHTML='';app.append(header())}
   else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[];const b=p.best;return tab===0?{n,v:b.reduce((a,c)=>a+c,0),t:tm.reduce((a,c,i)=>a+(b[i]>0?(c||0):0),0)}:{n,v:b[tab-1]||0,t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
-  const tbl=el('table',{class:'lb'},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
-  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  const tbl=el('table',{class:'lb'},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),REMOTE?el('th',{style:'text-align:right'},'次數'):null,el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n+(REMOTE&&window.bzTag?bzTag('divking',r.n):'')),REMOTE?el('td',{style:'text-align:right'},String(window.bzPlays?bzPlays('divking',r.n):0)):null,el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
   let armed=false;
   const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
   app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
     el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
     el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
     failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
-    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'🏆 = 每一關都過關；次數 = 總共玩了幾關。':'這個版本的排行榜只記在這台裝置上。'))));
   app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
 }
 
@@ -678,6 +679,7 @@ function finish(i,score,max,secs){
   app.innerHTML='';app.append(header());
   const msg=(i===NW-1&&score<max)?'王冠被搶走了……再挑戰一次，把亂除怪打倒！':st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?(i<NW-1?'過關了！下一關已經打開。':'過關了！你就是除法估商王！'):'再練習一次，拿到 1 顆星就能過關。';
   const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE&&window.bzLog)bzLog('divking',WKEY[i],score,st>=1);
   if(REMOTE)pushScore(i,secs).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
   app.append(el('div',{class:'panel result'},
     el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),

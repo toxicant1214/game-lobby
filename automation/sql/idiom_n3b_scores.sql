@@ -43,7 +43,7 @@ create or replace function public.reset_leaderboards()
 returns int language plpgsql security definer set search_path = public as $$
 declare
   t text; n int; total int := 0;
-  tbls text[] := array['scores','force_scores','air_water_scores','yb_scores','family_quest_scores','moon_scores','laojia_scores','traffic_scores','divking_scores','idiom_k4_scores','idiom_n4_scores','idiom_h4_scores','idiom_n3b_scores'];  -- 新遊戲的表加在這裡
+  tbls text[] := array['play_log','scores','force_scores','air_water_scores','yb_scores','family_quest_scores','moon_scores','laojia_scores','traffic_scores','divking_scores','idiom_k4_scores','idiom_n4_scores','idiom_h4_scores','idiom_n3b_scores'];  -- 新遊戲的表加在這裡
 begin
   foreach t in array tbls loop
     if to_regclass('public.'||t) is not null then

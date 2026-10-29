@@ -109,6 +109,7 @@ th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--line)}
 <a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
 <script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
 <script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+<script src="../bz-stats.js"></script>
 
 <div id="app">
   <div id="hud" class="hud" hidden></div>
@@ -420,6 +421,7 @@ async function saveScore(){
   var all=store("aqua_board")||{}; var p=all[id]||{name:S.name,cls:S.cls,best:0,plays:0};
   p.best=Math.max(p.best,S.score); p.plays++; all[id]=p; store("aqua_board",all);
   if(!CLOUD) return result;
+  if(window.bzLog) bzLog('aquatic','all',S.score,true);
   try{
     await sb("/rest/v1/rpc/submit_score",{p_game:GAME_ID,p_id:id,p_name:S.name,p_cls:S.cls,p_score:S.score});
     result="shared";
@@ -461,13 +463,14 @@ async function showBoard(){
         rows=await sb(q)||[];
       }catch(e){ failed=true; }
     }
-    var h='<table><tr><th>名次</th><th>名字</th><th>最高分</th></tr>';
+    var st=(mode!=="local"&&!failed&&window.bzStats)?await bzStats('aquatic'):null;
+    var h='<table><tr><th>名次</th><th>名字</th>'+(st?'<th>次數</th>':'')+'<th>最高分</th></tr>';
     if(failed) h+='<tr><td colspan="3">排行榜暫時連不上，請稍後再試。</td></tr>';
     else if(!rows.length) h+='<tr><td colspan="3">還沒有人上榜，快來當第一名！</td></tr>';
     rows.forEach(function(r,i){ var m=S.name&&r.name===S.name;
-      h+='<tr class="'+(m?"me":"")+'"><td>'+(i<3?["🥇","🥈","🥉"][i]:(i+1))+'</td><td>'+esc(r.name)+'</td><td>'+r.best+'</td></tr>'; });
+      h+='<tr class="'+(m?"me":"")+'"><td>'+(i<3?["🥇","🥈","🥉"][i]:(i+1))+'</td><td>'+esc(r.name)+(st&&st[r.name]&&st[r.name].cleared?' 🏆':'')+'</td>'+(st?'<td>'+(st[r.name]?st[r.name].plays:0)+'</td>':'')+'<td>'+r.best+'</td></tr>'; });
     $("#rows").innerHTML=h+'</table>';
-    $("#nt").textContent = mode==="local" ? "這是這台裝置上的排行榜。" : "全校前 10 名。";
+    $("#nt").textContent = mode==="local" ? "這是這台裝置上的排行榜。" : "全校前 10 名。🏆 = 完整玩完過一次；次數 = 玩完幾次。";
   }
   tabs(); load();
 }

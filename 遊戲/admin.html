@@ -103,6 +103,12 @@ tr.off td.code{text-decoration:line-through}
     <p class="note">停用後，孩子下次打開遊戲書房就會被請回輸入代碼的畫面。備註打完按 Enter 或點別處就會存。</p>
   </section>
 
+  <section class="card" id="records" hidden>
+    <h2>學生紀錄</h2>
+    <p class="sub">所有玩過的孩子（完整姓名）、玩了幾次、有沒有全破。老師們用老師密碼也能從大廳下方的「老師查看」進去看。</p>
+    <a href="./teacher.html" id="recBtn" style="text-decoration:none"><button type="button" style="width:100%">打開學生紀錄</button></a>
+  </section>
+
   <section class="card" id="reset" hidden>
     <h2>清除排行榜</h2>
     <p class="sub">選擇要清除的範圍，舊成績會先備份。每年 1、3、5、7、9、11 月的 1 號早上 8 點也會自動清除全部遊戲一次。</p>
@@ -175,7 +181,8 @@ $('login').addEventListener('submit', async e => {
   e.preventDefault(); PASS = $('pass').value; $('loginBtn').disabled = true; say('loginMsg','確認中…');
   try{
     await loadCodes();
-    $('login').hidden = true; $('codes').hidden = false; $('reset').hidden = false;
+    $('login').hidden = true; $('codes').hidden = false; $('reset').hidden = false; $('records').hidden = false;
+    try{ sessionStorage.setItem('bz_tpass', PASS); }catch(e){}
   }catch(err){ say('loginMsg', err.wrong ? '密碼不對，請再試一次。' : '讀取失敗：' + err.message, 'err'); }
   $('loginBtn').disabled = false;
 });
@@ -228,6 +235,7 @@ $('yes').addEventListener('click', async () => {
   const w = $('which').value;
   try{
     const n = w === 'all' ? await rpc('admin_reset', { p_pass: PASS }) : await rpc('admin_reset_game', { p_pass: PASS, p_game: w });
+    if(w !== 'all') await rpc('admin_reset_plays', { p_pass: PASS, p_game: w }).catch(()=>{});   // 遊玩次數也一起清
     say('resetMsg', `清除完成，共備份並清除 ${n} 筆成績。`, 'ok');
   }
   catch(err){ say('resetMsg', err.wrong ? '密碼不對。' : '清除失敗：' + err.message, 'err'); }
