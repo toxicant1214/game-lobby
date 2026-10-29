@@ -160,6 +160,7 @@ button{font:inherit;color:inherit;}
 <a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
 <script class="bz-guard">try{if(!localStorage.getItem("bz_code"))location.replace("../index.html")}catch(e){}</script>
 <script class="bz-session">(function(){var U="https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/ping_code",K="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4";function g(k){try{return localStorage.getItem(k)}catch(e){return null}}function kick(m){try{["bz_code","bz_name","yb_name"].forEach(function(k){localStorage.removeItem(k)});localStorage.setItem("bz_msg",m)}catch(e){}location.replace("../index.html")}function ping(){var c=g("bz_code"),s=g("bz_sid");if(!c||!s||document.hidden)return;fetch(U,{method:"POST",headers:{apikey:K,"Content-Type":"application/json"},body:JSON.stringify({p_code:c,p_sid:s})}).then(function(r){return r.ok?r.json():null}).then(function(r){if(!r)return;if(r.ok===false)kick("這組代碼已停用，請向老師確認。");else if(r.mine===false)kick("這組代碼已經在其他裝置登入，這台裝置先登出了。")}).catch(function(){})}setTimeout(ping,2000);setInterval(ping,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)ping()})})();</script>
+<script src="../bz-stats.js"></script>
 
 <div class="wrap">
 
@@ -566,6 +567,7 @@ function gameOver(){
   var key = S.mode+"-"+S.level;
   if(!best[key] || S.score>best[key]){best[key] = S.score; saveBest(best);}
   submitLevel(S.level);
+  if(REMOTE&&window.bzLog) bzLog('yb',key,S.score,false);
   setTimeout(function(){
     showModal(
       '<h2>愛心用完了</h2><div class="big">本場得分 '+S.score+'</div>'+
@@ -578,6 +580,7 @@ function finish(){
   var key = S.mode+"-"+S.level, isBest = !best[key] || S.score>best[key];
   if(isBest){best[key] = S.score; saveBest(best);}
   submitLevel(S.level);
+  if(REMOTE&&window.bzLog) bzLog('yb',key,S.score,true);
   var stars = S.hearts, s = "";
   for(var i=0;i<3;i++) s += i<stars?"★":"☆";
   var msg = stars===3?"全部都對，太強了！":stars===2?"很棒，再挑戰更高難度吧！":"過關了，再練一次會更穩！";
@@ -615,17 +618,17 @@ function openBoard(){
   if(!lbLevel) lbLevel = S.level;
   var tabs = [1,2,3].map(function(k){
     return '<button type="button" data-m="'+k+'" aria-pressed="'+(k===lbLevel)+'">'+LV_NAME[k]+'</button>';}).join("");
-  showModal('<h2>🏆 排行榜</h2><div class="big">'+LV_NAME[lbLevel]+'・前 10 名</div><div class="lb-tabs">'+tabs+'</div><ol class="lb-list" id="lbList"><li>讀取中…</li></ol><div class="lb-note">分數＝這個難度裡，每種玩法最高分的加總</div>',
+  showModal('<h2>🏆 排行榜</h2><div class="big">'+LV_NAME[lbLevel]+'・前 10 名</div><div class="lb-tabs">'+tabs+'</div><ol class="lb-list" id="lbList"><li>讀取中…</li></ol><div class="lb-note">分數＝這個難度裡，每種玩法最高分的加總<br>🏆 = 5 種玩法 × 3 種難度全部玩過；次數 = 總共玩了幾場</div>',
     [{label:"關閉",cls:"",fn:hideModal}]);
   document.querySelectorAll(".lb-tabs button").forEach(function(b){
     b.addEventListener("click",function(){lbLevel=+b.dataset.m;openBoard();});});
   var board = "lv-"+lbLevel, me = pid(getName()||" ");
   if(!REMOTE){$("#lbList").innerHTML="<li>排行榜未開啟</li>";return;}
-  api("/rest/v1/yb_scores?board=eq."+encodeURIComponent(board)+"&select=player_id,name,best&order=best.desc,updated_at.asc&limit=10")
-    .then(function(rows){
+  Promise.all([api("/rest/v1/yb_scores?board=eq."+encodeURIComponent(board)+"&select=player_id,name,best&order=best.desc,updated_at.asc&limit=10"),window.bzStats?bzStats('yb'):null])
+    .then(function(a){var rows=a[0];
       var el = $("#lbList"); if(!el) return;
       el.innerHTML = (rows&&rows.length) ? rows.map(function(r,i){
-        return '<li class="'+(r.player_id===me?'me':'')+'"><span class="rk">'+(i+1)+'</span><span class="nm">'+esc(r.name)+'</span><b>'+r.best+'</b></li>';}).join("")
+        return '<li class="'+(r.player_id===me?'me':'')+'"><span class="rk">'+(i+1)+'</span><span class="nm">'+esc(r.name)+(window.bzTag?bzTag('yb',r.name):'')+(window.bzPlays&&bzPlays('yb',r.name)?' <small style="opacity:.6">玩 '+bzPlays('yb',r.name)+' 次</small>':'')+'</span><b>'+r.best+'</b></li>';}).join("")
         : "<li>還沒有人上榜，搶第一吧！</li>";
     }).catch(function(){var el=$("#lbList"); if(el) el.innerHTML="<li>連不上排行榜，稍後再試</li>";});
 }

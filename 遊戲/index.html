@@ -84,6 +84,7 @@ h2{font-family:var(--serif);font-weight:700;font-size:24px;margin:0;letter-spaci
 .card:hover .go::after{margin-left:4px}
 
 .empty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:40px 0}
+.teacher-link{font-size:13px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;letter-spacing:.06em}
 footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
   font-size:13px;color:var(--ink-soft);letter-spacing:.08em}
 
@@ -100,6 +101,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);display
 .gate-card{background:var(--sheet);border:1px solid var(--line);box-shadow:0 24px 40px -24px rgba(36,48,43,.5);padding:32px 28px;width:100%;max-width:380px;display:grid;gap:14px;position:relative}
 .gate-card::before{content:"";position:absolute;top:-9px;left:50%;width:74px;height:18px;transform:translateX(-50%) rotate(-2deg);background:rgba(166,90,58,.18)}
 .gate-card .eyebrow{margin:0}
+.gate-card .teacher-link{justify-self:center}
 .gate-card h2{font-size:28px}
 .gate-card p{margin:0;color:var(--ink-soft);font-size:15px}
 .gate-card input{font-family:var(--serif);font-size:26px;letter-spacing:.4em;text-align:center;text-transform:uppercase;padding:12px;border:1px solid var(--ink);background:#fff;color:var(--ink);width:100%;min-height:56px}
@@ -137,6 +139,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);display
       <input id="nameIn" class="name-in" maxlength="12" autocomplete="off" aria-label="你的名字" hidden>
       <button type="submit" id="codeBtn">進入書房</button>
       <p class="gate-msg" id="gateMsg" aria-live="polite"></p>
+      <a class="teacher-link" href="./teacher.html">老師查看學生紀錄 →</a>
     </form>
   </div>
 
@@ -144,6 +147,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);display
     <span>倍思學院 ® Since 2016</span>
     <span class="who" id="who"></span>
     <span id="count"></span>
+    <a class="teacher-link" href="./teacher.html">老師查看</a>
   </footer>
 </div>
 

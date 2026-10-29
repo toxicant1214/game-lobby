@@ -23,7 +23,12 @@
    4b. **需要插圖時（例如「看圖選成語」）**：先檢查 pi 的 Chrome 有沒有連上（載入 claude-in-chrome 工具，呼叫 tabs_context_mcp）。
       - 連得上：照 `gpt-image-slides` skill 的做法，開新分頁到 chatgpt.com，請 ChatGPT 用同一個畫風畫每張圖（國小生友善、無文字），下載後放進遊戲資料夾的 `images/`，遊戲用相對路徑 `./images/xxx.png` 引用。不要動 pi 原本開著的分頁。
       - 連不上（pi 電腦沒開、Chrome 沒開）：先用內嵌 SVG 插圖做完，PR 說明和給 pi 的訊息寫「目前是 SVG 暫代圖，開著電腦和 Chrome 時在這個對話串回覆『補圖』，就會改用 ChatGPT 畫圖」。
+   4c. **遊玩次數和全破（每個遊戲都要有）**：照「除法估商王」做——
+      - bz-session 腳本後面加 `<script src="../bz-stats.js"></script>`。
+      - 每玩完一關（在 `if(REMOTE)pushScore(i` 前面）呼叫 `bzLog('<遊戲代號>',WKEY[i],score,st>=1)`；遊戲代號 = admin.html #which 選單用的那個。
+      - 排行榜：讀完排行榜後 `await bzStats('<遊戲代號>')`，表格加「次數」欄，名字後面加 `bzTag('<遊戲代號>',r.n)`（全破 🏆），說明文字加「🏆 = 每一關都過關；次數 = 總共玩了幾關。」
    5. 寫排行榜 SQL 到 `automation/sql/<table>.sql`（照 `automation/sql/` 裡最新那份的格式：新資料表 + submit_xxx 函式，並把新表加進 reset_leaderboards() 的清單、admin_reset_game() 的 case）。
+   5b. 在 `automation/sql/play_log.sql` 的 `game_levels` 清單加一行（遊戲代號、大廳名稱、關卡數），和新遊戲的 SQL 一起執行；reset_leaderboards() 的表清單第一個一定要保留 `'play_log'`。老師查看頁（teacher.html）會自動列出新遊戲。
    6. 用 Supabase Management API 執行 SQL：
       `POST https://api.supabase.com/v1/projects/wbxpqyrkgdaqvtsmijoe/database/query`，
       body `{"query": "<SQL>"}`。金鑰設在雲端環境的「網路密鑰」，由 proxy 自動加上 Authorization header，不用自己帶（看不到金鑰是正常的）。
