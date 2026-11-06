@@ -75,7 +75,7 @@ input{-webkit-user-select:text;user-select:text;}
 .arrow svg{width:24px;height:24px;}
 #prev{left:max(16px,env(safe-area-inset-left,0px));}
 #next{right:max(16px,env(safe-area-inset-right,0px));}
-.info{grid-column:3;align-self:center;justify-self:start;width:min(320px,100%);background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:10px;margin-left:8px;}
+.info{position:relative;z-index:6;max-height:calc(100% - 8px);overflow:auto;grid-column:3;align-self:center;justify-self:start;width:min(320px,100%);background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:10px;margin-left:8px;}
 .info .type{font-family:var(--f-display);font-weight:900;font-size:28px;}
 .info .tag{justify-self:start;font-size:12px;font-weight:700;letter-spacing:.15em;color:#2a1a04;background:var(--brass);padding:3px 10px;border-radius:4px;}
 .info p{margin:0;font-size:15px;line-height:1.7;}
@@ -210,7 +210,7 @@ input{-webkit-user-select:text;user-select:text;}
 #pet-btn .heart{position:absolute;right:-4px;top:-4px;background:var(--cinnabar);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:2px 7px;}
 .held{display:flex;align-items:center;gap:8px;background:var(--brass);color:#2a1a04;border-radius:999px;padding:6px 8px 6px 6px;font-weight:700;font-size:14px;animation:rise .25s;box-shadow:0 0 0 4px rgba(246,207,115,.3);}
 .held .ic{width:36px;height:36px;border-radius:50%;background:#fff6dc;}
-.held button{border:0;background:rgba(0,0,0,.15);border-radius:50%;width:26px;height:26px;font-size:14px;}
+.held{cursor:pointer;}.held .held-hint{font-weight:500;font-size:12px;opacity:.75;}.held button{border:0;background:#2a1a04;color:#f6cf73;border-radius:999px;min-height:36px;padding:0 14px;font-size:14px;font-weight:900;cursor:pointer;}
 body.holding #pano{cursor:copy;}
 .toast{position:fixed;z-index:80;left:50%;top:22%;transform:translateX(-50%);background:var(--glass-2);border:1px solid var(--brass);border-radius:14px;padding:10px 16px;font-weight:700;display:flex;align-items:center;gap:10px;animation:rise .3s;max-width:calc(100vw - 32px);}
 .toast .ic{width:40px;height:40px;flex:none;}
@@ -408,6 +408,8 @@ body.holding #pano{cursor:copy;}
   .hpbox{min-width:0;flex:1;}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+@media (max-height:640px){.info p,.stats{display:none;}.info{gap:8px;padding:14px;}.info .type{font-size:22px;}}
+@media (max-height:480px){.stage{padding-top:56px;padding-bottom:84px;}.roster{padding-top:6px;padding-bottom:6px;}.chip{width:44px;height:56px;}.info{position:absolute!important;right:max(12px,env(safe-area-inset-right,0px));left:auto!important;width:min(300px,45%)!important;top:56px;bottom:auto!important;}.pick-head{display:none;}}
 </style>
 
 <!-- 封面 -->
@@ -486,7 +488,7 @@ body.holding #pano{cursor:copy;}
   </div>
   <div class="hud-b">
     <button id="pet-btn" hidden aria-label="夥伴"><img id="pet-img" alt=""><span class="heart" id="pet-heart"></span></button>
-    <div class="held" id="held" hidden><span class="ic" id="held-ic"></span><span id="held-nm"></span><button id="held-x" aria-label="放回背包">✕</button></div>
+    <div class="held" id="held" hidden><span class="ic" id="held-ic"></span><span id="held-nm"></span><span class="held-hint">點人物交給他</span><button id="held-x" aria-label="放回背包">放下 ✕</button></div>
   </div>
 </section>
 
@@ -3587,9 +3589,10 @@ async function giveHint(){if(busy||!CH)return;busy=true;const g=CH.goals.find(g=
 
 /* ================= 背包 ================= */
 let HELD=null;
-function holdItem(id){HELD=id;$("held").hidden=false;$("held-ic").setAttribute("style",iconStyle(id));$("held-nm").textContent="拿著："+ITEMS[id].name+"（點人物交給他）";document.body.classList.add("holding");}
+function holdItem(id){HELD=id;$("held").hidden=false;$("held-ic").setAttribute("style",iconStyle(id));$("held-nm").textContent="拿著："+ITEMS[id].name+"";document.body.classList.add("holding");}
 function dropHeld(silent){HELD=null;$("held").hidden=true;document.body.classList.remove("holding");}
-$("held-x").onclick=()=>dropHeld();
+$("held").onclick=()=>{dropHeld();SFX.tick();toast("已經放回背包");};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&HELD&&!busy)dropHeld();});
 function openBag(sel){const ids=Object.keys(S.bag).filter(id=>ITEMS[id]&&ITEMS[id].kind!=="treasure"||ITEMS[id]&&ITEMS[id].kind==="treasure");
   const order=["tool","food","treasure"];ids.sort((a,b)=>order.indexOf(ITEMS[a].kind)-order.indexOf(ITEMS[b].kind));
   const pick=sel&&S.bag[sel]?sel:ids[0];const slots=Math.max(12,Math.ceil(ids.length/4)*4);
@@ -3602,7 +3605,7 @@ function openBag(sel){const ids=Object.keys(S.bag).filter(id=>ITEMS[id]&&ITEMS[i
     p.querySelectorAll(".slot").forEach(s=>s.classList.toggle("on",s.dataset.id===id));
     const inPlay=!$("play").hidden;
     $("bg-detail").innerHTML=`<div class="item-detail">${icon(id)}<div><b>${esc(it.name)}</b>${it.kind==="food"?` <span style="font-size:12px;color:#ff9db0">夥伴食物 ♥+${it.feed}</span>`:""}<p>${esc(T(it.desc))}</p></div></div>
-      <div class="row">${it.kind==="food"&&S.pet.has?`<button class="btn jade" id="bg-feed">餵給${esc(S.pet.name)}</button>`:""}${inPlay&&it.kind!=="treasure"?`<button class="btn" id="bg-hold">拿在手上（再點人物交給他）</button>`:""}</div>`;
+      <div class="row">${it.kind==="food"&&S.pet.has?`<button class="btn jade" id="bg-feed">餵給${esc(S.pet.name)}</button>`:""}${inPlay?`<button class="btn" id="bg-hold">拿在手上（再點人物交給他）</button>`:""}</div>`;
     const f=$("bg-feed");if(f)f.onclick=()=>{closeModal();feedPet(id);};
     const h=$("bg-hold");if(h)h.onclick=()=>{closeModal();holdItem(id);SFX.pick();};};
   p.querySelectorAll(".slot[data-id]").forEach(s=>s.onclick=()=>{SFX.tick();detail(s.dataset.id);});detail(pick);
