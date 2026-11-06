@@ -3368,7 +3368,11 @@ let sx=null;$("pick").addEventListener("pointerdown",e=>{if(!e.target.closest("b
 $("pick").addEventListener("pointerup",e=>{if(sx===null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>50)showHero(cur+(d<0?1:-1),d<0?1:-1);});
 $("choose").onclick=()=>{const h=HEROES[cur];SFX.pick();$("hero").classList.add("cheer");setTimeout(()=>$("hero").classList.remove("cheer"),700);
   setTimeout(()=>askName(h),350);};
+const BZ_NAME=(()=>{try{return (localStorage.getItem("bz_name")||"").trim();}catch(e){return "";}})();
+if(BZ_NAME&&S.name&&S.name!==BZ_NAME){S.name=BZ_NAME;save();}
+if(BZ_NAME){const k=document.querySelector("#pick .pick-head .kicker");if(k)k.textContent=BZ_NAME+"，你好！";}
 function askName(h){
+  if(BZ_NAME){S.hero=h.id;S.name=BZ_NAME;save();SFX.win();flashTo(openHub);return;}
   const p=modal(`<div class="namecard" style="display:grid;gap:16px"><div class="por" style="position:static;height:auto"><img src="${IMG[h.id]}" alt=""></div><div class="body">
     <div class="kicker">STEP 2 ／ 2</div><h2>幫你的探險家取名字</h2>
     <label class="field" for="n-name">探險家名字（劇情裡的人會這樣叫你）<input id="n-name" maxlength="8" autocomplete="off" placeholder="最多 8 個字" value="${S.hero===h.id?esc(S.name):""}"></label>
