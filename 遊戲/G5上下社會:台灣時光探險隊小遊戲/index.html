@@ -476,6 +476,7 @@ body.holding #pano{cursor:copy;}
     <div class="eras" id="eras"></div>
     <div class="chapters" id="chapters"></div>
     <div class="battle-card" id="hub-battle"></div>
+    <div class="battle-card" id="hub-final" hidden></div>
   </div>
 </section>
 
@@ -636,7 +637,14 @@ const ERAS=[
   {id:"post",name:"戰後臺灣",years:"終戰・經濟起飛・民主",img:"thumb_p3",food:["mantou","bubbletea","bento","redcake"],
    boss:{name:"迷霧遺忘獸",img:"boss_post",flag:"boss_post",reward:"formosabadge",
     intro:[["旁白","五片時光拼圖一拼起來，就發出好亮的光……可是光的另一邊，一隻全身灰濛濛、看不清楚臉的怪獸慢慢爬了出來！"],["旁白","「我是迷霧遺忘獸！只要大家忘記走過的路，我就會越來越大！」用你記住的歷史，把牠照亮！"]],
-    outro:[["教授","{name}，你打敗了迷霧遺忘獸！迷霧全部散開了！"],["教授","從幾萬年前的史前人，到大航海、明鄭、清領、日治，再到戰後的臺灣……你走完了整條時光長河。"],["教授","今天的臺灣，是很多人一起努力出來的。謝謝你，時光探險家！"]]}}
+    outro:[["教授","{name}，你打敗了迷霧遺忘獸！迷霧全部散開了！"],["教授","從幾萬年前的史前人，到大航海、明鄭、清領、日治，再到戰後的臺灣……你走完了整條時光長河。"],["教授","今天的臺灣，是很多人一起努力出來的。"],["教授","最後還有一道挑戰：把所有的歷史放回時光長河裡！完成它，就能拿到破關證書。"]]}}
+];
+
+/* ===== 時光長河：全部時代破關後的總複習 ===== */
+const RIVER=[
+ {title:"第一段：史前到明鄭",bins:["史前時代","大航海時代","明鄭時期"],items:[["長濱文化的人住在海邊洞穴",0],["卑南人用石板棺埋葬",0],["十三行人會煉鐵",0],["荷蘭人蓋熱蘭遮城",1],["西班牙人占領北臺灣",1],["新港文書：用羅馬拼音寫的契約",1],["鄭成功打敗荷蘭人",2],["陳永華建孔廟、興學校",2],["軍隊屯田開墾",2]]},
+ {title:"第二段：清領到日治",bins:["清領時期","日治時期"],items:[["唐山過臺灣，橫渡黑水溝",0],["林爽文事件",0],["開港通商，茶葉大量出口",0],["劉銘傳興建鐵路",0],["牡丹社事件後沈葆楨來臺",0],["設立臺灣總督府",1],["推行守時觀念與星期制",1],["八田與一興建嘉南大圳",1]]},
+ {title:"第三段：日治到戰後",bins:["日治時期","戰後臺灣"],items:[["臺灣文化協會成立",0],["霧社事件",0],["皇民化運動",0],["二次大戰的空襲與配給",0],["二二八事件",1],["十大建設",1],["客廳即工廠",1],["美麗島事件",1],["第一次總統直選",1]]}
 ];
 
 const CHAPTERS=[
@@ -3356,10 +3364,14 @@ Object.assign(CARDS,{
   meiyuan:{ch:"p3",name:"美援",kind:"戰後經濟",year:"1951～1965 年",text:"戰後臺灣很窮，美國提供了麵粉、棉花、肥料和資金等援助，叫做「美援」。很多人小時候都穿過用麵粉袋做的衣服呢！",key:"<b>美援</b>提供物資和資金，幫助臺灣經濟重建。"},
   epz:{ch:"p3",name:"加工出口區",kind:"經濟起飛",year:"1966 年",text:"1966 年政府在高雄設立臺灣第一個「加工出口區」，從國外買進原料，在臺灣加工做成衣服、雨傘、玩具、電子產品，再賣到國外，創造很多工作機會。",key:"<b>1966 年</b>在<b>高雄</b>設立第一個<b>加工出口區</b>。"},
   livingroom:{ch:"p3",name:"客廳即工廠",kind:"經濟起飛",year:"1970 年代",text:"那時候很多家庭在客廳接工廠的零件回家組裝，像是做聖誕燈、縫衣服、黏玩具，全家大小一起賺錢，叫做「客廳即工廠」。",key:"<b>客廳即工廠</b>：全家一起在家做加工。"},
+  jiunian:{ch:"p3",name:"九年國民義務教育",kind:"社會變遷",year:"1968 年",text:"1968 年政府開始實施「九年國民義務教育」，國小畢業後可以直接讀國民中學，不用再考初中。更多孩子能夠讀書，也為後來的經濟發展培養了很多人才。",key:"<b>1968 年</b>實施<b>九年國民義務教育</b>。"},
+  un1971:{ch:"p4",name:"退出聯合國",kind:"外交處境",year:"1971 年",text:"1971 年聯合國通過決議，由中華人民共和國取得中國在聯合國的代表權，中華民國退出聯合國。之後很多國家和我國斷交，臺灣改用經濟、貿易和民間交流等方式，繼續和世界往來。",key:"<b>1971 年</b>中華民國<b>退出聯合國</b>，外交處境變得困難。"},
   shida:{ch:"p4",name:"十大建設",kind:"經濟起飛",year:"1970 年代",text:"1970 年代政府推動「十大建設」，包括中山高速公路、鐵路電氣化、北迴鐵路、桃園國際機場、臺中港、蘇澳港、大造船廠、大煉鋼廠、石油化學工業和核能發電廠，讓交通更方便，也發展了重工業。",key:"<b>1970 年代十大建設</b>：<b>中山高速公路</b>、<b>桃園國際機場</b>、大煉鋼廠……"},
   sciencepark:{ch:"p4",name:"新竹科學園區",kind:"經濟轉型",year:"1980 年",text:"1980 年政府設立新竹科學工業園區，發展電腦、半導體等高科技產業。後來臺灣做的晶片和電子產品賣到全世界，「MIT（臺灣製造）」變成品質的代名詞。",key:"<b>1980 年</b>設立<b>新竹科學園區</b>，發展<b>高科技產業</b>。"},
   miracle:{ch:"p4",name:"臺灣經濟奇蹟",kind:"經濟轉型",year:"1960～1990 年代",text:"臺灣從農業社會，變成工業、再到高科技產業的社會，經濟快速成長，被稱為「臺灣經濟奇蹟」，和韓國、香港、新加坡並稱「亞洲四小龍」。",key:"經濟快速成長，被稱為<b>經濟奇蹟</b>，名列<b>亞洲四小龍</b>。"},
   sunyatsen:{ch:"p4",hidden:true,name:"高速公路通車",kind:"隱藏發現",year:"1978 年",text:"中山高速公路在 1978 年全線通車，從基隆到高雄，開車的時間一下子縮短了好多，南北往來變得好方便。",key:"<b>1978 年中山高速公路</b>全線通車。"},
+  dangwai:{ch:"p5",name:"黨外運動",kind:"民主化",year:"1970～1980 年代",text:"戒嚴時期不能成立新的政黨，一群不屬於國民黨的人士被稱為「黨外」。他們參加選舉、辦雜誌，爭取言論自由和民主。1986 年，黨外人士成立了民主進步黨。",key:"<b>黨外人士</b>參選、辦雜誌，爭取<b>民主和自由</b>。"},
+  meilidao:{ch:"p5",name:"美麗島事件",kind:"民主化",year:"1979 年",text:"1979 年 12 月 10 日世界人權日，黨外人士在高雄舉辦遊行，和軍警發生衝突，很多人被逮捕、判刑。這件事讓更多人開始關心民主和人權，也推動了後來的解嚴和民主改革。",key:"<b>1979 年美麗島事件</b>，讓更多人關心<b>民主與人權</b>。"},
   jieyan2:{ch:"p5",name:"解除戒嚴",kind:"民主化",year:"1987 年",text:"經過很多人的爭取，政府在 1987 年宣布解除戒嚴。之後開放成立新政黨、開放辦報紙，人民的言論和集會自由越來越多。",key:"<b>1987 年解除戒嚴</b>，開放<b>報禁、黨禁</b>。"},
   zhixuan:{ch:"p5",name:"總統直選",kind:"民主化",year:"1996 年",text:"以前總統是由國民大會代表選出來的。1996 年，臺灣舉行第一次總統直接選舉，年滿 20 歲的公民都可以投票，一人一票選出自己的總統。",key:"<b>1996 年</b>第一次<b>總統直選</b>。"},
   lunti:{ch:"p5",name:"政黨輪替",kind:"民主化",year:"2000 年",text:"2000 年的總統選舉，由不同的政黨贏得選舉，臺灣第一次政黨輪替，政權和平轉移。這表示人民可以用選票決定由誰來執政。",key:"<b>2000 年</b>第一次<b>政黨輪替</b>，政權<b>和平轉移</b>。"},
@@ -3530,6 +3542,7 @@ CHAPTERS.push(
   {t:"完成「土地改革三步驟」排序",c:["c:meiyuan"],h:"再去找地政人員。"},
   {t:"轉身去看在客廳做代工的媽媽",c:["c:livingroom"],h:"轉到另一邊，客廳裡縫衣服、做聖誕燈的媽媽。"},
   {t:"把縫好的成衣送去加工出口區",c:["c:epz"],h:"把「外銷的成衣」交給工廠裡的女工秀英。"},
+  {t:"聽媽媽說孩子上國中的事",c:["c:jiunian"],h:"回去找做代工的媽媽。"},
   {t:"找回第三片時光拼圖",c:["f:done"],h:"秀英說聖誕燈的箱子裡有東西在發光。"}
  ],
  spots:[
@@ -3562,6 +3575,12 @@ CHAPTERS.push(
       {t:"國語家庭",r:"那是日治時期皇民化的事。"},
       {t:"三年輪作",r:"那是嘉南大圳的種田方法。"}]},
      fx:{card:"livingroom",give:["shirt"]},after:[["homemom","這批衣服縫好了，麻煩你幫我送去加工出口區，交給秀英！"]]},
+    {if:["c:epz","!c:jiunian"],lines:[["homemom","衣服送到了嗎？謝謝你！"],["homemom","告訴你一個好消息：從 1968 年開始實施「九年國民義務教育」，我們家老大國小畢業，不用考試就可以直接讀國中了！"],["homemom","我們在客廳辛苦做代工，就是希望孩子能多讀一點書。"]],
+     ask:{q:"1968 年開始實施的教育政策是什麼？",by:"homemom",say:"你知道嗎？",o:[
+      {t:"九年國民義務教育",ok:true,r:"對！孩子都可以讀到國中了。"},
+      {t:"皇民化教育",r:"那是日治時期的事。"},
+      {t:"只有男生可以上學",r:"不是喔，男生女生都可以讀書。"}]},
+     fx:{card:"jiunian"}},
     {if:[],lines:[["homemom","這些衣服和燈泡，要賣到國外去喔。"]]}
    ]},
   {id:"xiuying",name:"秀英",role:"加工出口區的女工",por:"xiuying",s:"b",x:82,y:32,
@@ -3581,6 +3600,7 @@ CHAPTERS.push(
   {id:"lights",name:"聖誕燈的箱子",role:"",kind:"obj",s:"b",x:91,y:72,
    talks:[
     {if:["!c:epz"],lines:[["旁白","一大箱要出貨的聖誕燈。"]]},
+    {if:["!c:jiunian"],lines:[["旁白","做代工的媽媽正在對你招手，好像有好消息要告訴你。"]]},
     {if:["!f:done"],lines:[["旁白","燈串裡藏著一片發光的拼圖──第三片時光拼圖！"]],
      ask:{q:"戰後美國提供臺灣麵粉、棉花、肥料和資金，叫做什麼？",by:"教授",say:"考考你：",o:[
       {t:"美援",ok:true,r:"答對了！"},
@@ -3604,6 +3624,7 @@ CHAPTERS.push(
   {t:"完成「十大建設」找一找",c:["c:shida"],h:"工程師要考你，哪些是十大建設。"},
   {t:"轉身到科學園區，把晶片交給工程師",c:["c:sciencepark"],h:"轉到另一邊，穿無塵衣的工程師。先從工地的卡車司機那裡拿到晶片。"},
   {t:"聽外國記者怎麼說臺灣",c:["c:miracle"],h:"科學園區門口拿相機的記者。"},
+  {t:"聽記者說臺灣的外交處境",c:["c:un1971"],h:"再跟外國記者聊聊。"},
   {t:"找回第四片時光拼圖",c:["f:done"],h:"記者說無塵室的窗邊有東西在發光。"}
  ],
  spots:[
@@ -3646,12 +3667,18 @@ CHAPTERS.push(
       {t:"四大天王",r:"哈哈，那是歌手啦。"},
       {t:"四大名著",r:"那是書喔。"}]},
      fx:{card:"miracle"}},
+    {if:["!c:un1971"],lines:[["reporter","不過，臺灣在國際上的處境並不容易。"],["reporter","1971 年，聯合國決定由中華人民共和國代表中國，中華民國退出了聯合國，後來很多國家也和臺灣斷交。"],["reporter","可是臺灣沒有放棄，靠著做生意、貿易和民間交流，繼續和全世界往來。我就是來報導這件事的！"]],
+     ask:{q:"中華民國在哪一年退出聯合國？",by:"reporter",say:"考考你：",o:[
+      {t:"1971 年",ok:true,r:"Correct！"},
+      {t:"1945 年",r:"1945 年是戰爭結束的時候。"},
+      {t:"1996 年",r:"1996 年是第一次總統直選。"}]},
+     fx:{card:"un1971"}},
     {if:["!f:done"],lines:[["reporter","咦，無塵室的窗邊好像有東西在發光？"]]},
     {if:[],lines:[["reporter","我要把臺灣的故事告訴全世界！"]]}
    ]},
   {id:"window",name:"無塵室的窗邊",role:"",kind:"obj",s:"b",x:46,y:72,
    talks:[
-    {if:["!c:miracle"],lines:[["旁白","窗戶裡面的人都穿著白白的衣服。"]]},
+    {if:["!c:un1971"],lines:[["旁白","窗戶裡面的人都穿著白白的衣服。"]]},
     {if:["!f:done"],lines:[["旁白","窗臺上有一片發光的拼圖──第四片時光拼圖！"]],
      ask:{q:"下列哪一項是十大建設？",by:"教授",say:"最後一題：",o:[
       {t:"中山高速公路",ok:true,r:"答對了！"},
@@ -3672,6 +3699,7 @@ CHAPTERS.push(
  ],
  goals:[
   {t:"跟第一次投票的爺爺說話",c:["f:met"],h:"排隊排在前面、穿西裝的爺爺。"},
+  {t:"聽爺爺說黨外和美麗島的故事",c:["c:meilidao"],h:"再跟陳爺爺聊聊。"},
   {t:"聽選務人員說明，把選票交給爺爺",c:["c:zhixuan"],h:"桌子後面的選務人員會給你選票。"},
   {t:"完成「民主的腳步」排序",c:["c:lunti"],h:"再去找選務人員。"},
   {t:"轉身到今天的夜市，認識新住民媽媽",c:["c:duoyuan"],h:"轉到另一邊，小吃攤的新住民媽媽。"},
@@ -3681,6 +3709,12 @@ CHAPTERS.push(
   {id:"voter",name:"陳爺爺",role:"第一次選總統的爺爺",por:"votergpa",s:"a",x:34,y:30,
    talks:[
     {if:["!f:met"],lines:[["voter","小朋友，你知道今天是什麼日子嗎？今天我們要自己選總統！"],["voter","我年輕的時候是戒嚴時期，說話都要小心翼翼的。1987 年政府宣布解除戒嚴，後來可以組政黨、辦報紙了。"],["voter","活到這把年紀，終於可以一人一票選總統，我好激動啊！"]],fx:{set:["met"]}},
+    {if:["!c:meilidao"],lines:[["voter","戒嚴的時候不能組新的政黨。有一群不屬於國民黨的人，大家叫他們「黨外」，他們參加選舉、辦雜誌，替大家爭取說話的自由。"],["voter","1979 年 12 月 10 日世界人權日，黨外人士在高雄辦遊行，和軍警發生衝突，很多人被抓去關。那就是「美麗島事件」。"],["voter","可是從那以後，越來越多人關心民主和人權。1986 年，黨外人士成立了新的政黨，隔年政府就解除戒嚴了。"]],
+     ask:{q:"1979 年在高雄發生、讓更多人關心民主和人權的事件是什麼？",by:"voter",say:"你記得嗎？",o:[
+      {t:"美麗島事件",ok:true,r:"沒錯，那是臺灣民主路上很重要的一步。"},
+      {t:"二二八事件",r:"二二八事件是 1947 年的事。"},
+      {t:"霧社事件",r:"霧社事件是日治時期的事。"}]},
+     fx:{card:["dangwai","meilidao"]}},
     {if:["!c:zhixuan"],lines:[["voter","選務人員那邊好像要給你東西？"]]},
     {if:[],lines:[["voter","每一票都很珍貴！"]]}
    ],
@@ -3694,9 +3728,10 @@ CHAPTERS.push(
   {id:"clerk",name:"選務人員",role:"投票所的工作人員",por:"clerk",s:"a",x:86,y:40,
    talks:[
     {if:["!f:met"],lines:[["clerk","請排隊，拿出身分證喔。"]]},
+    {if:["!c:meilidao"],lines:[["clerk","陳爺爺好像有故事想跟你說喔。"]]},
     {if:["!c:zhixuan"],lines:[["clerk","以前總統是由國民大會選出來的。今年開始，年滿 20 歲的公民都可以直接投票選總統。"],["clerk","這張選票麻煩你拿給陳爺爺。"]],fx:{give:["ballot"]}},
     {if:["!c:jieyan2"],lines:[["clerk","臺灣的民主，是一步一步走過來的。你能把這些事情排出正確的順序嗎？"]],
-     fx:{sort:{kicker:"排序挑戰",title:"民主的腳步",bins:["1987 年","1996 年","2000 年"],items:[["解除戒嚴，開放報禁、黨禁",0],["第一次總統直選",1],["第一次政黨輪替",2]]},card:["jieyan2","lunti"],give:["votestamp"]},
+     fx:{sort:{kicker:"排序挑戰",title:"民主的腳步",bins:["1979 年","1987 年","1996 年","2000 年"],items:[["美麗島事件",0],["解除戒嚴，開放報禁、黨禁",1],["第一次總統直選",2],["第一次政黨輪替",3]]},card:["jieyan2","lunti"],give:["votestamp"]},
      after:[["clerk","全對！2000 年由不同的政黨贏得選舉，政權和平轉移，叫做「政黨輪替」。"],["clerk","這個圈選章送你，要記得：民主得來不易！"]]},
     {if:[],lines:[["clerk","投票完，請安靜離開投票所喔。"]]}
    ]},
@@ -3756,10 +3791,15 @@ QUIZ.push(
  {ch:"p4",q:"1980 年設立、發展高科技產業的是哪裡？",o:["新竹科學園區","高雄加工出口區","桃園國際機場","臺中港"],a:0,why:"1980 年設立新竹科學園區。"},
  {ch:"p4",q:"臺灣和韓國、香港、新加坡被並稱為什麼？",o:["亞洲四小龍","四大天王","四大名著","四大港口"],a:0,why:"亞洲四小龍。"},
  {ch:"p4",q:"臺灣的產業發展，大致的順序是哪一個？",o:["農業 → 工業 → 高科技產業","高科技產業 → 農業 → 工業","工業 → 農業 → 高科技產業","都一直是農業"],a:0,why:"從農業社會轉型為工業，再到高科技產業。"},
+ {ch:"p3",q:"1968 年開始實施，讓國小畢業生可以直接讀國中的政策是什麼？",o:["九年國民義務教育","耕者有其田","國語運動","全民健保"],a:0,why:"1968 年實施九年國民義務教育。"},
+ {ch:"p4",q:"中華民國在哪一年退出聯合國？",o:["1971 年","1945 年","1987 年","1996 年"],a:0,why:"1971 年中華民國退出聯合國，之後許多國家與我國斷交。"},
+ {ch:"p4",q:"退出聯合國後，臺灣主要用什麼方式繼續和世界往來？",o:["經濟、貿易和民間交流","關起門不和別人往來","全部改說英語","派軍隊出國"],a:0,why:"臺灣以經貿與民間交流和世界往來。"},
+ {ch:"p5",q:"1979 年在高雄發生，讓更多人關心民主和人權的事件是什麼？",o:["美麗島事件","二二八事件","霧社事件","西來庵事件"],a:0,why:"1979 年美麗島事件。"},
+ {ch:"p5",q:"戒嚴時期，不屬於國民黨、爭取民主的政治人士被稱為什麼？",o:["黨外","保正","郊商","佃農"],a:0,why:"他們被稱為黨外人士。"},
  {ch:"p5",q:"臺灣在哪一年解除戒嚴？",o:["1987 年","1949 年","1996 年","2000 年"],a:0,why:"1987 年解除戒嚴。"},
  {ch:"p5",q:"臺灣第一次總統直接選舉是哪一年？",o:["1996 年","1987 年","2000 年","1945 年"],a:0,why:"1996 年第一次總統直選。"},
  {ch:"p5",q:"2000 年臺灣第一次發生什麼事？",o:["政黨輪替","解除戒嚴","總統直選","發行新臺幣"],a:0,why:"2000 年第一次政黨輪替，政權和平轉移。"},
- {ch:"p5",q:"戰後臺灣民主化的正確順序是哪一個？",o:["解除戒嚴 → 總統直選 → 政黨輪替","總統直選 → 解除戒嚴 → 政黨輪替","政黨輪替 → 總統直選 → 解除戒嚴","解除戒嚴 → 政黨輪替 → 總統直選"],a:0,why:"1987 解嚴 → 1996 總統直選 → 2000 政黨輪替。"},
+ {ch:"p5",q:"戰後臺灣民主化的正確順序是哪一個？",o:["美麗島事件 → 解除戒嚴 → 總統直選 → 政黨輪替","解除戒嚴 → 美麗島事件 → 總統直選 → 政黨輪替","總統直選 → 解除戒嚴 → 美麗島事件 → 政黨輪替","政黨輪替 → 總統直選 → 解除戒嚴 → 美麗島事件"],a:0,why:"1979 美麗島事件 → 1987 解嚴 → 1996 總統直選 → 2000 政黨輪替。"},
  {ch:"p5",q:"1995 年開始實施，讓大家看病不用花很多錢的制度是什麼？",o:["全民健保","戒嚴","土地改革","美援"],a:0,why:"1995 年實施全民健保。"},
  {ch:"p5",q:"面對新住民和不同族群的文化，我們應該怎麼做？",o:["互相尊重、欣賞","要求大家都一樣","不要和他們說話","只吃自己家鄉的菜"],a:0,why:"臺灣是多元文化社會，要彼此尊重。"}
 );
@@ -3919,8 +3959,47 @@ function openHub(){
   $("hub-battle").innerHTML=anyDone?`<span style="font-size:34px">⚔️</span><div class="sp"><b>答題對決：${er.boss.name}</b><span>${allDone&&!eraBossWon(er)?"這個時代的章節都完成了，快去打倒魔王！":"題目每次隨機，從這個時代已完成的章節出題。答對還能拿到夥伴的食物！"}最佳紀錄：${S.battle.bestCorrect} 題答對${S.battle.wins?`・勝利 ${S.battle.wins} 次`:""}</span></div><button class="btn" id="hub-fight">${allDone&&!eraBossWon(er)?"迎戰魔王":"開始對決"}</button>`
     :`<span style="font-size:34px;opacity:.5">⚔️</span><div class="sp"><b>答題對決</b><span>完成這個時代的第一章後開放。</span></div>`;
   if(anyDone)$("hub-fight").onclick=()=>startBattle({story:allDone&&!eraBossWon(er),era:er.id});
+  renderFinal();
   S.cur=null;save();
 }
+/* ===== 全部破關：時光長河總複習＋電子破關證書 ===== */
+function allBoss(){return ERAS.filter(e=>eraChs(e.id).length).every(e=>S.g.includes(e.boss.flag));}
+function renderFinal(){const f=$("hub-final");if(!allBoss()){f.hidden=true;return;}f.hidden=false;const done=S.g.includes("river");
+  f.innerHTML=`<span style="font-size:34px">${done?"🎓":"🌊"}</span><div class="sp"><b>${done?"破關證書":"最終挑戰：時光長河"}</b><span>${done?"你走完了臺灣的整條時光長河！點這裡看你的破關證書。":"把三十幾件歷史大事，放回正確的時代。全部完成就能拿到破關證書！"}</span></div><button class="btn" id="hub-fin">${done?"看證書":"出發！"}</button>`;
+  $("hub-fin").onclick=()=>done?openCert():playRiver();}
+async function playRiver(){music.set(BOSS_MUSIC);let miss=0;
+  for(const r of RIVER){const before=S.river_miss||0;await sortGame({kicker:"時光長河",title:r.title,hint:"這件事發生在哪個時代？點下面正確的時代！",bins:r.bins,items:r.items,onWrong:()=>miss++});}
+  if(!S.g.includes("river"))S.g.push("river");S.riverBest=S.riverBest==null?miss:Math.min(S.riverBest,miss);save();SFX.win();
+  modal(`<div class="kicker">時光長河</div><h2>全部的歷史都回到正確的時代了！</h2><p>這次放錯 ${miss} 次${miss===0?"，完美！":""}。迷霧完全散開，時光長河又開始流動了。</p><div class="row"><button class="btn" id="rv-c">領取破關證書</button></div>`);
+  $("rv-c").onclick=()=>{closeModal();openCert();};music.set(HUB_MUSIC);renderFinal();}
+async function certCanvas(){const W=1600,H=1130,c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
+  try{const bg=await loadImg(IMG.cover);const s=Math.max(W/bg.width,H/bg.height);g.drawImage(bg,(W-bg.width*s)/2,(H-bg.height*s)/2,bg.width*s,bg.height*s);}catch(e){}
+  g.fillStyle="rgba(14,18,32,.78)";g.fillRect(0,0,W,H);
+  g.strokeStyle="#f6cf73";g.lineWidth=6;g.strokeRect(40,40,W-80,H-80);g.lineWidth=2;g.strokeRect(58,58,W-116,H-116);
+  g.textAlign="center";g.fillStyle="#f6cf73";g.font='900 46px "Noto Serif TC",serif';g.fillText("台灣時光探險隊",W/2,150);
+  g.fillStyle="#fff4e0";g.font='900 92px "Noto Serif TC",serif';g.fillText("破 關 證 書",W/2,270);
+  g.font='500 34px "Noto Sans TC",sans-serif';g.fillStyle="#e8dcc2";g.fillText("茲證明",W/2,350);
+  g.font='900 76px "Noto Serif TC",serif';g.fillStyle="#fff";g.fillText(S.name||"探險家",W/2,445);
+  const stars=CHAPTERS.reduce((s,c)=>s+(chs(c.id).stars||0),0),cards=S.cards.length;
+  g.font='500 32px "Noto Sans TC",sans-serif';g.fillStyle="#e8dcc2";
+  g.fillText(`走完史前到戰後的 ${ERAS.filter(e=>eraChs(e.id).length).length} 個時代、${CHAPTERS.length} 個章節，打倒所有迷霧魔王，`,W/2,525);
+  g.fillText(`並完成「時光長河」總複習，成為真正的時光探險家！`,W/2,572);
+  g.font='700 34px "Noto Sans TC",sans-serif';g.fillStyle="#f6cf73";g.fillText(`★ ${stars} / ${CHAPTERS.length*3}　　史料卡 ${cards} / ${Object.keys(CARDS).length} 張`,W/2,640);
+  const rewards=ERAS.filter(e=>eraChs(e.id).length).map(e=>e.boss.reward),sz=120,gap=40,x0=(W-(rewards.length*sz+(rewards.length-1)*gap))/2;
+  for(let i=0;i<rewards.length;i++){const it=ITEMS[rewards[i]];if(!it)continue;try{const sh=await loadImg(IMG[it.sheet||"items"]);const cw=sh.width/ICON_GRID,ch=sh.height/ICON_GRID;
+    const x=x0+i*(sz+gap),y=690;g.fillStyle="rgba(246,207,115,.15)";g.beginPath();g.arc(x+sz/2,y+sz/2,sz/2+8,0,Math.PI*2);g.fill();
+    g.drawImage(sh,(it.icon%ICON_GRID)*cw,Math.floor(it.icon/ICON_GRID)*ch,cw,ch,x,y,sz,sz);
+    g.font='500 20px "Noto Sans TC",sans-serif';g.fillStyle="#e8dcc2";g.fillText(ERAS.filter(e=>eraChs(e.id).length)[i].name,x+sz/2,y+sz+36);}catch(e){}}
+  const d=new Date();g.font='500 28px "Noto Sans TC",sans-serif';g.fillStyle="#e8dcc2";
+  g.textAlign="left";g.fillText(`${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日`,130,1010);
+  g.textAlign="right";g.fillText("倍思學院 ® Since 2016",W-130,1010);
+  return c;}
+async function openCert(){const p=modal(`<div class="panel-head"><h2>🎓 破關證書</h2><button class="x" id="ct-x">✕</button></div><div id="ct-box" style="text-align:center;color:var(--paper-dim)">證書製作中…</div>`,{wide:true});
+  $("ct-x").onclick=closeModal;
+  let url="";try{const c=await certCanvas();url=c.toDataURL("image/png");}catch(e){}
+  if(!url){$("ct-box").textContent="證書做不出來，請重新整理再試一次。";return;}
+  $("ct-box").innerHTML=`<img src="${url}" alt="破關證書" style="width:100%;border-radius:10px;display:block"><p style="font-size:13px;margin:8px 0">手機可以長按圖片儲存；電腦可以按下面的按鈕下載。</p><div class="row" style="justify-content:center"><a class="btn" id="ct-dl" download="台灣時光探險隊破關證書.png" href="${url}">下載證書</a></div>`;}
+
 document.addEventListener("click",e=>{const b=e.target.closest("[data-open]");if(!b)return;const w=b.dataset.open;
   if(w==="bag")openBag();if(w==="book")openBook();if(w==="cabinet")openCabinet();if(w==="pet")openPet();});
 document.addEventListener("click",e=>{const b=e.target.closest('[data-act="settings"]');if(b)openSettings();});
@@ -4279,7 +4358,7 @@ function sortGame(m){return new Promise(res=>{const items=shuffle(m.items.map(([
     if(+btn.dataset.b===it.b){SFX.ok();$("sg-done").insertAdjacentHTML("afterbegin",`<div>✅ ${esc(it.t)} → <b>${esc(m.bins[it.b])}</b></div>`);k++;
       if(k>=items.length){$("sg-card").textContent="全部配對完成！";SFX.win();await sleep(1100);delete $("modal").dataset.lock;closeModal();
         if(st&&wrongHere){st.miss++;st.missed.push(m.title);save();}res();return;}show();}
-    else{SFX.no();wrongHere++;btn.animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"none"}],{duration:260});toast(`「${esc(it.t)}」不是「${esc(m.bins[+btn.dataset.b])}」喔，再想想！`);}});
+    else{SFX.no();wrongHere++;if(m.onWrong)m.onWrong();btn.animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"none"}],{duration:260});toast(`「${esc(it.t)}」不是「${esc(m.bins[+btn.dataset.b])}」喔，再想想！`);}});
   show();});}
 
 /* ================= 章節完成 ================= */
