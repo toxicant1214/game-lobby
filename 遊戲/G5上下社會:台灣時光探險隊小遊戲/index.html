@@ -421,6 +421,10 @@ body.holding #pano{cursor:copy;}
 .wear .wi{width:30px;height:30px;border-radius:50%;background-color:#fff6dc;background-repeat:no-repeat;flex:none;}
 .wear.on{background:var(--brass);color:#2a1a04;border-color:var(--brass);}
 .wear[disabled]{opacity:.45;}
+.era .prog.newc{background:#f6cf73;color:#2a1a00;font-weight:900;animation:newp 1.6s ease-in-out infinite}
+.chap.newchap{outline:2px solid #f6cf73;box-shadow:0 0 18px rgba(246,207,115,.55)}
+.chap.newchap .st::after{content:" NEW";color:#f6cf73;font-weight:900}
+@keyframes newp{50%{transform:scale(1.07)}}
 </style>
 
 <!-- 封面 -->
@@ -4418,13 +4422,14 @@ function openHub(){
   let sel=ERAS.findIndex(x=>x.id===S.era);if(sel<0||!eraOpen(sel)){sel=0;ERAS.forEach((x,i)=>{if(eraOpen(i))sel=i;});}S.era=ERAS[sel].id;
   $("eras").innerHTML=ERAS.map((er,i)=>{const list=eraChs(er.id),open=eraOpen(i),dc=list.filter(c=>chs(c.id).done).length;
     return `<button class="era ${open?"open":"locked"} ${i===sel?"sel":""}" data-i="${i}"><span class="im" style="background-image:url(${IMG[er.img]})"></span>
-    ${open?`<span class="prog">${eraBossWon(er)?"✦ 已破關":dc+"/"+list.length+" 章"}</span>`:`<span class="lock">${list.length?"🔒 先打敗上一個時代的魔王":"時光門修復中"}</span>`}<span class="tx"><b>${er.name}</b><span>${er.years}</span></span></button>`;}).join("");
+    ${open?`<span class="prog${eraBossWon(er)&&dc<list.length?" newc":""}">${eraBossWon(er)?(dc<list.length?"✨ 新章節 "+(list.length-dc):"✦ 已破關"):dc+"/"+list.length+" 章"}</span>`:`<span class="lock">${list.length?"🔒 先打敗上一個時代的魔王":"時光門修復中"}</span>`}<span class="tx"><b>${er.name}</b><span>${er.years}</span></span></button>`;}).join("");
   $("eras").querySelectorAll(".era").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,er=ERAS[i];
     if(!eraOpen(i)){toast(eraChs(er.id).length?`先完成「${ERAS[i-1].name}」並打敗${ERAS[i-1].boss.name}，才能打開這道時光門！`:"這個時代的時光門還在修復中，敬請期待！");return;}
     S.era=er.id;save();SFX.tick();openHub();});
   const er=ERAS[sel],list=eraChs(er.id);
   $("chapters").innerHTML=list.map(c=>{const i=CHAPTERS.indexOf(c),st=chs(c.id),ok=chapterUnlocked(i);
-    return `<button class="chap ${ok?"":"locked"}" data-i="${i}"><span class="th" style="background-image:url(${IMG["thumb_"+c.id]})"></span><span><span>${c.seal}</span><b>${c.title}</b>
+    const isNew=ok&&!st.done&&eraBossWon(er)&&st.flags.length<=1;
+    return `<button class="chap ${ok?"":"locked"}${isNew?" newchap":""}" data-i="${i}"><span class="th" style="background-image:url(${IMG["thumb_"+c.id]})"></span><span><span>${c.seal}</span><b>${c.title}</b>
       <span class="st">${st.done?"★".repeat(st.stars)+"☆".repeat(3-st.stars):ok?(st.flags.length>1?"進行中…":"可以出發"):"🔒 完成上一章解鎖"}</span></span></button>`;}).join("");
   $("chapters").querySelectorAll(".chap").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(!chapterUnlocked(i)){toast("先完成上一章，才能打開這一章喔！");return;}enterChapter(i);});
   const anyDone=list.some(c=>chs(c.id).done),allDone=list.every(c=>chs(c.id).done);
@@ -4432,6 +4437,8 @@ function openHub(){
     :`<span style="font-size:34px;opacity:.5">⚔️</span><div class="sp"><b>答題對決</b><span>完成這個時代的第一章後開放。</span></div>`;
   if(anyDone)$("hub-fight").onclick=()=>startBattle({story:allDone&&!eraBossWon(er),era:er.id});
   renderFinal();
+  const newEras=ERAS.filter((e,i)=>eraOpen(i)&&eraBossWon(e)&&eraChs(e.id).some(c=>!chs(c.id).done));
+  if(newEras.length&&!openHub._told){openHub._told=1;toast(`✨ 新章節上線了！看看「${newEras.map(e=>e.name).join("、")}」`);}
   S.cur=null;save();
 }
 /* ===== 全部破關：時光長河總複習＋電子破關證書 ===== */
