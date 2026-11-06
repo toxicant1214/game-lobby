@@ -96,6 +96,18 @@ td.name{font-weight:700}
     </div>
     <p class="note">「玩了幾次」是每玩完一關算一次。「全破」是每一關都過關過。排行榜每兩個月清除時，這裡的紀錄也會一起清除（舊資料有備份）。</p>
   </section>
+  <section class="card" id="tw" hidden>
+    <h2 style="margin:0">台灣時光探險隊・學生進度</h2>
+    <p class="sub" style="margin:0">從遊戲書房登入玩的孩子，進度存在雲端，這裡看得到每個人玩到哪裡。</p>
+    <div class="stats" id="twStats"></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>姓名</th><th>代碼</th><th>玩到哪裡</th><th>完成章數</th><th>星星</th><th>史料卡</th><th>打倒魔王</th><th>最後玩</th></tr></thead>
+        <tbody id="twBody"></tbody>
+      </table>
+    </div>
+    <p class="note">共 29 章、7 個時代魔王，每章最多 3 顆星（滿分 87 顆）。「玩到哪裡」是完成的最後一章。</p>
+  </section>
 </div>
 <script>
 const SUPABASE_URL = "https://wbxpqyrkgdaqvtsmijoe.supabase.co";
@@ -176,7 +188,7 @@ async function login(pass){
       const r = await fetch(SUPABASE_URL + '/rest/v1/game_levels?select=game,title&order=title', { headers:{ apikey:SUPABASE_KEY } });
       (await r.json()).forEach(g => $('game').insertAdjacentHTML('beforeend', `<option value="${esc(g.game)}">${esc(g.title)}</option>`));
     }catch(e){}
-    $('login').hidden = true; $('report').hidden = false; render();
+    $('login').hidden = true; $('report').hidden = false; render(); loadTw();
   }catch(err){
     try{ sessionStorage.removeItem('bz_tpass'); }catch(e){}
     $('loginMsg').textContent = err.wrong ? '密碼不對，請再試一次。' : '讀取失敗：' + err.message; $('loginMsg').className = 'msg err';
@@ -184,6 +196,28 @@ async function login(pass){
   $('loginBtn').disabled = false;
 }
 
+
+/* ===== 台灣時光探險隊：學生進度 ===== */
+const TW_ERAS=[["史前時代",["ch1","ch2","ch3","ch4"]],["大航海時代",["s1","s2","s3","s4","s5"]],["明鄭時期",["z1","z2","z3"]],
+  ["清領前期",["q1","q2","q3","q4"]],["清領後期",["r1","r2","r3","r4"]],["日治前期",["j1","j2","j3","j4"]],["日治中後期",["k1","k2","k3","k4","k5"]],["戰後臺灣",[]]];
+function twWhere(done){let last=null;TW_ERAS.forEach(([n,ids])=>ids.forEach((id,k)=>{if(done.includes(id))last=n+" 第 "+(k+1)+" 章";}));return last||"剛開始";}
+let TW=[];
+async function loadTw(){
+  const show=['all','twtime'].includes($('game').value);
+  if(!show){$('tw').hidden=true;return;}
+  try{TW=await rpc('teacher_twtime',{p_pass:PASS})||[];}catch(e){$('tw').hidden=true;return;}
+  $('tw').hidden=false;renderTw();
+}
+function renderTw(){
+  const q=$('q').value.trim().toUpperCase();
+  const rows=TW.filter(r=>!q||r.name.toUpperCase().includes(q)||r.code.includes(q));
+  $('twStats').innerHTML=`<span><b>${rows.length}</b>位孩子玩過</span><span><b>${rows.filter(r=>r.chapters>=29).length}</b>位全部完成</span>`;
+  $('twBody').innerHTML=rows.length?rows.map(r=>`<tr><td class="name">${esc(r.name)}</td><td data-l="代碼">${esc(r.code)}</td><td data-l="玩到">${esc(twWhere(r.done_chs||[]))}</td><td class="num" data-l="完成">${r.chapters} / 29</td><td class="num" data-l="星星">${r.stars} / 87</td><td class="num" data-l="史料卡">${r.cards}</td><td class="num" data-l="魔王">${r.bosses} / 7</td><td data-l="最後玩">${fmt(r.last_played)}</td></tr>`).join('')
+    :`<tr><td colspan="8">${q?'找不到這個名字。':'還沒有孩子玩過。'}</td></tr>`;
+}
+$('game').addEventListener('change', loadTw);
+$('q').addEventListener('input', renderTw);
+$('reload').addEventListener('click', loadTw);
 $('login').addEventListener('submit', e => { e.preventDefault(); login($('pass').value); });
 $('game').addEventListener('change', load);
 $('q').addEventListener('input', render);
