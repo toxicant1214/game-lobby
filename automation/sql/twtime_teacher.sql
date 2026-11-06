@@ -4,7 +4,7 @@
 -- 需要先跑過 game_progress.sql、play_log.sql
 -- ============================================================
 insert into public.game_levels(game, title, levels) values
-  ('twtime', '台灣時光探險隊（五年級社會）', 29)
+  ('twtime', '台灣時光探險隊（五年級社會）', 34)
 on conflict (game) do update set title = excluded.title, levels = excluded.levels;
 
 create or replace function public.teacher_twtime(p_pass text)

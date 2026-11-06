@@ -106,7 +106,7 @@ td.name{font-weight:700}
         <tbody id="twBody"></tbody>
       </table>
     </div>
-    <p class="note">共 29 章、7 個時代魔王，每章最多 3 顆星（滿分 87 顆）。「玩到哪裡」是完成的最後一章。</p>
+    <p class="note">共 34 章、8 個時代魔王，每章最多 3 顆星（滿分 102 顆）。「玩到哪裡」是完成的最後一章。</p>
   </section>
 </div>
 <script>
@@ -199,7 +199,7 @@ async function login(pass){
 
 /* ===== 台灣時光探險隊：學生進度 ===== */
 const TW_ERAS=[["史前時代",["ch1","ch2","ch3","ch4"]],["大航海時代",["s1","s2","s3","s4","s5"]],["明鄭時期",["z1","z2","z3"]],
-  ["清領前期",["q1","q2","q3","q4"]],["清領後期",["r1","r2","r3","r4"]],["日治前期",["j1","j2","j3","j4"]],["日治中後期",["k1","k2","k3","k4","k5"]],["戰後臺灣",[]]];
+  ["清領前期",["q1","q2","q3","q4"]],["清領後期",["r1","r2","r3","r4"]],["日治前期",["j1","j2","j3","j4"]],["日治中後期",["k1","k2","k3","k4","k5"]],["戰後臺灣",["p1","p2","p3","p4","p5"]]];
 function twWhere(done){let last=null;TW_ERAS.forEach(([n,ids])=>ids.forEach((id,k)=>{if(done.includes(id))last=n+" 第 "+(k+1)+" 章";}));return last||"剛開始";}
 let TW=[];
 async function loadTw(){
@@ -211,8 +211,8 @@ async function loadTw(){
 function renderTw(){
   const q=$('q').value.trim().toUpperCase();
   const rows=TW.filter(r=>!q||r.name.toUpperCase().includes(q)||r.code.includes(q));
-  $('twStats').innerHTML=`<span><b>${rows.length}</b>位孩子玩過</span><span><b>${rows.filter(r=>r.chapters>=29).length}</b>位全部完成</span>`;
-  $('twBody').innerHTML=rows.length?rows.map(r=>`<tr><td class="name">${esc(r.name)}</td><td data-l="代碼">${esc(r.code)}</td><td data-l="玩到">${esc(twWhere(r.done_chs||[]))}</td><td class="num" data-l="完成">${r.chapters} / 29</td><td class="num" data-l="星星">${r.stars} / 87</td><td class="num" data-l="史料卡">${r.cards}</td><td class="num" data-l="魔王">${r.bosses} / 7</td><td data-l="最後玩">${fmt(r.last_played)}</td></tr>`).join('')
+  $('twStats').innerHTML=`<span><b>${rows.length}</b>位孩子玩過</span><span><b>${rows.filter(r=>r.chapters>=34).length}</b>位全部完成</span>`;
+  $('twBody').innerHTML=rows.length?rows.map(r=>`<tr><td class="name">${esc(r.name)}</td><td data-l="代碼">${esc(r.code)}</td><td data-l="玩到">${esc(twWhere(r.done_chs||[]))}</td><td class="num" data-l="完成">${r.chapters} / 34</td><td class="num" data-l="星星">${r.stars} / 102</td><td class="num" data-l="史料卡">${r.cards}</td><td class="num" data-l="魔王">${r.bosses} / 8</td><td data-l="最後玩">${fmt(r.last_played)}</td></tr>`).join('')
     :`<tr><td colspan="8">${q?'找不到這個名字。':'還沒有孩子玩過。'}</td></tr>`;
 }
 $('game').addEventListener('change', loadTw);
