@@ -525,8 +525,8 @@ body.holding #pano{cursor:copy;}
 <div id="toast-root"></div>
 
 <script>
-const IMG={"pano_ch1": "a/pano_ch1.jpg", "thumb_ch1": "a/thumb_ch1.jpg", "pano_ch2": "a/pano_ch2.jpg", "thumb_ch2": "a/thumb_ch2.jpg", "pano_ch3": "a/pano_ch3.jpg", "thumb_ch3": "a/thumb_ch3.jpg", "pano_ch4": "a/pano_ch4.jpg", "thumb_ch4": "a/thumb_ch4.jpg", "pano_s1": "a/pano_s1.jpg", "thumb_s1": "a/thumb_s1.jpg", "pano_s2": "a/pano_s2.jpg", "thumb_s2": "a/thumb_s2.jpg", "pano_s3": "a/pano_s3.jpg", "thumb_s3": "a/thumb_s3.jpg", "pano_s4": "a/pano_s4.jpg", "thumb_s4": "a/thumb_s4.jpg", "pano_s5": "a/pano_s5.jpg", "thumb_s5": "a/thumb_s5.jpg", "pano_z1": "a/pano_z1.jpg", "thumb_z1": "a/thumb_z1.jpg", "pano_z2": "a/pano_z2.jpg", "thumb_z2": "a/thumb_z2.jpg", "pano_z3": "a/pano_z3.jpg", "thumb_z3": "a/thumb_z3.jpg", "pano_q1": "a/pano_q1.jpg", "thumb_q1": "a/thumb_q1.jpg", "pano_q2": "a/pano_q2.jpg", "thumb_q2": "a/thumb_q2.jpg", "pano_q3": "a/pano_q3.jpg", "thumb_q3": "a/thumb_q3.jpg", "pano_q4": "a/pano_q4.jpg", "thumb_q4": "a/thumb_q4.jpg", "pano_r1": "a/pano_r1.jpg", "thumb_r1": "a/thumb_r1.jpg", "pano_r2": "a/pano_r2.jpg", "thumb_r2": "a/thumb_r2.jpg", "pano_r3": "a/pano_r3.jpg", "thumb_r3": "a/thumb_r3.jpg", "pano_r4": "a/pano_r4.jpg", "thumb_r4": "a/thumb_r4.jpg", "pano_j1": "a/pano_j1.jpg", "thumb_j1": "a/thumb_j1.jpg", "pano_j2": "a/pano_j2.jpg", "thumb_j2": "a/thumb_j2.jpg", "pano_j3": "a/pano_j3.jpg", "thumb_j3": "a/thumb_j3.jpg", "pano_j4": "a/pano_j4.jpg", "thumb_j4": "a/thumb_j4.jpg", "pano_k1": "a/pano_k1.jpg", "thumb_k1": "a/thumb_k1.jpg", "pano_k2": "a/pano_k2.jpg", "thumb_k2": "a/thumb_k2.jpg", "pano_k3": "a/pano_k3.jpg", "thumb_k3": "a/thumb_k3.jpg", "pano_k4": "a/pano_k4.jpg", "thumb_k4": "a/thumb_k4.jpg", "pano_k5": "a/pano_k5.jpg", "thumb_k5": "a/thumb_k5.jpg", "e_sea": "a/e_sea.jpg", "e_zheng": "a/e_zheng.jpg", "e_qing1": "a/e_qing1.jpg", "e_japan": "a/e_japan.jpg", "e_post": "a/e_post.jpg", "cover": "a/cover.jpg", "c1": "a/c1.webp", "c2": "a/c2.webp", "c3": "a/c3.webp", "c4": "a/c4.webp", "c5": "a/c5.webp", "c6": "a/c6.webp", "acai": "a/acai.webp", "afu": "a/afu.webp", "ahai": "a/ahai.webp", "ama2": "a/ama2.webp", "aming": "a/aming.webp", "ashui": "a/ashui.webp", "ashun": "a/ashun.webp", "atian": "a/atian.webp", "atu": "a/atu.webp", "ayong": "a/ayong.webp", "beadtrader": "a/beadtrader.webp", "boatboss": "a/boatboss.webp", "boatman": "a/boatman.webp", "boss": "a/boss.webp", "boss_jp1": "a/boss_jp1.webp", "boss_jp2": "a/boss_jp2.webp", "boss_qing1": "a/boss_qing1.webp", "boss_qing2": "a/boss_qing2.webp", "boss_sea": "a/boss_sea.webp", "boss_zheng": "a/boss_zheng.webp", "brother": "a/brother.webp", "captain": "a/captain.webp", "chen": "a/chen.webp", "chenyh": "a/chenyh.webp", "coyett": "a/coyett.webp", "dcap": "a/dcap.webp", "deer1": "a/deer1.webp", "deer2": "a/deer2.webp", "deer3": "a/deer3.webp", "deptgirl": "a/deptgirl.webp", "doctor": "a/doctor.webp", "dodd": "a/dodd.webp", "driver": "a/driver.webp", "girl": "a/girl.webp", "granny": "a/granny.webp", "haru": "a/haru.webp", "hatta": "a/hatta.webp", "hosei": "a/hosei.webp", "huang": "a/huang.webp", "hunter": "a/hunter.webp", "items": "a/items.webp", "items_jp1": "a/items_jp1.webp", "items_jp2": "a/items_jp2.webp", "items_qing1": "a/items_qing1.webp", "items_qing2": "a/items_qing2.webp", "items_sea": "a/items_sea.webp", "items_zheng": "a/items_zheng.webp", "jade": "a/jade.webp", "jama": "a/jama.webp", "jiang": "a/jiang.webp", "jlin": "a/jlin.webp", "keisatsu": "a/keisatsu.webp", "kenichi": "a/kenichi.webp", "kid": "a/kid.webp", "koxinga": "a/koxinga.webp", "leader": "a/leader.webp", "lichun": "a/lichun.webp", "linxt": "a/linxt.webp", "liu": "a/liu.webp", "mackay": "a/mackay.webp", "marco": "a/marco.webp", "miaogong": "a/miaogong.webp", "mother": "a/mother.webp", "operator": "a/operator.webp", "padre": "a/padre.webp", "painter": "a/painter.webp", "pastor": "a/pastor.webp", "picker": "a/picker.webp", "prof": "a/prof.webp", "quan": "a/quan.webp", "reader": "a/reader.webp", "roadsoldier": "a/roadsoldier.webp", "scholar": "a/scholar.webp", "shen": "a/shen.webp", "shi": "a/shi.webp", "smith": "a/smith.webp", "stationmaster": "a/stationmaster.webp", "stone": "a/stone.webp", "teller": "a/teller.webp", "tokei": "a/tokei.webp", "toothache": "a/toothache.webp", "tuncap": "a/tuncap.webp", "uncle": "a/uncle.webp", "vander": "a/vander.webp", "wu": "a/wu.webp", "xiucai": "a/xiucai.webp", "yuan": "a/yuan.webp", "zhang": "a/zhang.webp"};
-const PANO={"ch1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 200, "L": 2300, "H": 900, "tAL": 0, "tBL": 0}, "ch2": {"W0": 1350, "WA": 1350, "WB": 1070, "ov": 200, "L": 2020, "H": 900, "tAL": 0, "tBL": 280}, "ch3": {"W0": 1350, "WA": 1260, "WB": 1350, "ov": 70, "L": 2470, "H": 900, "tAL": 0, "tBL": 0}, "ch4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 70, "L": 2560, "H": 900, "tAL": 0, "tBL": 0}, "s1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 50, "L": 2600, "H": 900, "tAL": 0, "tBL": 0}, "s2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}};
+const IMG={"pano_ch1": "a/pano_ch1.jpg", "thumb_ch1": "a/thumb_ch1.jpg", "pano_ch2": "a/pano_ch2.jpg", "thumb_ch2": "a/thumb_ch2.jpg", "pano_ch3": "a/pano_ch3.jpg", "thumb_ch3": "a/thumb_ch3.jpg", "pano_ch4": "a/pano_ch4.jpg", "thumb_ch4": "a/thumb_ch4.jpg", "pano_s1": "a/pano_s1.jpg", "thumb_s1": "a/thumb_s1.jpg", "pano_s2": "a/pano_s2.jpg", "thumb_s2": "a/thumb_s2.jpg", "pano_s3": "a/pano_s3.jpg", "thumb_s3": "a/thumb_s3.jpg", "pano_s4": "a/pano_s4.jpg", "thumb_s4": "a/thumb_s4.jpg", "pano_s5": "a/pano_s5.jpg", "thumb_s5": "a/thumb_s5.jpg", "pano_z1": "a/pano_z1.jpg", "thumb_z1": "a/thumb_z1.jpg", "pano_z2": "a/pano_z2.jpg", "thumb_z2": "a/thumb_z2.jpg", "pano_z3": "a/pano_z3.jpg", "thumb_z3": "a/thumb_z3.jpg", "pano_q1": "a/pano_q1.jpg", "thumb_q1": "a/thumb_q1.jpg", "pano_q2": "a/pano_q2.jpg", "thumb_q2": "a/thumb_q2.jpg", "pano_q3": "a/pano_q3.jpg", "thumb_q3": "a/thumb_q3.jpg", "pano_q4": "a/pano_q4.jpg", "thumb_q4": "a/thumb_q4.jpg", "pano_r1": "a/pano_r1.jpg", "thumb_r1": "a/thumb_r1.jpg", "pano_r2": "a/pano_r2.jpg", "thumb_r2": "a/thumb_r2.jpg", "pano_r3": "a/pano_r3.jpg", "thumb_r3": "a/thumb_r3.jpg", "pano_r4": "a/pano_r4.jpg", "thumb_r4": "a/thumb_r4.jpg", "pano_j1": "a/pano_j1.jpg", "thumb_j1": "a/thumb_j1.jpg", "pano_j2": "a/pano_j2.jpg", "thumb_j2": "a/thumb_j2.jpg", "pano_j3": "a/pano_j3.jpg", "thumb_j3": "a/thumb_j3.jpg", "pano_j4": "a/pano_j4.jpg", "thumb_j4": "a/thumb_j4.jpg", "pano_k1": "a/pano_k1.jpg", "thumb_k1": "a/thumb_k1.jpg", "pano_k2": "a/pano_k2.jpg", "thumb_k2": "a/thumb_k2.jpg", "pano_k3": "a/pano_k3.jpg", "thumb_k3": "a/thumb_k3.jpg", "pano_k4": "a/pano_k4.jpg", "thumb_k4": "a/thumb_k4.jpg", "pano_k5": "a/pano_k5.jpg", "thumb_k5": "a/thumb_k5.jpg", "pano_p1": "a/pano_p1.jpg", "thumb_p1": "a/thumb_p1.jpg", "pano_p2": "a/pano_p2.jpg", "thumb_p2": "a/thumb_p2.jpg", "pano_p3": "a/pano_p3.jpg", "thumb_p3": "a/thumb_p3.jpg", "pano_p4": "a/pano_p4.jpg", "thumb_p4": "a/thumb_p4.jpg", "pano_p5": "a/pano_p5.jpg", "thumb_p5": "a/thumb_p5.jpg", "e_sea": "a/e_sea.jpg", "e_zheng": "a/e_zheng.jpg", "e_qing1": "a/e_qing1.jpg", "e_japan": "a/e_japan.jpg", "e_post": "a/e_post.jpg", "cover": "a/cover.jpg", "c1": "a/c1.webp", "c2": "a/c2.webp", "c3": "a/c3.webp", "c4": "a/c4.webp", "c5": "a/c5.webp", "c6": "a/c6.webp", "acai": "a/acai.webp", "afu": "a/afu.webp", "ahai": "a/ahai.webp", "ama2": "a/ama2.webp", "aming": "a/aming.webp", "ashui": "a/ashui.webp", "ashun": "a/ashun.webp", "atian": "a/atian.webp", "atu": "a/atu.webp", "axiong": "a/axiong.webp", "ayong": "a/ayong.webp", "banker": "a/banker.webp", "beadtrader": "a/beadtrader.webp", "boatboss": "a/boatboss.webp", "boatman": "a/boatman.webp", "boss": "a/boss.webp", "boss_jp1": "a/boss_jp1.webp", "boss_jp2": "a/boss_jp2.webp", "boss_post": "a/boss_post.webp", "boss_qing1": "a/boss_qing1.webp", "boss_qing2": "a/boss_qing2.webp", "boss_sea": "a/boss_sea.webp", "boss_zheng": "a/boss_zheng.webp", "brother": "a/brother.webp", "captain": "a/captain.webp", "chen": "a/chen.webp", "chenyh": "a/chenyh.webp", "chipeng": "a/chipeng.webp", "clerk": "a/clerk.webp", "coyett": "a/coyett.webp", "dcap": "a/dcap.webp", "deer1": "a/deer1.webp", "deer2": "a/deer2.webp", "deer3": "a/deer3.webp", "deptgirl": "a/deptgirl.webp", "doctor": "a/doctor.webp", "dodd": "a/dodd.webp", "driver": "a/driver.webp", "girl": "a/girl.webp", "granny": "a/granny.webp", "guidegma": "a/guidegma.webp", "haru": "a/haru.webp", "hatta": "a/hatta.webp", "homemom": "a/homemom.webp", "hosei": "a/hosei.webp", "huang": "a/huang.webp", "hunter": "a/hunter.webp", "items": "a/items.webp", "items_jp1": "a/items_jp1.webp", "items_jp2": "a/items_jp2.webp", "items_post": "a/items_post.webp", "items_qing1": "a/items_qing1.webp", "items_qing2": "a/items_qing2.webp", "items_sea": "a/items_sea.webp", "items_zheng": "a/items_zheng.webp", "jade": "a/jade.webp", "jama": "a/jama.webp", "jiang": "a/jiang.webp", "jlin": "a/jlin.webp", "juanmom": "a/juanmom.webp", "keisatsu": "a/keisatsu.webp", "kenichi": "a/kenichi.webp", "kid": "a/kid.webp", "koxinga": "a/koxinga.webp", "landofficer": "a/landofficer.webp", "leader": "a/leader.webp", "lichun": "a/lichun.webp", "linxt": "a/linxt.webp", "liu": "a/liu.webp", "mackay": "a/mackay.webp", "marco": "a/marco.webp", "miaogong": "a/miaogong.webp", "mother": "a/mother.webp", "newsman": "a/newsman.webp", "oldsoldier": "a/oldsoldier.webp", "operator": "a/operator.webp", "padre": "a/padre.webp", "painter": "a/painter.webp", "pastor": "a/pastor.webp", "patu": "a/patu.webp", "pdriver": "a/pdriver.webp", "picker": "a/picker.webp", "prof": "a/prof.webp", "pstudent": "a/pstudent.webp", "pteacher": "a/pteacher.webp", "quan": "a/quan.webp", "reader": "a/reader.webp", "reporter": "a/reporter.webp", "roadeng": "a/roadeng.webp", "roadsoldier": "a/roadsoldier.webp", "scholar": "a/scholar.webp", "shen": "a/shen.webp", "shi": "a/shi.webp", "smith": "a/smith.webp", "stationmaster": "a/stationmaster.webp", "stone": "a/stone.webp", "teller": "a/teller.webp", "tokei": "a/tokei.webp", "toothache": "a/toothache.webp", "tuncap": "a/tuncap.webp", "uncle": "a/uncle.webp", "vander": "a/vander.webp", "votergpa": "a/votergpa.webp", "wu": "a/wu.webp", "xiaoan": "a/xiaoan.webp", "xinmom": "a/xinmom.webp", "xiucai": "a/xiucai.webp", "xiuying": "a/xiuying.webp", "yuan": "a/yuan.webp", "zhang": "a/zhang.webp"};
+const PANO={"ch1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 200, "L": 2300, "H": 900, "tAL": 0, "tBL": 0}, "ch2": {"W0": 1350, "WA": 1350, "WB": 1070, "ov": 200, "L": 2020, "H": 900, "tAL": 0, "tBL": 280}, "ch3": {"W0": 1350, "WA": 1260, "WB": 1350, "ov": 70, "L": 2470, "H": 900, "tAL": 0, "tBL": 0}, "ch4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 70, "L": 2560, "H": 900, "tAL": 0, "tBL": 0}, "s1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 50, "L": 2600, "H": 900, "tAL": 0, "tBL": 0}, "s2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}};
 const HEROES=[
   {id:"c1",type:"考古迷",tag:"觀察力",desc:"拿著放大鏡和小刷子，任何一塊石頭都不放過。最擅長從小線索拼出大故事。",stats:{觀察:5,勇氣:3,知識:4},names:["阿哲","小石","凱凱"]},
   {id:"c2",type:"航海家",tag:"勇氣",desc:"看著望遠鏡長大的海之女兒，地圖一攤開就知道往哪走。風浪越大越興奮。",stats:{觀察:4,勇氣:5,知識:3},names:["小帆","海音","阿浪"]},
@@ -609,7 +609,10 @@ const ERAS=[
    boss:{name:"迷霧戰雲",img:"boss_jp2",flag:"boss_jp2",reward:"dovebadge",
     intro:[["旁白","五個時光沙漏一拼起來，時光門就亮了……可是天上壓下來一大片灰紫色的雲，雲裡還傳來轟隆隆的聲音！"],["旁白","「我是迷霧戰雲！戰爭讓大家害怕、讓大家想忘記……我就靠這些過日子！」答對題目，用記住的歷史把牠吹散！"]],
     outro:[["教授","{name}，你吹散了迷霧戰雲！天空又藍了。"],["教授","你走完了整個日治時期：割讓、殖民統治、鐵路和衛生、文化協會、嘉南大圳、皇民化，還有戰爭。"],["教授","記住歷史，不是為了記住仇恨，而是讓我們更珍惜和平。下一個時代是戰後臺灣，時光門正在修復中！"]]}},
-  {id:"post",name:"戰後臺灣",years:"1945～今",img:"e_post",boss:{name:"",img:"boss",flag:"boss_post",reward:"compass",intro:[],outro:[]}}
+  {id:"post",name:"戰後臺灣",years:"終戰・經濟起飛・民主",img:"thumb_p3",food:["mantou","bubbletea","bento","redcake"],
+   boss:{name:"迷霧遺忘獸",img:"boss_post",flag:"boss_post",reward:"formosabadge",
+    intro:[["旁白","五片時光拼圖一拼起來，就發出好亮的光……可是光的另一邊，一隻全身灰濛濛、看不清楚臉的怪獸慢慢爬了出來！"],["旁白","「我是迷霧遺忘獸！只要大家忘記走過的路，我就會越來越大！」用你記住的歷史，把牠照亮！"]],
+    outro:[["教授","{name}，你打敗了迷霧遺忘獸！迷霧全部散開了！"],["教授","從幾萬年前的史前人，到大航海、明鄭、清領、日治，再到戰後的臺灣……你走完了整條時光長河。"],["教授","今天的臺灣，是很多人一起努力出來的。謝謝你，時光探險家！"]]}}
 ];
 
 const CHAPTERS=[
@@ -3277,6 +3280,453 @@ QUIZ.push(
  {ch:"k5",q:"二次世界大戰期間，許多臺灣年輕人怎麼了？",o:["被徵召當軍伕、志願兵或軍人","都去留學","都去當畫家","都搬去歐洲"],a:0,why:"許多臺灣人被徵召上戰場。"},
  {ch:"k5",q:"日本在哪一年投降，結束對臺灣的統治？",o:["1945 年","1895 年","1937 年","1941 年"],a:0,why:"1945 年日本投降，日治時期結束。"},
  {ch:"k5",q:"日治時期的事件，正確的時間順序是哪一個？",o:["馬關條約 → 文化協會成立 → 皇民化運動 → 日本投降","皇民化運動 → 馬關條約 → 日本投降 → 文化協會成立","文化協會成立 → 馬關條約 → 皇民化運動 → 日本投降","日本投降 → 皇民化運動 → 文化協會成立 → 馬關條約"],a:0,why:"1895 馬關條約、1921 文化協會、1937 皇民化、1945 投降。"}
+);
+
+/* ======================= 戰後臺灣（1945～今） ======================= */
+Object.assign(ITEMS,{
+  oldnote:{name:"一大疊舊臺幣",sheet:"items_post",icon:0,kind:"tool",ch:"p1",desc:"一大疊舊臺幣，可是只能買到一點點東西。"},
+  ntd:{name:"新臺幣",sheet:"items_post",icon:1,kind:"treasure",from:"第一章・終戰與接收",desc:"1949 年開始發行的新臺幣。四萬元舊臺幣，才換一元新臺幣！"},
+  gybook:{name:"國語課本",sheet:"items_post",icon:2,kind:"tool",ch:"p1",desc:"戰後學校開始教的國語課本。"},
+  mantou:{name:"眷村饅頭",sheet:"items_post",icon:3,kind:"food",feed:4,desc:"眷村媽媽親手蒸的饅頭，又香又有嚼勁。"},
+  onepaper:{name:"只有幾張的報紙",sheet:"items_post",icon:4,kind:"tool",ch:"p2",desc:"戒嚴時期的報紙，家數和張數都受到限制。"},
+  lily:{name:"紀念的百合花",sheet:"items_post",icon:5,kind:"treasure",from:"第二章・二二八與戒嚴",desc:"紀念公園裡志工奶奶送你的百合花。記住歷史，是為了珍惜和平與自由。"},
+  deed:{name:"土地所有權狀",sheet:"items_post",icon:6,kind:"tool",ch:"p3",desc:"寫著農民名字的土地所有權狀，從此田地是自己的了。"},
+  shirt:{name:"外銷的成衣",sheet:"items_post",icon:7,kind:"tool",ch:"p3",desc:"加工出口區做好、要賣到國外去的衣服。"},
+  grain:{name:"金色稻穗",sheet:"items_post",icon:8,kind:"treasure",from:"第三章・土地改革與經濟起飛",desc:"阿土伯送你的稻穗。種自己的田，收成特別香。"},
+  hwmodel:{name:"高速公路小模型",sheet:"items_post",icon:9,kind:"treasure",from:"第四章・十大建設",desc:"工程師送你的高速公路模型。十大建設讓臺灣的交通和工業大大進步。"},
+  chip:{name:"晶片",sheet:"items_post",icon:10,kind:"tool",ch:"p4",desc:"科學園區做出來的小小晶片，電腦和手機都少不了它。"},
+  ballot:{name:"選票",sheet:"items_post",icon:11,kind:"tool",ch:"p5",desc:"總統選舉的選票。一人一票，自己選出國家的領導人。"},
+  votestamp:{name:"圈選章",sheet:"items_post",icon:12,kind:"treasure",from:"第五章・解嚴與民主",desc:"投票用的圈選章。民主得來不易，要好好珍惜每一票。"},
+  bubbletea:{name:"珍珠奶茶",sheet:"items_post",icon:13,kind:"food",feed:5,desc:"臺灣發明、紅到全世界的珍珠奶茶！"},
+  piece1:{name:"時光拼圖（一）",sheet:"items_post",icon:14,kind:"tool",ch:"p1",desc:"迷霧怪物藏起來的時光拼圖。"},
+  piece2:{name:"時光拼圖（二）",sheet:"items_post",icon:14,kind:"tool",ch:"p2",desc:"第二片時光拼圖。"},
+  piece3:{name:"時光拼圖（三）",sheet:"items_post",icon:14,kind:"tool",ch:"p3",desc:"第三片時光拼圖。"},
+  piece4:{name:"時光拼圖（四）",sheet:"items_post",icon:14,kind:"tool",ch:"p4",desc:"第四片時光拼圖。"},
+  piece5:{name:"時光拼圖（五）",sheet:"items_post",icon:14,kind:"tool",ch:"p5",desc:"最後一片時光拼圖。"},
+  formosabadge:{name:"臺灣之光徽章",sheet:"items_post",icon:15,kind:"treasure",from:"打敗迷霧遺忘獸",desc:"走完從史前到今天的臺灣歷史，真正的時光探險家才有的徽章！",hint:"完成戰後臺灣五章，打敗迷霧遺忘獸就能拿到。"}
+});
+Object.assign(CARDS,{
+  guangfu:{ch:"p1",name:"戰後接收臺灣",kind:"戰後初期",year:"1945 年",text:"1945 年日本戰敗投降，中華民國政府派人來接收臺灣，成立「臺灣省行政長官公署」，由陳儀擔任行政長官。很多臺灣人走上街頭，歡迎戰爭結束。",key:"<b>1945 年</b>中華民國政府<b>接收臺灣</b>，設<b>臺灣省行政長官公署</b>。"},
+  guoyu:{ch:"p1",name:"推行國語",kind:"戰後初期",year:"戰後初期",text:"戰後政府在學校和社會推行「國語運動」，大家要改學北京話。很多只會說日語、臺語、客語的人，一下子要重新學一種語言，很不容易。",key:"戰後推行<b>國語運動</b>，學校改教<b>國語</b>。"},
+  inflation:{ch:"p1",name:"物價飛漲與新臺幣",kind:"戰後經濟",year:"1949 年",text:"戰後物資缺乏、物價一直漲，錢變得越來越不值錢。1949 年政府發行「新臺幣」，四萬元舊臺幣只能換一元新臺幣，才讓物價慢慢穩定下來。",key:"<b>1949 年發行新臺幣</b>，<b>四萬元舊臺幣換一元</b>新臺幣。"},
+  qiantai:{ch:"p1",name:"政府遷臺",kind:"戰後初期",year:"1949 年",text:"1949 年，中華民國政府在國共內戰中失利，把中央政府遷到臺灣，大批軍人、公務員和他們的家人跟著來到臺灣。",key:"<b>1949 年</b>中華民國政府<b>遷臺</b>，大批軍民來臺。"},
+  juancun:{ch:"p1",hidden:true,name:"眷村",kind:"隱藏發現",year:"1950 年代起",text:"政府為了安置隨軍來臺的軍人和家眷，在各地蓋了「眷村」。來自中國各省的人住在一起，眷村菜像牛肉麵、饅頭、水餃，後來也變成臺灣美食的一部分。",key:"安置軍人和家眷的<b>眷村</b>，帶來各省的<b>飲食文化</b>。"},
+  ererba:{ch:"p2",name:"二二八事件",kind:"戰後政治",year:"1947 年",text:"戰後物價上漲、失業的人很多，政府官員又有貪污的問題，民眾心裡很不滿。1947 年 2 月 27 日，臺北查緝私菸時打傷了一位賣菸的婦人，引發衝突，第二天爆發「二二八事件」。政府派軍隊來臺鎮壓，很多人因此失去生命。",key:"<b>1947 年</b>因<b>查緝私菸</b>引發<b>二二八事件</b>，許多人失去生命。"},
+  jieyan:{ch:"p2",name:"戒嚴時期",kind:"戰後政治",year:"1949～1987 年",text:"1949 年政府宣布臺灣「戒嚴」，一直到 1987 年才解除，長達 38 年。戒嚴時期，人民集會、組織政黨、出版報紙和說話的自由都受到很多限制。",key:"<b>1949 年起戒嚴</b>，長達<b>38 年</b>，人民的<b>自由受到限制</b>。"},
+  baojin:{ch:"p2",name:"報禁與黨禁",kind:"戰後政治",year:"戒嚴時期",text:"戒嚴時期不能隨便辦新的報紙（報禁），報紙的張數也有限制；也不能成立新的政黨（黨禁）。說了批評政府的話，可能會被抓去關，有人稱這段時間為「白色恐怖」。",key:"戒嚴時期有<b>報禁、黨禁</b>，言論受到嚴格管制。"},
+  peaceday:{ch:"p2",name:"和平紀念日",kind:"今天的我們",year:"今天",text:"政府後來向受難者和家屬道歉，蓋了「二二八和平紀念公園」和紀念館，並把每年 2 月 28 日訂為「和平紀念日」，提醒大家記住歷史、珍惜和平和人權。",key:"每年 <b>2 月 28 日</b>是<b>和平紀念日</b>。"},
+  bell:{ch:"p2",hidden:true,name:"和平鐘",kind:"隱藏發現",year:"今天",text:"紀念公園裡有一座和平鐘。敲響它，是希望悲傷的事不要再發生，大家能彼此包容、和平相處。",key:"<b>和平鐘</b>：希望大家記取教訓、和平相處。"},
+  flourbag:{ch:"p3",hidden:true,name:"麵粉袋做的衣服",kind:"隱藏發現",year:"1950～1960 年代",text:"美援送來的麵粉袋，上面印著兩隻握手的圖案。那時候大家很節省，把麵粉袋洗乾淨，縫成衣服、褲子，成為很多人共同的童年回憶。",key:"<b>美援</b>的麵粉袋被縫成<b>衣服</b>，是那個年代的回憶。"},
+  landreform:{ch:"p3",name:"土地改革",kind:"戰後經濟",year:"1949～1953 年",text:"政府分三個步驟推動土地改革：先「三七五減租」，地租最多只能收收成的 37.5%；再「公地放領」，把公有土地賣給農民；最後「耕者有其田」，向地主買下多的土地，轉賣給沒有土地的佃農。",key:"土地改革三步驟：<b>三七五減租 → 公地放領 → 耕者有其田</b>。"},
+  meiyuan:{ch:"p3",name:"美援",kind:"戰後經濟",year:"1951～1965 年",text:"戰後臺灣很窮，美國提供了麵粉、棉花、肥料和資金等援助，叫做「美援」。很多人小時候都穿過用麵粉袋做的衣服呢！",key:"<b>美援</b>提供物資和資金，幫助臺灣經濟重建。"},
+  epz:{ch:"p3",name:"加工出口區",kind:"經濟起飛",year:"1966 年",text:"1966 年政府在高雄設立臺灣第一個「加工出口區」，從國外買進原料，在臺灣加工做成衣服、雨傘、玩具、電子產品，再賣到國外，創造很多工作機會。",key:"<b>1966 年</b>在<b>高雄</b>設立第一個<b>加工出口區</b>。"},
+  livingroom:{ch:"p3",name:"客廳即工廠",kind:"經濟起飛",year:"1970 年代",text:"那時候很多家庭在客廳接工廠的零件回家組裝，像是做聖誕燈、縫衣服、黏玩具，全家大小一起賺錢，叫做「客廳即工廠」。",key:"<b>客廳即工廠</b>：全家一起在家做加工。"},
+  shida:{ch:"p4",name:"十大建設",kind:"經濟起飛",year:"1970 年代",text:"1970 年代政府推動「十大建設」，包括中山高速公路、鐵路電氣化、北迴鐵路、桃園國際機場、臺中港、蘇澳港、大造船廠、大煉鋼廠、石油化學工業和核能發電廠，讓交通更方便，也發展了重工業。",key:"<b>1970 年代十大建設</b>：<b>中山高速公路</b>、<b>桃園國際機場</b>、大煉鋼廠……"},
+  sciencepark:{ch:"p4",name:"新竹科學園區",kind:"經濟轉型",year:"1980 年",text:"1980 年政府設立新竹科學工業園區，發展電腦、半導體等高科技產業。後來臺灣做的晶片和電子產品賣到全世界，「MIT（臺灣製造）」變成品質的代名詞。",key:"<b>1980 年</b>設立<b>新竹科學園區</b>，發展<b>高科技產業</b>。"},
+  miracle:{ch:"p4",name:"臺灣經濟奇蹟",kind:"經濟轉型",year:"1960～1990 年代",text:"臺灣從農業社會，變成工業、再到高科技產業的社會，經濟快速成長，被稱為「臺灣經濟奇蹟」，和韓國、香港、新加坡並稱「亞洲四小龍」。",key:"經濟快速成長，被稱為<b>經濟奇蹟</b>，名列<b>亞洲四小龍</b>。"},
+  sunyatsen:{ch:"p4",hidden:true,name:"高速公路通車",kind:"隱藏發現",year:"1978 年",text:"中山高速公路在 1978 年全線通車，從基隆到高雄，開車的時間一下子縮短了好多，南北往來變得好方便。",key:"<b>1978 年中山高速公路</b>全線通車。"},
+  jieyan2:{ch:"p5",name:"解除戒嚴",kind:"民主化",year:"1987 年",text:"經過很多人的爭取，政府在 1987 年宣布解除戒嚴。之後開放成立新政黨、開放辦報紙，人民的言論和集會自由越來越多。",key:"<b>1987 年解除戒嚴</b>，開放<b>報禁、黨禁</b>。"},
+  zhixuan:{ch:"p5",name:"總統直選",kind:"民主化",year:"1996 年",text:"以前總統是由國民大會代表選出來的。1996 年，臺灣舉行第一次總統直接選舉，年滿 20 歲的公民都可以投票，一人一票選出自己的總統。",key:"<b>1996 年</b>第一次<b>總統直選</b>。"},
+  lunti:{ch:"p5",name:"政黨輪替",kind:"民主化",year:"2000 年",text:"2000 年的總統選舉，由不同的政黨贏得選舉，臺灣第一次政黨輪替，政權和平轉移。這表示人民可以用選票決定由誰來執政。",key:"<b>2000 年</b>第一次<b>政黨輪替</b>，政權<b>和平轉移</b>。"},
+  duoyuan:{ch:"p5",name:"多元文化的臺灣",kind:"今天的我們",year:"今天",text:"今天的臺灣，有原住民族、閩南、客家、戰後來臺的各省族群，還有來自東南亞等地的新住民。大家的語言、宗教和美食都不一樣，彼此尊重，讓臺灣更豐富。",key:"臺灣是<b>多元文化</b>的社會，要<b>彼此尊重</b>。"},
+  nhi:{ch:"p5",hidden:true,name:"全民健保",kind:"隱藏發現",year:"1995 年",text:"1995 年開始實施「全民健康保險」，大家每個月繳一點保費，生病時看醫生就不用花很多錢。",key:"<b>1995 年</b>實施<b>全民健保</b>。"}
+});
+CHAPTERS.push(
+/* ======================= 第一章 終戰與接收 ======================= */
+{id:"p1",era:"post",seal:"第一章",title:"終戰與接收",pano:"p1",start:{s:"a",x:40},
+ music:{root:147,scale:[0,2,4,7,9],tempo:600,wave:"triangle"},
+ intro:[
+  ["旁白","咚咚鏘！鑼鼓聲和鞭炮聲響成一片。{name}從時光門走出來，看見大家提著燈籠、笑著走上街。"],
+  ["教授","這是 1945 年 10 月的臺北。戰爭結束了，日本統治臺灣的五十年也結束了。"],
+  ["教授","迷霧怪物把最後的「時光拼圖」打散了，總共五片。找回來，我們就能一路走到今天！"]
+ ],
+ goals:[
+  {t:"跟揮手的阿雄打招呼",c:["f:met"],h:"人群中間、穿舊學生服揮手的男孩。"},
+  {t:"把國語課本拿給老師",c:["c:guoyu"],h:"教室門口穿長衫的老師。"},
+  {t:"幫煩惱的銀行行員換新臺幣",c:["c:inflation"],h:"銀行櫃台的行員。把「一大疊舊臺幣」交給他。"},
+  {t:"轉身到港口，聽老伯伯說話",c:["c:qiantai"],h:"轉到另一邊，港口扛著行李的老伯伯。"},
+  {t:"完成「日治時期還是戰後」分類",c:["c:guangfu"],h:"回去找阿雄，他想考考你。"},
+  {t:"找回第一片時光拼圖",c:["f:done"],h:"阿雄說牌樓下有東西在發光。"}
+ ],
+ spots:[
+  {id:"axiong",name:"阿雄",role:"興奮的男孩",por:"axiong",s:"a",x:60,y:48,
+   talks:[
+    {if:["!f:met"],lines:[["axiong","你也是來看熱鬧的嗎？戰爭結束了！再也不用躲空襲了！"],["axiong","聽說中華民國政府要派人來接收臺灣，大家都跑出來歡迎！"],["axiong","我撿到一本新的課本，可是上面的字我念不出來……你可以幫我拿去給老師嗎？"]],fx:{set:["met"],give:["gybook"]}},
+    {if:["!c:inflation"],lines:[["axiong","銀行櫃台那位叔叔一直在嘆氣，你要不要去看看？"]]},
+    {if:["!c:qiantai"],lines:[["axiong","港口那邊好像也很熱鬧，你去看看！"]]},
+    {if:["!c:guangfu"],lines:[["axiong","你今天看了好多東西！來，考考你：哪些是日治時期的事，哪些是戰後的事？"]],
+     fx:{sort:{kicker:"分類挑戰",title:"日治時期，還是戰後？",bins:["日治時期","戰後"],items:[["皇民化運動、改日本姓名",0],["嘉南大圳完工",0],["學校開始教國語（北京話）",1],["發行新臺幣",1],["成立臺灣省行政長官公署",1],["臺灣文化協會成立",0]]},card:"guangfu"},
+     after:[["axiong","全對！1945 年是一個大轉彎，臺灣進入新的時代了。"],["axiong","對了，牌樓下面好像有東西在發光……"]]},
+    {if:[],lines:[["axiong","以後我要好好學國語，也不要忘記阿嬤教我的臺語！"]]}
+   ],
+   wrong:[["axiong","「{item}」？這不是我的東西耶。"]]},
+  {id:"teacher",name:"林老師",role:"教國語的老師",por:"pteacher",s:"a",x:13,y:34,
+   talks:[
+    {if:["!f:met"],lines:[["teacher","同學們，跟我念：ㄅ、ㄆ、ㄇ、ㄈ……"]]},
+    {if:["!c:guoyu"],lines:[["teacher","戰爭結束了，學校要改教國語。可是我的課本不見了……"]]},
+    {if:[],lines:[["teacher","ㄅㄆㄇㄈ，一個一個慢慢學，總會學會的。"]]}
+   ],
+   gives:[{item:"gybook",if:["f:met"],lines:[["teacher","我的國語課本！謝謝你！"],["teacher","以前大家在學校說日語，現在要改說國語，也就是北京話。很多老人家只會說臺語、客語或日語，一下子要學新的語言，真的很辛苦。"]],
+     ask:{q:"戰後政府在學校和社會推行什麼？",by:"teacher",say:"考考你：",o:[
+      {t:"國語運動，大家改學國語（北京話）",ok:true,r:"答對了！"},
+      {t:"大家都要說日語",r:"那是日治時期喔。"},
+      {t:"只能說英語",r:"不是英語喔。"}]},
+     fx:{take:["gybook"],card:"guoyu"}}],
+   wrong:[["teacher","「{item}」？我在找的是上課用的課本。"]]},
+  {id:"banker",name:"銀行行員",role:"煩惱的銀行行員",por:"banker",s:"a",x:91,y:38,
+   talks:[
+    {if:["!f:met"],lines:[["banker","唉……唉……"]]},
+    {if:["!c:inflation"],lines:[["banker","東西一天比一天貴，昨天一斤米的錢，今天已經買不起了！錢越來越不值錢。"],["banker","你手上那疊舊臺幣，拿過來我幫你換新的錢吧。"]],fx:{set:["askmoney"],give:["oldnote"]}},
+    {if:[],lines:[["banker","有了新臺幣，物價總算慢慢穩定下來了。"]]}
+   ],
+   gives:[{item:"oldnote",if:["f:askmoney"],lines:[["banker","好，我來算算……一、二、三……四萬元舊臺幣，換一元新臺幣！"],["banker","這是 1949 年開始發行的「新臺幣」。物價漲得太厲害，只好換新的錢。"]],
+     ask:{q:"1949 年發行新臺幣時，多少元舊臺幣才能換一元新臺幣？",by:"banker",say:"你還記得嗎？",o:[
+      {t:"四萬元",ok:true,r:"沒錯！可見當時物價漲得多厲害。"},
+      {t:"十元",r:"比這個多太多了！"},
+      {t:"一元",r:"那就不用換啦。"}]},
+     fx:{take:["oldnote"],card:"inflation",give:["ntd"]}}],
+   wrong:[["banker","「{item}」？我這裡是換錢的地方喔。"]]},
+  {id:"oldman",name:"張伯伯",role:"剛下船的老兵",por:"oldsoldier",s:"b",x:15,y:36,
+   talks:[
+    {if:["!c:guoyu"],lines:[["oldman","（扛著大包行李，在港口東張西望）"]]},
+    {if:["!c:qiantai"],lines:[["oldman","小朋友，這裡是基隆港嗎？我跟著部隊從大陸坐船過來的。"],["oldman","1949 年，中華民國政府在內戰打輸了，把中央政府搬到臺灣，好多軍人、公務員和家人都一起過來了。"],["oldman","我本來以為過幾年就能回老家……"]],
+     ask:{q:"1949 年發生了什麼事，讓大批軍民來到臺灣？",by:"oldman",say:"你知道嗎？",o:[
+      {t:"中華民國政府遷臺",ok:true,r:"對，我們就是那時候來的。"},
+      {t:"日本人來接收臺灣",r:"日本那時候已經戰敗了。"},
+      {t:"荷蘭人來建城堡",r:"那是好久好久以前的事了！"}]},
+     fx:{card:"qiantai"}},
+    {if:[],lines:[["oldman","後來我在臺灣成了家，這裡也變成我的家了。"]]}
+   ]},
+  {id:"juanmom",name:"眷村媽媽",role:"蒸饅頭的眷村媽媽",por:"juanmom",s:"b",x:84,y:44,hidden:true,
+   talks:[{if:["!f:juan"],lines:[["juanmom","{pet}聞到香味跑過來了！來，剛蒸好的饅頭！"],["juanmom","我們住在「眷村」，鄰居來自各個省分，有人會包水餃、有人會做牛肉麵，大家互相交換手藝。"]],fx:{set:["juan","seen:juanmom"],card:"juancun",give:["mantou"]}},{if:[],lines:[["juanmom","有空來眷村吃飯喔！"]]}]},
+  {id:"arch",name:"牌樓",role:"",kind:"obj",s:"b",x:54,y:24,
+   talks:[
+    {if:["!c:guangfu"],lines:[["旁白","臨時搭起來的牌樓，掛滿了彩帶。"]]},
+    {if:["!f:done"],lines:[["旁白","牌樓的柱子下面，有一片發光的拼圖──第一片時光拼圖！"]],
+     ask:{q:"1945 年戰爭結束後，中華民國政府在臺灣成立了什麼機關？",by:"教授",say:"考考你：",o:[
+      {t:"臺灣省行政長官公署",ok:true,r:"答對了！"},
+      {t:"臺灣總督府",r:"那是日治時期的機關喔。"},
+      {t:"東印度公司",r:"那是荷蘭時期的喔。"}]},
+     fx:{give:["piece1"],done:true}},
+    {if:[],lines:[["旁白","彩帶在風中飄來飄去。"]]}
+   ]}
+ ],
+ outro:[["教授","第一片時光拼圖到手！"],["教授","戰爭結束了，可是戰後的生活並不輕鬆：物價飛漲、語言要重新學、還有很多人對政府不滿……下一站，我們要去看一段讓人難過、但一定要記住的歷史。"]]
+}
+,/* ======================= 第二章 二二八與戒嚴 ======================= */
+{id:"p2",era:"post",seal:"第二章",title:"二二八與戒嚴",pano:"p2",start:{s:"a",x:40},
+ music:{root:110,scale:[0,2,3,5,7,8,10],tempo:760,wave:"sine"},
+ intro:[
+  ["旁白","{name}走進一座安靜的公園，樹下有一座高高的紀念碑，很多人在這裡放下花。"],
+  ["教授","這裡是今天的「二二八和平紀念公園」。我們要聽一段讓人難過的歷史，記住它，是為了不要再讓悲劇發生。"]
+ ],
+ goals:[
+  {t:"聽志工奶奶說二二八的故事",c:["c:ererba"],h:"紀念碑前的志工奶奶。"},
+  {t:"轉身走進戒嚴時期的街道",c:["c:jieyan"],h:"轉到另一邊，報攤前的老闆。"},
+  {t:"把報紙拿給想看新聞的大學生",c:["c:baojin"],h:"報攤旁邊拿著書的大學生。"},
+  {t:"完成「戒嚴時期還是今天」分類",c:["c:peaceday"],h:"回去找志工奶奶。"},
+  {t:"找回第二片時光拼圖",c:["f:done"],h:"志工奶奶說紀念碑旁邊有東西在發光。"}
+ ],
+ spots:[
+  {id:"guide",name:"志工奶奶",role:"紀念公園的導覽志工",por:"guidegma",s:"a",x:24,y:38,
+   talks:[
+    {if:["!c:ererba"],lines:[["guide","小朋友，你們好。我是這裡的導覽志工，我來說一段故事。"],["guide","戰後物價一直漲，很多人找不到工作，有些官員又貪污，大家心裡很不滿。"],["guide","1947 年 2 月 27 日晚上，在臺北查緝私菸的人員打傷了一位賣菸的婦人，民眾很生氣，衝突擴大。第二天，就爆發了「二二八事件」。"],["guide","後來政府派軍隊來臺灣鎮壓，很多人因此失去了生命，很多家庭從此破碎。"]],
+     ask:{q:"二二八事件是因為什麼事情引發的？",by:"guide",say:"你有仔細聽嗎？",o:[
+      {t:"查緝私菸時打傷了賣菸的婦人，引發衝突",ok:true,r:"是的。其實背後還有很多人對政府的不滿。"},
+      {t:"颱風來襲",r:"不是天災喔。"},
+      {t:"日本人打過來",r:"那時候日本已經投降了。"}]},
+     fx:{card:"ererba"}},
+    {if:["!c:baojin"],lines:[["guide","事件之後，臺灣進入了一段很長的「戒嚴時期」。你轉過身去看看。"]]},
+    {if:["!c:peaceday"],lines:[["guide","你看到戒嚴時期的街道了。來，我考考你：哪些是戒嚴時期的事，哪些是今天的事？"]],
+     fx:{sort:{kicker:"分類挑戰",title:"戒嚴時期，還是今天？",bins:["戒嚴時期","今天"],items:[["不能隨便成立新的政黨",0],["報紙的家數和張數受到限制",0],["說批評政府的話可能被抓",0],["可以自由組政黨、辦報紙",1],["2 月 28 日是和平紀念日",1],["政府向受難者家屬道歉",1]]},card:"peaceday",give:["lily"]},
+     after:[["guide","答得很好。政府後來向受難者和家屬道歉，把 2 月 28 日訂為「和平紀念日」。"],["guide","這朵百合花送你。記住歷史，是為了珍惜今天的和平和自由。"],["guide","對了，紀念碑旁邊有個東西一直在發光……"]]},
+    {if:[],lines:[["guide","歷史不是用來記恨的，是用來學習的。"]]}
+   ]},
+  {id:"bell",name:"和平鐘",role:"",kind:"obj",hidden:true,s:"a",x:90,y:40,
+   talks:[{if:["!f:bell"],lines:[["旁白","{pet}跑到一座鐘的旁邊，用鼻子輕輕碰了一下……噹──。鐘聲在公園裡迴盪。"]],fx:{set:["bell","seen:bell"],card:"bell",give:["bubbletea"]}},{if:[],lines:[["旁白","和平鐘安安靜靜的。"]]}]},
+  {id:"stand",name:"報攤老闆",role:"戒嚴時期的報攤",por:"newsman",s:"b",x:20,y:34,
+   talks:[
+    {if:["!c:ererba"],lines:[["stand","報紙、報紙喔……"]]},
+    {if:["!c:jieyan"],lines:[["stand","小朋友，你怎麼一臉好奇？現在是「戒嚴時期」啊。"],["stand","1949 年政府宣布戒嚴，到現在都還沒解除。不能隨便集會、不能成立新的政黨，報紙也不能隨便辦。"],["stand","你看，我這裡賣的報紙就只有這幾家，每份也只有幾張。拿一份去吧。"]],
+     ask:{q:"臺灣的戒嚴時期大約有多長？",by:"stand",say:"你猜猜看：",o:[
+      {t:"38 年（1949～1987 年）",ok:true,r:"對，好長的一段時間。"},
+      {t:"3 天",r:"沒有那麼短喔。"},
+      {t:"100 年",r:"沒有那麼久。"}]},
+     fx:{card:"jieyan",give:["onepaper"]}},
+    {if:[],lines:[["stand","噓……說話要小心喔。"]]}
+   ]},
+  {id:"student",name:"大學生",role:"愛看書的大學生",por:"pstudent",s:"b",x:53,y:36,
+   talks:[
+    {if:["!c:jieyan"],lines:[["student","（低頭看書）"]]},
+    {if:["!c:baojin"],lines:[["student","我好想知道世界上發生了什麼事，可是能看的報紙好少……"]]},
+    {if:[],lines:[["student","總有一天，大家可以自由說出自己的想法。"]]}
+   ],
+   gives:[{item:"onepaper",if:["c:jieyan"],lines:[["student","謝謝你！可是……你看，報紙只有薄薄幾張。"],["student","現在不能辦新的報紙，這叫「報禁」；也不能組新的政黨，這叫「黨禁」。有人只是說了批評政府的話，就被抓去關。大家把這段時間叫做「白色恐怖」。"]],
+     ask:{q:"戒嚴時期的「黨禁」是指什麼？",by:"student",say:"你懂了嗎？",o:[
+      {t:"不能成立新的政黨",ok:true,r:"沒錯。"},
+      {t:"不能吃糖",r:"哈哈，不是喔。"},
+      {t:"不能上學",r:"學校還是要上的。"}]},
+     fx:{take:["onepaper"],card:"baojin"}}],
+   wrong:[["student","「{item}」？我想看的是報紙。"]]},
+  {id:"monument",name:"紀念碑",role:"",kind:"obj",s:"a",x:64,y:52,
+   talks:[
+    {if:["!c:peaceday"],lines:[["旁白","高高的紀念碑，下面放滿了花。"]]},
+    {if:["!f:done"],lines:[["旁白","紀念碑旁邊的花叢裡，有一片發光的拼圖──第二片時光拼圖！"]],
+     ask:{q:"每年的 2 月 28 日是什麼紀念日？",by:"教授",say:"最後一題：",o:[
+      {t:"和平紀念日",ok:true,r:"答對了。"},
+      {t:"兒童節",r:"兒童節是 4 月 4 日喔。"},
+      {t:"教師節",r:"教師節是 9 月 28 日喔。"}]},
+     fx:{give:["piece2"],done:true}},
+    {if:[],lines:[["旁白","紀念碑靜靜地站著，提醒大家珍惜和平。"]]}
+   ]}
+ ],
+ outro:[["教授","第二片時光拼圖到手。"],["教授","這段歷史很沉重，但我們要記得：自由和人權，是很多人努力爭取來的。"],["教授","接下來，我們去看看臺灣人怎麼努力工作，讓臺灣從貧窮慢慢變富有！"]]
+}
+,/* ======================= 第三章 土地改革與經濟起飛 ======================= */
+{id:"p3",era:"post",seal:"第三章",title:"土地改革與經濟起飛",pano:"p3",start:{s:"a",x:40},
+ music:{root:165,scale:[0,2,4,7,9],tempo:560,wave:"triangle"},
+ intro:[
+  ["旁白","稻田一片金黃，{name}聽見有人在田埂上開心地大喊：「這塊田，是我的了！」"],
+  ["教授","這是 1950 年代的農村。戰後政府推動「土地改革」，讓很多一輩子替地主種田的佃農，終於有了自己的田。"]
+ ],
+ goals:[
+  {t:"跟高興的阿土伯說話",c:["f:met"],h:"田埂上拿著稻穗的阿土伯。"},
+  {t:"幫地政人員把土地權狀交給阿土伯",c:["c:landreform"],h:"穿襯衫的地政人員有東西要給你。"},
+  {t:"完成「土地改革三步驟」排序",c:["c:meiyuan"],h:"再去找地政人員。"},
+  {t:"轉身去看在客廳做代工的媽媽",c:["c:livingroom"],h:"轉到另一邊，客廳裡縫衣服、做聖誕燈的媽媽。"},
+  {t:"把縫好的成衣送去加工出口區",c:["c:epz"],h:"把「外銷的成衣」交給工廠裡的女工秀英。"},
+  {t:"找回第三片時光拼圖",c:["f:done"],h:"秀英說聖誕燈的箱子裡有東西在發光。"}
+ ],
+ spots:[
+  {id:"atu",name:"阿土伯",role:"終於有自己田地的農夫",por:"patu",s:"a",x:22,y:42,
+   talks:[
+    {if:["!f:met"],lines:[["atu","哈哈哈！小朋友，你知道嗎？我種了一輩子的田，以前都是替地主種的！"],["atu","收成一大半都要交給地主當地租，我們一家常常吃不飽。"],["atu","聽說政府要把田賣給我們這些佃農……是真的嗎？"]],fx:{set:["met"]}},
+    {if:["!c:landreform"],lines:[["atu","那位地政人員好像有東西要給我？"]]},
+    {if:[],lines:[["atu","自己的田，種起來特別有力氣！"]]}
+   ],
+   gives:[{item:"deed",if:["f:met"],lines:[["atu","土地所有權狀！上面寫著我的名字！"],["atu","從今天起，這塊田就是我的了！收成都是自己的！"]],
+     fx:{take:["deed"],card:"landreform",give:["grain"]},after:[["atu","這把稻穗送你，謝謝你！"]]}],
+   wrong:[["atu","「{item}」？我在等的是一張很重要的紙。"]]},
+  {id:"officer",name:"地政人員",role:"推動土地改革的公務員",por:"landofficer",s:"a",x:76,y:38,
+   talks:[
+    {if:["!f:met"],lines:[["officer","我在整理土地的資料，好忙啊。"]]},
+    {if:["!c:landreform"],lines:[["officer","你認識阿土伯嗎？這是他的土地所有權狀，麻煩你幫我交給他！"]],fx:{give:["deed"]}},
+    {if:["!c:meiyuan"],lines:[["officer","土地改革分成三個步驟，你能排出正確的順序嗎？"]],
+     fx:{sort:{kicker:"配對挑戰",title:"土地改革的三個步驟",bins:["第一步","第二步","第三步"],items:[["三七五減租：地租最多收 37.5%",0],["公地放領：把公有土地賣給農民",1],["耕者有其田：地主多的田轉賣給佃農",2]]},card:"meiyuan",give:["bubbletea"]},
+     after:[["officer","完全正確！"],["officer","那時候臺灣很窮，美國也送來麵粉、棉花、肥料，叫做「美援」。很多小朋友都穿過麵粉袋做的褲子呢！"]]},
+    {if:[],lines:[["officer","有了自己的田，農民更努力，糧食也變多了。"]]}
+   ]},
+  {id:"flourbag",name:"曬穀場邊的麵粉袋",role:"",kind:"obj",hidden:true,s:"a",x:88,y:82,
+   talks:[{if:["!f:flour"],lines:[["旁白","{pet}從竹篩後面拖出一個舊麵粉袋，上面印著兩隻握在一起的手。阿土伯笑著說：「那是美援的麵粉袋啦！以前我家小孩的內褲，就是用它縫的！」"]],fx:{set:["flour"],card:"flourbag",give:["mantou"]}},{if:[],lines:[["旁白","舊麵粉袋洗得乾乾淨淨，還能再用。"]]}]},
+  {id:"homemom",name:"做代工的媽媽",role:"在客廳做代工的媽媽",por:"homemom",s:"b",x:22,y:38,
+   talks:[
+    {if:["!c:meiyuan"],lines:[["homemom","一件、兩件、三件……"]]},
+    {if:["!c:livingroom"],lines:[["homemom","歡迎！我們家的客廳就是工廠喔！工廠把布料和零件送來，我們全家一起縫衣服、組裝聖誕燈。"],["homemom","小孩寫完功課也來幫忙，大家叫這個「客廳即工廠」。賺的錢讓孩子可以讀書。"]],
+     ask:{q:"1970 年代很多家庭在家裡幫工廠做加工，叫做什麼？",by:"homemom",say:"你知道嗎？",o:[
+      {t:"客廳即工廠",ok:true,r:"沒錯！"},
+      {t:"國語家庭",r:"那是日治時期皇民化的事。"},
+      {t:"三年輪作",r:"那是嘉南大圳的種田方法。"}]},
+     fx:{card:"livingroom",give:["shirt"]},after:[["homemom","這批衣服縫好了，麻煩你幫我送去加工出口區，交給秀英！"]]},
+    {if:[],lines:[["homemom","這些衣服和燈泡，要賣到國外去喔。"]]}
+   ]},
+  {id:"xiuying",name:"秀英",role:"加工出口區的女工",por:"xiuying",s:"b",x:82,y:32,
+   talks:[
+    {if:["!c:livingroom"],lines:[["xiuying","（專心踩著縫紉機）"]]},
+    {if:["!c:epz"],lines:[["xiuying","你好！這裡是 1966 年在高雄設立的「加工出口區」，臺灣第一個喔！"],["xiuying","工廠從外國買原料進來，我們做成衣服、雨傘、玩具、電子產品，再賣到國外去。我從鄉下來這裡工作，賺錢寄回家。"],["xiuying","你手上那批衣服是要出貨的嗎？"]]},
+    {if:["!f:done"],lines:[["xiuying","咦，聖誕燈的箱子裡怎麼有東西在發光？"]]},
+    {if:[],lines:[["xiuying","臺灣做的東西，賣到全世界！"]]}
+   ],
+   gives:[{item:"shirt",if:["c:livingroom"],lines:[["xiuying","謝謝！這批要賣到美國去的！"]],
+     ask:{q:"臺灣第一個加工出口區設在哪裡？",by:"xiuying",say:"考考你：",o:[
+      {t:"高雄",ok:true,r:"答對了！1966 年設立的。"},
+      {t:"臺北",r:"不是喔。"},
+      {t:"花蓮",r:"不是喔。"}]},
+     fx:{take:["shirt"],card:"epz"}}],
+   wrong:[["xiuying","「{item}」？我要的是做好的衣服。"]]},
+  {id:"lights",name:"聖誕燈的箱子",role:"",kind:"obj",s:"b",x:91,y:72,
+   talks:[
+    {if:["!c:epz"],lines:[["旁白","一大箱要出貨的聖誕燈。"]]},
+    {if:["!f:done"],lines:[["旁白","燈串裡藏著一片發光的拼圖──第三片時光拼圖！"]],
+     ask:{q:"戰後美國提供臺灣麵粉、棉花、肥料和資金，叫做什麼？",by:"教授",say:"考考你：",o:[
+      {t:"美援",ok:true,r:"答對了！"},
+      {t:"配給",r:"配給是戰爭時期的喔。"},
+      {t:"十大建設",r:"十大建設是 1970 年代臺灣自己的建設。"}]},
+     fx:{give:["piece3"],done:true}},
+    {if:[],lines:[["旁白","燈泡一閃一閃的。"]]}
+   ]}
+ ],
+ outro:[["教授","第三片時光拼圖到手！"],["教授","農民有了自己的田，工廠也越來越多，臺灣慢慢從農業社會變成工業社會。"],["教授","可是道路、港口、電力不夠用了……下一站：十大建設！"]]
+}
+,/* ======================= 第四章 十大建設 ======================= */
+{id:"p4",era:"post",seal:"第四章",title:"十大建設",pano:"p4",start:{s:"a",x:40},
+ music:{root:131,scale:[0,2,4,5,7,9,11],tempo:520,wave:"square"},
+ intro:[
+  ["旁白","轟隆隆！巨大的工程車從{name}身邊開過，一條又寬又直的道路正在蓋起來。"],
+  ["教授","這是 1970 年代。政府推動「十大建設」，要讓臺灣的交通和工業再往前跨一大步。"]
+ ],
+ goals:[
+  {t:"跟高速公路工程師說話",c:["f:met"],h:"戴工程帽、拿著設計圖的工程師。"},
+  {t:"完成「十大建設」找一找",c:["c:shida"],h:"工程師要考你，哪些是十大建設。"},
+  {t:"轉身到科學園區，把晶片交給工程師",c:["c:sciencepark"],h:"轉到另一邊，穿無塵衣的工程師。先從工地的卡車司機那裡拿到晶片。"},
+  {t:"聽外國記者怎麼說臺灣",c:["c:miracle"],h:"科學園區門口拿相機的記者。"},
+  {t:"找回第四片時光拼圖",c:["f:done"],h:"記者說無塵室的窗邊有東西在發光。"}
+ ],
+ spots:[
+  {id:"roadeng",name:"高速公路工程師",role:"蓋中山高速公路的工程師",por:"roadeng",s:"a",x:16,y:32,
+   talks:[
+    {if:["!f:met"],lines:[["roadeng","小心！這裡是工地！"],["roadeng","我們正在蓋「中山高速公路」，從基隆一路到高雄。以前南北來回要好久，以後就快多了！"],["roadeng","這是政府推動的「十大建設」之一。除了高速公路，還有機場、港口、鐵路、造船廠、煉鋼廠……"]],fx:{set:["met"]}},
+    {if:["!c:shida"],lines:[["roadeng","考考你，下面哪些是十大建設？"]],
+     fx:{sort:{kicker:"分類挑戰",title:"是不是十大建設？",bins:["是十大建設","不是十大建設"],items:[["中山高速公路",0],["桃園國際機場",0],["北迴鐵路",0],["大煉鋼廠",0],["嘉南大圳",1],["縱貫鐵路（劉銘傳）",1],["億載金城",1]]},card:"shida",give:["hwmodel"]},
+     after:[["roadeng","答得好！嘉南大圳是日治時期、劉銘傳的鐵路是清朝，億載金城是沈葆楨蓋的喔。"],["roadeng","這個高速公路模型送你！"]]},
+    {if:[],lines:[["roadeng","路蓋好了，貨物和人都跑得更快！"]]}
+   ]},
+  {id:"driver",name:"卡車司機",role:"載貨的卡車司機",por:"pdriver",s:"a",x:76,y:42,
+   talks:[
+    {if:["!f:met"],lines:[["driver","叭叭！讓一讓喔！"]]},
+    {if:["!c:shida"],lines:[["driver","高速公路蓋好以後，我從臺北開到高雄，就不用開一整天了！"]]},
+    {if:["!f:gotchip"],lines:[["driver","我要載一箱貨去新竹的科學園區。啊，這顆晶片掉出來了，你幫我拿去給那邊的工程師好嗎？"]],fx:{set:["gotchip"],give:["chip"]}},
+    {if:[],lines:[["driver","交通方便了，生意也變好了！"]]}
+   ]},
+  {id:"road",name:"剛鋪好的路面",role:"",kind:"obj",hidden:true,s:"a",x:44,y:80,
+   talks:[{if:["!f:road"],lines:[["旁白","{pet}在剛鋪好的路面上跑了一大圈，好開心！路邊的看板畫著一條從北到南的長長的路。"]],fx:{set:["road","seen:road"],card:"sunyatsen",give:["bubbletea"]}},{if:[],lines:[["旁白","平平的柏油路，一路通到遠方。"]]}]},
+  {id:"chipeng",name:"科學園區工程師",role:"穿無塵衣的工程師",por:"chipeng",s:"b",x:24,y:34,
+   talks:[
+    {if:["!c:shida"],lines:[["chipeng","（隔著玻璃向你揮手）"]]},
+    {if:["!c:sciencepark"],lines:[["chipeng","你好！這裡是 1980 年設立的「新竹科學園區」。我們在做電腦、半導體這些高科技產品。"],["chipeng","我好像少了一顆晶片……你有看到嗎？"]]},
+    {if:[],lines:[["chipeng","小小的晶片，讓臺灣站上世界舞臺！"]]}
+   ],
+   gives:[{item:"chip",if:["c:shida"],lines:[["chipeng","就是這顆晶片！謝謝你！"],["chipeng","現在全世界的電腦、手機，很多都用了臺灣做的晶片。「MIT，臺灣製造」，品質有保證！"]],
+     ask:{q:"1980 年政府設立了什麼，發展高科技產業？",by:"chipeng",say:"考考你：",o:[
+      {t:"新竹科學園區",ok:true,r:"答對了！"},
+      {t:"加工出口區",r:"加工出口區是 1966 年在高雄設立的。"},
+      {t:"眷村",r:"眷村是住的地方喔。"}]},
+     fx:{take:["chip"],card:"sciencepark"}}],
+   wrong:[["chipeng","「{item}」？我在找的是一顆小小的晶片。"]]},
+  {id:"reporter",name:"外國記者",role:"來採訪臺灣的記者",por:"reporter",s:"b",x:80,y:34,
+   talks:[
+    {if:["!c:sciencepark"],lines:[["reporter","Wow, amazing!"]]},
+    {if:["!c:miracle"],lines:[["reporter","我從國外來採訪。臺灣從前很窮，靠著種田、加工出口，再到高科技，經濟成長得好快！"],["reporter","全世界都說這是「臺灣經濟奇蹟」，還把臺灣和韓國、香港、新加坡叫做「亞洲四小龍」！"]],
+     ask:{q:"臺灣、韓國、香港、新加坡經濟快速成長，被稱為什麼？",by:"reporter",say:"你知道嗎？",o:[
+      {t:"亞洲四小龍",ok:true,r:"Correct！答對了！"},
+      {t:"四大天王",r:"哈哈，那是歌手啦。"},
+      {t:"四大名著",r:"那是書喔。"}]},
+     fx:{card:"miracle"}},
+    {if:["!f:done"],lines:[["reporter","咦，無塵室的窗邊好像有東西在發光？"]]},
+    {if:[],lines:[["reporter","我要把臺灣的故事告訴全世界！"]]}
+   ]},
+  {id:"window",name:"無塵室的窗邊",role:"",kind:"obj",s:"b",x:46,y:72,
+   talks:[
+    {if:["!c:miracle"],lines:[["旁白","窗戶裡面的人都穿著白白的衣服。"]]},
+    {if:["!f:done"],lines:[["旁白","窗臺上有一片發光的拼圖──第四片時光拼圖！"]],
+     ask:{q:"下列哪一項是十大建設？",by:"教授",say:"最後一題：",o:[
+      {t:"中山高速公路",ok:true,r:"答對了！"},
+      {t:"嘉南大圳",r:"那是日治時期的建設。"},
+      {t:"縱貫鐵路（基隆到新竹）",r:"那是劉銘傳在清朝蓋的。"}]},
+     fx:{give:["piece4"],done:true}},
+    {if:[],lines:[["旁白","無塵室裡的機器一直在運轉。"]]}
+   ]}
+ ],
+ outro:[["教授","第四片時光拼圖到手！"],["教授","臺灣的經濟越來越好，大家也開始希望有更多自由、可以自己選出領導人……最後一站：民主的臺灣！"]]
+}
+,/* ======================= 第五章 解嚴與民主 ======================= */
+{id:"p5",era:"post",seal:"第五章",title:"解嚴與民主",pano:"p5",start:{s:"a",x:40},
+ music:{root:147,scale:[0,2,4,5,7,9,11],tempo:540,wave:"triangle"},
+ intro:[
+  ["旁白","一間小學的教室變成了投票所，大家排著隊，手裡拿著身分證，臉上都帶著期待。"],
+  ["教授","這是 1996 年，臺灣第一次由人民直接選總統。在這之前，臺灣走了好長一段路。"]
+ ],
+ goals:[
+  {t:"跟第一次投票的爺爺說話",c:["f:met"],h:"排隊排在前面、穿西裝的爺爺。"},
+  {t:"聽選務人員說明，把選票交給爺爺",c:["c:zhixuan"],h:"桌子後面的選務人員會給你選票。"},
+  {t:"完成「民主的腳步」排序",c:["c:lunti"],h:"再去找選務人員。"},
+  {t:"轉身到今天的夜市，認識新住民媽媽",c:["c:duoyuan"],h:"轉到另一邊，小吃攤的新住民媽媽。"},
+  {t:"找回最後一片時光拼圖",c:["f:done"],h:"新住民媽媽說攤子上有東西在發光。"}
+ ],
+ spots:[
+  {id:"voter",name:"陳爺爺",role:"第一次選總統的爺爺",por:"votergpa",s:"a",x:34,y:30,
+   talks:[
+    {if:["!f:met"],lines:[["voter","小朋友，你知道今天是什麼日子嗎？今天我們要自己選總統！"],["voter","我年輕的時候是戒嚴時期，說話都要小心翼翼的。1987 年政府宣布解除戒嚴，後來可以組政黨、辦報紙了。"],["voter","活到這把年紀，終於可以一人一票選總統，我好激動啊！"]],fx:{set:["met"]}},
+    {if:["!c:zhixuan"],lines:[["voter","選務人員那邊好像要給你東西？"]]},
+    {if:[],lines:[["voter","每一票都很珍貴！"]]}
+   ],
+   gives:[{item:"ballot",if:["f:met"],lines:[["voter","這就是選票！我要好好想清楚，圈下我支持的人。"]],
+     ask:{q:"臺灣第一次總統直接選舉是哪一年？",by:"voter",say:"你記得嗎？",o:[
+      {t:"1996 年",ok:true,r:"就是今天！"},
+      {t:"1945 年",r:"那是戰爭結束的時候。"},
+      {t:"1895 年",r:"那是馬關條約的時候。"}]},
+     fx:{take:["ballot"],card:"zhixuan"}}],
+   wrong:[["voter","「{item}」？我要的是選票喔。"]]},
+  {id:"clerk",name:"選務人員",role:"投票所的工作人員",por:"clerk",s:"a",x:86,y:40,
+   talks:[
+    {if:["!f:met"],lines:[["clerk","請排隊，拿出身分證喔。"]]},
+    {if:["!c:zhixuan"],lines:[["clerk","以前總統是由國民大會選出來的。今年開始，年滿 20 歲的公民都可以直接投票選總統。"],["clerk","這張選票麻煩你拿給陳爺爺。"]],fx:{give:["ballot"]}},
+    {if:["!c:jieyan2"],lines:[["clerk","臺灣的民主，是一步一步走過來的。你能把這些事情排出正確的順序嗎？"]],
+     fx:{sort:{kicker:"排序挑戰",title:"民主的腳步",bins:["1987 年","1996 年","2000 年"],items:[["解除戒嚴，開放報禁、黨禁",0],["第一次總統直選",1],["第一次政黨輪替",2]]},card:["jieyan2","lunti"],give:["votestamp"]},
+     after:[["clerk","全對！2000 年由不同的政黨贏得選舉，政權和平轉移，叫做「政黨輪替」。"],["clerk","這個圈選章送你，要記得：民主得來不易！"]]},
+    {if:[],lines:[["clerk","投票完，請安靜離開投票所喔。"]]}
+   ]},
+  {id:"nurse",name:"牆上的海報",role:"",kind:"obj",hidden:true,s:"a",x:88,y:16,
+   talks:[{if:["!f:nhi"],lines:[["旁白","{pet}對著牆上的海報一直看：一位醫生笑著幫小朋友看病。原來，1995 年開始實施「全民健保」了！"]],fx:{set:["nhi","seen:nurse"],card:"nhi",give:["bubbletea"]}},{if:[],lines:[["旁白","生病看醫生，不用再擔心花很多錢了。"]]}]},
+  {id:"xinmom",name:"阮媽媽",role:"從越南來的新住民媽媽",por:"xinmom",s:"b",x:26,y:32,
+   talks:[
+    {if:["!c:lunti"],lines:[["xinmom","Xin chào！你好！"]]},
+    {if:["!c:duoyuan"],lines:[["xinmom","你好！我從越南嫁到臺灣，現在是「新住民」。這是我做的越南河粉，很好吃喔！"],["xinmom","臺灣有原住民族、閩南人、客家人、戰後從各省來的人，還有我們這些新住民。大家說的話、拜的神、吃的東西都不一樣。"],["xinmom","只要彼此尊重，不一樣的文化放在一起，就會變得更豐富！"]],
+     ask:{q:"今天的臺灣，面對不同族群的文化應該怎麼做？",by:"xinmom",say:"你覺得呢？",o:[
+      {t:"互相尊重、欣賞彼此的文化",ok:true,r:"說得真好！"},
+      {t:"大家都要變得一模一樣",r:"不一樣才有趣呀！"},
+      {t:"只喜歡自己的文化，別人的都不好",r:"這樣就太可惜了。"}]},
+     fx:{card:"duoyuan",give:["bubbletea"]}},
+    {if:["!f:done"],lines:[["xinmom","咦？我的攤子上怎麼有個東西在發光？"]]},
+    {if:[],lines:[["xinmom","下次帶家人一起來吃喔！"]]}
+   ]},
+  {id:"kid",name:"小安",role:"新住民媽媽的孩子",por:"xiaoan",s:"b",x:84,y:46,
+   talks:[
+    {if:["!c:duoyuan"],lines:[["kid","媽媽，我可以喝珍奶嗎？"]]},
+    {if:[],lines:[["kid","我會說中文、臺語，還會說一點越南話喔！"]]}
+   ]},
+  {id:"stall",name:"小吃攤",role:"",kind:"obj",s:"b",x:40,y:80,
+   talks:[
+    {if:["!c:duoyuan"],lines:[["旁白","熱騰騰的河粉、香噴噴的雞排，夜市好熱鬧。"]]},
+    {if:["!f:done"],lines:[["旁白","碗盤旁邊有一片發光的拼圖──最後一片時光拼圖！"]],
+     ask:{q:"臺灣在哪一年解除戒嚴？",by:"教授",say:"最後一題：",o:[
+      {t:"1987 年",ok:true,r:"答對了！"},
+      {t:"1949 年",r:"1949 年是開始戒嚴的時候。"},
+      {t:"2000 年",r:"2000 年是第一次政黨輪替。"}]},
+     fx:{give:["piece5"],done:true}},
+    {if:[],lines:[["旁白","夜市的燈光一盞一盞亮起來。"]]}
+   ]}
+ ],
+ outro:[["教授","五片時光拼圖都找齊了！"],["教授","從終戰、二二八與戒嚴，到經濟起飛、十大建設，再到解嚴和民主，你走完了戰後臺灣。"],["教授","咦……拼圖拼起來的時候，時光門後面出現了一團好大的迷霧！"]]
+}
+);
+QUIZ.push(
+ {ch:"p1",q:"1945 年戰爭結束後，哪一個政府來接收臺灣？",o:["中華民國政府","日本政府","荷蘭東印度公司","清帝國"],a:0,why:"1945 年中華民國政府接收臺灣。"},
+ {ch:"p1",q:"戰後中華民國政府在臺灣成立了什麼機關？",o:["臺灣省行政長官公署","臺灣總督府","承天府","臺灣民主國"],a:0,why:"設立臺灣省行政長官公署，陳儀擔任行政長官。"},
+ {ch:"p1",q:"戰後學校和社會推行什麼語言運動？",o:["國語運動","皇民化運動","白話文運動","新文化運動"],a:0,why:"戰後推行國語運動。"},
+ {ch:"p1",q:"1949 年發行新臺幣時，多少元舊臺幣換一元新臺幣？",o:["四萬元","一百元","十元","一元"],a:0,why:"四萬元舊臺幣換一元新臺幣。"},
+ {ch:"p1",q:"1949 年中華民國政府遷臺，為了安置隨軍來臺的軍人和家眷，蓋了什麼？",o:["眷村","三合院","城堡","神社"],a:0,why:"政府蓋眷村安置軍人與家眷。"},
+ {ch:"p2",q:"二二八事件發生在哪一年？",o:["1947 年","1945 年","1987 年","1996 年"],a:0,why:"1947 年發生二二八事件。"},
+ {ch:"p2",q:"二二八事件是因為什麼引發的？",o:["查緝私菸打傷了賣菸的婦人","颱風來襲","日本攻打臺灣","選舉結果"],a:0,why:"查緝私菸引發衝突，加上民眾長期不滿。"},
+ {ch:"p2",q:"臺灣的戒嚴從 1949 年開始，到哪一年解除？",o:["1987 年","1950 年","1996 年","2000 年"],a:0,why:"1987 年解除戒嚴，長達 38 年。"},
+ {ch:"p2",q:"戒嚴時期的「報禁」是指什麼？",o:["不能隨便辦新的報紙","不能看書","不能寫信","不能唱歌"],a:0,why:"報禁限制報紙的家數和張數。"},
+ {ch:"p2",q:"每年的 2 月 28 日是什麼紀念日？",o:["和平紀念日","兒童節","國慶日","教師節"],a:0,why:"2 月 28 日是和平紀念日。"},
+ {ch:"p3",q:"土地改革的第一步是什麼？",o:["三七五減租","耕者有其田","公地放領","十大建設"],a:0,why:"順序：三七五減租 → 公地放領 → 耕者有其田。"},
+ {ch:"p3",q:"「三七五減租」是規定地租最多只能收收成的多少？",o:["37.5%","50%","75%","100%"],a:0,why:"地租最多收收成的 37.5%。"},
+ {ch:"p3",q:"「耕者有其田」的目的是什麼？",o:["讓沒有土地的佃農擁有自己的田","讓地主有更多田","把田都蓋成工廠","讓大家不要種田"],a:0,why:"政府向地主買地轉賣給佃農。"},
+ {ch:"p3",q:"戰後美國提供麵粉、棉花和資金幫助臺灣，叫做什麼？",o:["美援","配給","關稅","奏摺"],a:0,why:"美國的援助稱為美援。"},
+ {ch:"p3",q:"1966 年臺灣第一個加工出口區設在哪裡？",o:["高雄","臺北","新竹","臺中"],a:0,why:"1966 年在高雄設立加工出口區。"},
+ {ch:"p3",q:"1970 年代很多家庭在家裡幫工廠做加工，叫做什麼？",o:["客廳即工廠","國語家庭","三年輪作","家庭即學校"],a:0,why:"客廳即工廠。"},
+ {ch:"p4",q:"下列哪一項是十大建設？",o:["中山高速公路","嘉南大圳","縱貫鐵路（基隆到新竹）","億載金城"],a:0,why:"中山高速公路是十大建設之一。"},
+ {ch:"p4",q:"十大建設是在哪一個年代推動的？",o:["1970 年代","1900 年代","1950 年代","2000 年代"],a:0,why:"十大建設在 1970 年代推動。"},
+ {ch:"p4",q:"1980 年設立、發展高科技產業的是哪裡？",o:["新竹科學園區","高雄加工出口區","桃園國際機場","臺中港"],a:0,why:"1980 年設立新竹科學園區。"},
+ {ch:"p4",q:"臺灣和韓國、香港、新加坡被並稱為什麼？",o:["亞洲四小龍","四大天王","四大名著","四大港口"],a:0,why:"亞洲四小龍。"},
+ {ch:"p4",q:"臺灣的產業發展，大致的順序是哪一個？",o:["農業 → 工業 → 高科技產業","高科技產業 → 農業 → 工業","工業 → 農業 → 高科技產業","都一直是農業"],a:0,why:"從農業社會轉型為工業，再到高科技產業。"},
+ {ch:"p5",q:"臺灣在哪一年解除戒嚴？",o:["1987 年","1949 年","1996 年","2000 年"],a:0,why:"1987 年解除戒嚴。"},
+ {ch:"p5",q:"臺灣第一次總統直接選舉是哪一年？",o:["1996 年","1987 年","2000 年","1945 年"],a:0,why:"1996 年第一次總統直選。"},
+ {ch:"p5",q:"2000 年臺灣第一次發生什麼事？",o:["政黨輪替","解除戒嚴","總統直選","發行新臺幣"],a:0,why:"2000 年第一次政黨輪替，政權和平轉移。"},
+ {ch:"p5",q:"戰後臺灣民主化的正確順序是哪一個？",o:["解除戒嚴 → 總統直選 → 政黨輪替","總統直選 → 解除戒嚴 → 政黨輪替","政黨輪替 → 總統直選 → 解除戒嚴","解除戒嚴 → 政黨輪替 → 總統直選"],a:0,why:"1987 解嚴 → 1996 總統直選 → 2000 政黨輪替。"},
+ {ch:"p5",q:"1995 年開始實施，讓大家看病不用花很多錢的制度是什麼？",o:["全民健保","戒嚴","土地改革","美援"],a:0,why:"1995 年實施全民健保。"},
+ {ch:"p5",q:"面對新住民和不同族群的文化，我們應該怎麼做？",o:["互相尊重、欣賞","要求大家都一樣","不要和他們說話","只吃自己家鄉的菜"],a:0,why:"臺灣是多元文化社會，要彼此尊重。"}
 );
 
 </script>
