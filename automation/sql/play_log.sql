@@ -43,7 +43,7 @@ insert into public.game_levels(game, title, levels) values
   ('idiomn4',  '成語大冒險 南一版（四上國語）',     4),
   ('idiomh4',  '成語大冒險 翰林版（四上國語）',     4),
   ('idiomn3b', '成語大冒險 南一版 L7～12（三上國語）', 5),
-  ('twtime',   '台灣時光探險隊（五年級社會）',      34)  -- 每完成一章記一筆
+  ('twtime',   '台灣時光探險隊（五年級社會）',      39)  -- 每完成一章記一筆
 on conflict (game) do update set title = excluded.title, levels = excluded.levels;
 
 -- 排行榜上的名字只顯示部分（王小明 → 王○明），和大廳的 maskName() 一樣
