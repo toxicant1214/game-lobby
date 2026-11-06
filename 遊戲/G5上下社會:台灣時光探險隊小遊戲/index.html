@@ -3291,7 +3291,24 @@ const KEY="tw-time-explorer-v1";
 const fresh=()=>({hero:null,name:"",bag:{},cab:[],cards:[],log:[],pet:{has:false,name:"",aff:0},chs:{},g:[],battle:{best:0,wins:0,plays:0,bestCorrect:0},music:false,cur:null});
 let S=fresh();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+/* 雲端存檔：從遊戲書房登入（有學生代碼）時，進度跟著代碼存到 Supabase，換裝置也能接著玩 */
+const CLOUD=(()=>{let c="";try{c=(localStorage.getItem("bz_code")||"").trim().toUpperCase();}catch(e){}
+  return c?{code:c,game:"twtime",U:"https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/",K:"sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"}:null;})();
+if(CLOUD&&S._code&&S._code!==CLOUD.code)S=fresh();   // 同一台裝置換了另一位學生
+let cloudSettled=!CLOUD,pushT=null;
+function save(){if(cloudSettled){S._t=Date.now();if(CLOUD)S._code=CLOUD.code;}
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(CLOUD&&cloudSettled){clearTimeout(pushT);pushT=setTimeout(()=>cloudSend(false),2500);}}
+function cloudRpc(fn,args,keep){return fetch(CLOUD.U+fn,{method:"POST",keepalive:!!keep,headers:{apikey:CLOUD.K,"Content-Type":"application/json"},body:JSON.stringify(args)});}
+function cloudSend(keep){if(!CLOUD)return;clearTimeout(pushT);pushT=null;
+  cloudRpc("save_progress",{p_code:CLOUD.code,p_game:CLOUD.game,p_data:S,p_saved_at:S._t||0},keep).catch(()=>{});}
+addEventListener("visibilitychange",()=>{if(document.hidden&&pushT)cloudSend(true);});
+addEventListener("pagehide",()=>{if(pushT)cloudSend(true);});
+const cloudReady=!CLOUD?Promise.resolve():cloudRpc("load_progress",{p_code:CLOUD.code,p_game:CLOUD.game})
+  .then(r=>r.ok?r.json():null).then(rows=>{const r=rows&&rows[0];cloudSettled=true;
+    if(r&&r.data&&(+r.saved_at||0)>(S._t||0)){S=Object.assign(fresh(),r.data);try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(window.onCloudLoaded)onCloudLoaded();}
+    else if(S.hero&&(!r||(+r.saved_at||0)<(S._t||0)||!S._t)){save();cloudSend(false);}})
+  .catch(()=>{cloudSettled=true;});
 function chs(id){return S.chs[id]||(S.chs[id]={flags:[],talked:[],miss:0,done:false,stars:0,missed:[]});}
 const heroOf=id=>HEROES.find(h=>h.id===id)||HEROES[0];
 const T=s=>String(s).replace(/\{name\}/g,S.name||"探險家").replace(/\{pet\}/g,S.pet.name||"小鹿");
@@ -3351,7 +3368,9 @@ if(!matchMedia("(prefers-reduced-motion: reduce)").matches)sparkLoop();
 function show(id){["cover","pick","hub","play","battle"].forEach(s=>$(s).hidden=s!==id);sparkOn=id==="cover";if(sparkOn)sparkLoop();}
 let flashing=false;
 async function flashTo(fn){if(flashing)return;flashing=true;$("flash").className="on";SFX.portal();await sleep(950);try{fn();}finally{flashing=false;}$("flash").className="off";await sleep(700);$("flash").className="";}
-$("go").onclick=()=>{if(S.music&&!music.on){music.toggle();syncMusicBtns();}
+$("go").onclick=async()=>{if(flashing||$("go").disabled)return;
+  if(CLOUD&&!cloudSettled){$("go").disabled=true;const t=$("go").textContent;$("go").textContent="讀取進度中…";await Promise.race([cloudReady,sleep(5000)]);cloudSettled=true;$("go").disabled=false;$("go").textContent=t;}
+  if(S.music&&!music.on){music.toggle();syncMusicBtns();}
   flashTo(()=>{if(S.hero&&S.name)openHub();else{show("pick");showHero(Math.max(0,HEROES.findIndex(h=>h.id===S.hero)),0);}});};
 
 /* ================= 選角 ================= */
@@ -3790,5 +3809,6 @@ async function endBattle(win){clearInterval(B.timer);if(B.hp<=0)win=true;
 /* ================= 啟動 ================= */
 syncMusicBtns();
 if(S.hero&&S.name){$("go").textContent="繼續冒險";}
+window.onCloudLoaded=()=>{if(BZ_NAME&&S.hero)S.name=BZ_NAME;if(S.hero&&S.name)$("go").textContent="繼續冒險";};
 
 </script>
