@@ -410,6 +410,17 @@ body.holding #pano{cursor:copy;}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 @media (max-height:640px){.info p,.stats{display:none;}.info{gap:8px;padding:14px;}.info .type{font-size:22px;}}
 @media (max-height:480px){.stage{padding-top:56px;padding-bottom:84px;}.roster{padding-top:6px;padding-bottom:6px;}.chip{width:44px;height:56px;}.info{position:absolute!important;right:max(12px,env(safe-area-inset-right,0px));left:auto!important;width:min(300px,45%)!important;top:56px;bottom:auto!important;}.pick-head{display:none;}}
+@media (max-height:500px){.hud-r .tool .lbl{display:none;}.hud-r .tool{padding:0 11px;height:40px;}.hud-r{flex-wrap:nowrap;}}
+@media (max-height:500px) and (max-width:820px){
+  .hud-l{top:calc(10px + env(safe-area-inset-top,0px));width:min(290px,44vw);}
+  .hud-r{left:auto;right:max(10px,env(safe-area-inset-right,0px));justify-content:flex-end;max-width:54vw;}
+}
+@media (max-height:500px){.quest{padding:8px 10px;gap:4px;}.quest .seal{width:30px;height:30px;font-size:10px;}.quest h3{font-size:15px;}.quest .cnt{display:none;}}
+.wear-row{display:flex;flex-wrap:wrap;gap:6px;}
+.wear{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:4px 10px 4px 4px;font-size:13px;}
+.wear .wi{width:30px;height:30px;border-radius:50%;background-color:#fff6dc;background-repeat:no-repeat;flex:none;}
+.wear.on{background:var(--brass);color:#2a1a04;border-color:var(--brass);}
+.wear[disabled]{opacity:.45;}
 </style>
 
 <!-- 封面 -->
@@ -525,7 +536,7 @@ body.holding #pano{cursor:copy;}
 <div id="toast-root"></div>
 
 <script>
-const IMG={"pano_ch1": "a/pano_ch1.jpg", "thumb_ch1": "a/thumb_ch1.jpg", "pano_ch2": "a/pano_ch2.jpg", "thumb_ch2": "a/thumb_ch2.jpg", "pano_ch3": "a/pano_ch3.jpg", "thumb_ch3": "a/thumb_ch3.jpg", "pano_ch4": "a/pano_ch4.jpg", "thumb_ch4": "a/thumb_ch4.jpg", "pano_s1": "a/pano_s1.jpg", "thumb_s1": "a/thumb_s1.jpg", "pano_s2": "a/pano_s2.jpg", "thumb_s2": "a/thumb_s2.jpg", "pano_s3": "a/pano_s3.jpg", "thumb_s3": "a/thumb_s3.jpg", "pano_s4": "a/pano_s4.jpg", "thumb_s4": "a/thumb_s4.jpg", "pano_s5": "a/pano_s5.jpg", "thumb_s5": "a/thumb_s5.jpg", "pano_z1": "a/pano_z1.jpg", "thumb_z1": "a/thumb_z1.jpg", "pano_z2": "a/pano_z2.jpg", "thumb_z2": "a/thumb_z2.jpg", "pano_z3": "a/pano_z3.jpg", "thumb_z3": "a/thumb_z3.jpg", "pano_q1": "a/pano_q1.jpg", "thumb_q1": "a/thumb_q1.jpg", "pano_q2": "a/pano_q2.jpg", "thumb_q2": "a/thumb_q2.jpg", "pano_q3": "a/pano_q3.jpg", "thumb_q3": "a/thumb_q3.jpg", "pano_q4": "a/pano_q4.jpg", "thumb_q4": "a/thumb_q4.jpg", "pano_r1": "a/pano_r1.jpg", "thumb_r1": "a/thumb_r1.jpg", "pano_r2": "a/pano_r2.jpg", "thumb_r2": "a/thumb_r2.jpg", "pano_r3": "a/pano_r3.jpg", "thumb_r3": "a/thumb_r3.jpg", "pano_r4": "a/pano_r4.jpg", "thumb_r4": "a/thumb_r4.jpg", "pano_j1": "a/pano_j1.jpg", "thumb_j1": "a/thumb_j1.jpg", "pano_j2": "a/pano_j2.jpg", "thumb_j2": "a/thumb_j2.jpg", "pano_j3": "a/pano_j3.jpg", "thumb_j3": "a/thumb_j3.jpg", "pano_j4": "a/pano_j4.jpg", "thumb_j4": "a/thumb_j4.jpg", "pano_k1": "a/pano_k1.jpg", "thumb_k1": "a/thumb_k1.jpg", "pano_k2": "a/pano_k2.jpg", "thumb_k2": "a/thumb_k2.jpg", "pano_k3": "a/pano_k3.jpg", "thumb_k3": "a/thumb_k3.jpg", "pano_k4": "a/pano_k4.jpg", "thumb_k4": "a/thumb_k4.jpg", "pano_k5": "a/pano_k5.jpg", "thumb_k5": "a/thumb_k5.jpg", "pano_p1": "a/pano_p1.jpg", "thumb_p1": "a/thumb_p1.jpg", "pano_p2": "a/pano_p2.jpg", "thumb_p2": "a/thumb_p2.jpg", "pano_p3": "a/pano_p3.jpg", "thumb_p3": "a/thumb_p3.jpg", "pano_p4": "a/pano_p4.jpg", "thumb_p4": "a/thumb_p4.jpg", "pano_p5": "a/pano_p5.jpg", "thumb_p5": "a/thumb_p5.jpg", "e_sea": "a/e_sea.jpg", "e_zheng": "a/e_zheng.jpg", "e_qing1": "a/e_qing1.jpg", "e_japan": "a/e_japan.jpg", "e_post": "a/e_post.jpg", "cover": "a/cover.jpg", "c1": "a/c1.webp", "c2": "a/c2.webp", "c3": "a/c3.webp", "c4": "a/c4.webp", "c5": "a/c5.webp", "c6": "a/c6.webp", "acai": "a/acai.webp", "afu": "a/afu.webp", "ahai": "a/ahai.webp", "ama2": "a/ama2.webp", "aming": "a/aming.webp", "ashui": "a/ashui.webp", "ashun": "a/ashun.webp", "atian": "a/atian.webp", "atu": "a/atu.webp", "axiong": "a/axiong.webp", "ayong": "a/ayong.webp", "banker": "a/banker.webp", "beadtrader": "a/beadtrader.webp", "boatboss": "a/boatboss.webp", "boatman": "a/boatman.webp", "boss": "a/boss.webp", "boss_jp1": "a/boss_jp1.webp", "boss_jp2": "a/boss_jp2.webp", "boss_post": "a/boss_post.webp", "boss_qing1": "a/boss_qing1.webp", "boss_qing2": "a/boss_qing2.webp", "boss_sea": "a/boss_sea.webp", "boss_zheng": "a/boss_zheng.webp", "brother": "a/brother.webp", "captain": "a/captain.webp", "chen": "a/chen.webp", "chenyh": "a/chenyh.webp", "chipeng": "a/chipeng.webp", "clerk": "a/clerk.webp", "coyett": "a/coyett.webp", "dcap": "a/dcap.webp", "deer1": "a/deer1.webp", "deer2": "a/deer2.webp", "deer3": "a/deer3.webp", "deptgirl": "a/deptgirl.webp", "doctor": "a/doctor.webp", "dodd": "a/dodd.webp", "driver": "a/driver.webp", "girl": "a/girl.webp", "granny": "a/granny.webp", "guidegma": "a/guidegma.webp", "haru": "a/haru.webp", "hatta": "a/hatta.webp", "homemom": "a/homemom.webp", "hosei": "a/hosei.webp", "huang": "a/huang.webp", "hunter": "a/hunter.webp", "items": "a/items.webp", "items_jp1": "a/items_jp1.webp", "items_jp2": "a/items_jp2.webp", "items_post": "a/items_post.webp", "items_qing1": "a/items_qing1.webp", "items_qing2": "a/items_qing2.webp", "items_sea": "a/items_sea.webp", "items_zheng": "a/items_zheng.webp", "jade": "a/jade.webp", "jama": "a/jama.webp", "jiang": "a/jiang.webp", "jlin": "a/jlin.webp", "juanmom": "a/juanmom.webp", "keisatsu": "a/keisatsu.webp", "kenichi": "a/kenichi.webp", "kid": "a/kid.webp", "koxinga": "a/koxinga.webp", "landofficer": "a/landofficer.webp", "leader": "a/leader.webp", "lichun": "a/lichun.webp", "linxt": "a/linxt.webp", "liu": "a/liu.webp", "mackay": "a/mackay.webp", "marco": "a/marco.webp", "miaogong": "a/miaogong.webp", "mother": "a/mother.webp", "newsman": "a/newsman.webp", "oldsoldier": "a/oldsoldier.webp", "operator": "a/operator.webp", "padre": "a/padre.webp", "painter": "a/painter.webp", "pastor": "a/pastor.webp", "patu": "a/patu.webp", "pdriver": "a/pdriver.webp", "picker": "a/picker.webp", "prof": "a/prof.webp", "pstudent": "a/pstudent.webp", "pteacher": "a/pteacher.webp", "quan": "a/quan.webp", "reader": "a/reader.webp", "reporter": "a/reporter.webp", "roadeng": "a/roadeng.webp", "roadsoldier": "a/roadsoldier.webp", "scholar": "a/scholar.webp", "shen": "a/shen.webp", "shi": "a/shi.webp", "smith": "a/smith.webp", "stationmaster": "a/stationmaster.webp", "stone": "a/stone.webp", "teller": "a/teller.webp", "tokei": "a/tokei.webp", "toothache": "a/toothache.webp", "tuncap": "a/tuncap.webp", "uncle": "a/uncle.webp", "vander": "a/vander.webp", "votergpa": "a/votergpa.webp", "wu": "a/wu.webp", "xiaoan": "a/xiaoan.webp", "xinmom": "a/xinmom.webp", "xiucai": "a/xiucai.webp", "xiuying": "a/xiuying.webp", "yuan": "a/yuan.webp", "zhang": "a/zhang.webp"};
+const IMG={"pano_ch1": "a/pano_ch1.jpg", "thumb_ch1": "a/thumb_ch1.jpg", "pano_ch2": "a/pano_ch2.jpg", "thumb_ch2": "a/thumb_ch2.jpg", "pano_ch3": "a/pano_ch3.jpg", "thumb_ch3": "a/thumb_ch3.jpg", "pano_ch4": "a/pano_ch4.jpg", "thumb_ch4": "a/thumb_ch4.jpg", "pano_s1": "a/pano_s1.jpg", "thumb_s1": "a/thumb_s1.jpg", "pano_s2": "a/pano_s2.jpg", "thumb_s2": "a/thumb_s2.jpg", "pano_s3": "a/pano_s3.jpg", "thumb_s3": "a/thumb_s3.jpg", "pano_s4": "a/pano_s4.jpg", "thumb_s4": "a/thumb_s4.jpg", "pano_s5": "a/pano_s5.jpg", "thumb_s5": "a/thumb_s5.jpg", "pano_z1": "a/pano_z1.jpg", "thumb_z1": "a/thumb_z1.jpg", "pano_z2": "a/pano_z2.jpg", "thumb_z2": "a/thumb_z2.jpg", "pano_z3": "a/pano_z3.jpg", "thumb_z3": "a/thumb_z3.jpg", "pano_q1": "a/pano_q1.jpg", "thumb_q1": "a/thumb_q1.jpg", "pano_q2": "a/pano_q2.jpg", "thumb_q2": "a/thumb_q2.jpg", "pano_q3": "a/pano_q3.jpg", "thumb_q3": "a/thumb_q3.jpg", "pano_q4": "a/pano_q4.jpg", "thumb_q4": "a/thumb_q4.jpg", "pano_r1": "a/pano_r1.jpg", "thumb_r1": "a/thumb_r1.jpg", "pano_r2": "a/pano_r2.jpg", "thumb_r2": "a/thumb_r2.jpg", "pano_r3": "a/pano_r3.jpg", "thumb_r3": "a/thumb_r3.jpg", "pano_r4": "a/pano_r4.jpg", "thumb_r4": "a/thumb_r4.jpg", "pano_j1": "a/pano_j1.jpg", "thumb_j1": "a/thumb_j1.jpg", "pano_j2": "a/pano_j2.jpg", "thumb_j2": "a/thumb_j2.jpg", "pano_j3": "a/pano_j3.jpg", "thumb_j3": "a/thumb_j3.jpg", "pano_j4": "a/pano_j4.jpg", "thumb_j4": "a/thumb_j4.jpg", "pano_k1": "a/pano_k1.jpg", "thumb_k1": "a/thumb_k1.jpg", "pano_k2": "a/pano_k2.jpg", "thumb_k2": "a/thumb_k2.jpg", "pano_k3": "a/pano_k3.jpg", "thumb_k3": "a/thumb_k3.jpg", "pano_k4": "a/pano_k4.jpg", "thumb_k4": "a/thumb_k4.jpg", "pano_k5": "a/pano_k5.jpg", "thumb_k5": "a/thumb_k5.jpg", "pano_p1": "a/pano_p1.jpg", "thumb_p1": "a/thumb_p1.jpg", "pano_p2": "a/pano_p2.jpg", "thumb_p2": "a/thumb_p2.jpg", "pano_p3": "a/pano_p3.jpg", "thumb_p3": "a/thumb_p3.jpg", "pano_p4": "a/pano_p4.jpg", "thumb_p4": "a/thumb_p4.jpg", "pano_p5": "a/pano_p5.jpg", "thumb_p5": "a/thumb_p5.jpg", "e_sea": "a/e_sea.jpg", "e_zheng": "a/e_zheng.jpg", "e_qing1": "a/e_qing1.jpg", "e_japan": "a/e_japan.jpg", "e_post": "a/e_post.jpg", "cover": "a/cover.jpg", "c1": "a/c1.webp", "c2": "a/c2.webp", "c3": "a/c3.webp", "c4": "a/c4.webp", "c5": "a/c5.webp", "c6": "a/c6.webp", "acai": "a/acai.webp", "afu": "a/afu.webp", "ahai": "a/ahai.webp", "ama2": "a/ama2.webp", "aming": "a/aming.webp", "ashui": "a/ashui.webp", "ashun": "a/ashun.webp", "atian": "a/atian.webp", "atu": "a/atu.webp", "axiong": "a/axiong.webp", "ayong": "a/ayong.webp", "banker": "a/banker.webp", "beadtrader": "a/beadtrader.webp", "boatboss": "a/boatboss.webp", "boatman": "a/boatman.webp", "boss": "a/boss.webp", "boss_jp1": "a/boss_jp1.webp", "boss_jp2": "a/boss_jp2.webp", "boss_post": "a/boss_post.webp", "boss_qing1": "a/boss_qing1.webp", "boss_qing2": "a/boss_qing2.webp", "boss_sea": "a/boss_sea.webp", "boss_zheng": "a/boss_zheng.webp", "brother": "a/brother.webp", "captain": "a/captain.webp", "chen": "a/chen.webp", "chenyh": "a/chenyh.webp", "chipeng": "a/chipeng.webp", "clerk": "a/clerk.webp", "coyett": "a/coyett.webp", "dcap": "a/dcap.webp", "deer1": "a/deer1.webp", "deer2": "a/deer2.webp", "deer3": "a/deer3.webp", "deptgirl": "a/deptgirl.webp", "doctor": "a/doctor.webp", "dodd": "a/dodd.webp", "driver": "a/driver.webp", "girl": "a/girl.webp", "granny": "a/granny.webp", "guidegma": "a/guidegma.webp", "haru": "a/haru.webp", "hatta": "a/hatta.webp", "homemom": "a/homemom.webp", "hosei": "a/hosei.webp", "huang": "a/huang.webp", "hunter": "a/hunter.webp", "items": "a/items.webp", "items_jp1": "a/items_jp1.webp", "items_jp2": "a/items_jp2.webp", "items_post": "a/items_post.webp", "items_qing1": "a/items_qing1.webp", "items_qing2": "a/items_qing2.webp", "items_sea": "a/items_sea.webp", "items_zheng": "a/items_zheng.webp", "jade": "a/jade.webp", "jama": "a/jama.webp", "jiang": "a/jiang.webp", "jlin": "a/jlin.webp", "juanmom": "a/juanmom.webp", "keisatsu": "a/keisatsu.webp", "kenichi": "a/kenichi.webp", "kid": "a/kid.webp", "koxinga": "a/koxinga.webp", "landofficer": "a/landofficer.webp", "leader": "a/leader.webp", "lichun": "a/lichun.webp", "linxt": "a/linxt.webp", "liu": "a/liu.webp", "mackay": "a/mackay.webp", "marco": "a/marco.webp", "miaogong": "a/miaogong.webp", "mother": "a/mother.webp", "newsman": "a/newsman.webp", "oldsoldier": "a/oldsoldier.webp", "operator": "a/operator.webp", "padre": "a/padre.webp", "painter": "a/painter.webp", "pastor": "a/pastor.webp", "patu": "a/patu.webp", "pdriver": "a/pdriver.webp", "pet_wear": "a/pet_wear.webp", "picker": "a/picker.webp", "prof": "a/prof.webp", "pstudent": "a/pstudent.webp", "pteacher": "a/pteacher.webp", "quan": "a/quan.webp", "reader": "a/reader.webp", "reporter": "a/reporter.webp", "roadeng": "a/roadeng.webp", "roadsoldier": "a/roadsoldier.webp", "scholar": "a/scholar.webp", "shen": "a/shen.webp", "shi": "a/shi.webp", "smith": "a/smith.webp", "stationmaster": "a/stationmaster.webp", "stone": "a/stone.webp", "teller": "a/teller.webp", "tokei": "a/tokei.webp", "toothache": "a/toothache.webp", "tuncap": "a/tuncap.webp", "uncle": "a/uncle.webp", "vander": "a/vander.webp", "votergpa": "a/votergpa.webp", "wu": "a/wu.webp", "xiaoan": "a/xiaoan.webp", "xinmom": "a/xinmom.webp", "xiucai": "a/xiucai.webp", "xiuying": "a/xiuying.webp", "yuan": "a/yuan.webp", "zhang": "a/zhang.webp"};
 const PANO={"ch1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 200, "L": 2300, "H": 900, "tAL": 0, "tBL": 0}, "ch2": {"W0": 1350, "WA": 1350, "WB": 1070, "ov": 200, "L": 2020, "H": 900, "tAL": 0, "tBL": 280}, "ch3": {"W0": 1350, "WA": 1260, "WB": 1350, "ov": 70, "L": 2470, "H": 900, "tAL": 0, "tBL": 0}, "ch4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 70, "L": 2560, "H": 900, "tAL": 0, "tBL": 0}, "s1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 50, "L": 2600, "H": 900, "tAL": 0, "tBL": 0}, "s2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "s5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "z3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "q4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "r4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "j4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "k5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p1": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p2": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p3": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p4": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}, "p5": {"W0": 1350, "WA": 1350, "WB": 1350, "ov": 80, "L": 2540, "H": 900, "tAL": 0, "tBL": 0}};
 const HEROES=[
   {id:"c1",type:"考古迷",tag:"觀察力",desc:"拿著放大鏡和小刷子，任何一塊石頭都不放過。最擅長從小線索拼出大故事。",stats:{觀察:5,勇氣:3,知識:4},names:["阿哲","小石","凱凱"]},
@@ -549,7 +560,7 @@ const ITEMS={
   shard4:{name:"時光門碎片（四）",icon:6,kind:"tool",ch:"ch4",desc:"最後一片時光門碎片。"},
   rice:{name:"稻穗",icon:7,kind:"food",feed:3,desc:"金黃色的稻穗。新石器時代的人開始種植稻米。{pet}也很愛吃。"},
   knife:{name:"磨製石刀",icon:8,kind:"treasure",from:"第三章・圓山與卑南",desc:"用「磨」的方式做成的石刀，又光滑又鋒利，可以收割稻穗。是新石器時代的工具。"},
-  pot:{name:"陶罐",icon:9,kind:"tool",ch:"ch3",desc:"用陶土捏好、再用火燒製的陶罐，可以煮食物、裝東西。"},
+  pot:{name:"陶罐",icon:9,kind:"treasure",from:"第三章・稻田與玉的村落",desc:"用陶土捏好、再用火燒製的陶罐，可以煮食物、裝東西。"},
   jadestone:{name:"玉料",icon:10,kind:"tool",ch:"ch3",desc:"從花蓮豐田一帶運來的臺灣玉原料。"},
   jue:{name:"人獸形玉玦",icon:11,kind:"treasure",from:"第三章・卑南遺址",desc:"卑南遺址出土、用玉石磨製的耳環，上面是人站在野獸頭上的造型。看得出卑南人已經有審美觀念。"},
   charcoal:{name:"木炭",icon:12,kind:"tool",ch:"ch4",desc:"燒得黑黑的木炭，放進煉鐵爐可以燒出很高的溫度。"},
@@ -575,7 +586,20 @@ const CARDS={
   timeline:{ch:"ch4",name:"史前時期三階段",kind:"總整理",year:"舊石器 → 新石器 → 金屬器",text:"舊石器：敲打石器、住洞穴、採集捕撈狩獵、會用火（長濱八仙洞）。新石器：磨製石器、燒陶、種稻、飼養動物、定居（圓山、卑南）。金屬器：煉鐵、鐵器、和海外交易（十三行、漢本）。",key:"<b>敲打石器 → 磨製石器 → 製作鐵器</b>"}
 };
 const PET={stages:[{min:0,img:"deer1",name:"鹿寶寶"},{min:12,img:"deer2",name:"小鹿"},{min:30,img:"deer3",name:"長角鹿"}],
-  skills:[{lv:1,t:"嗅嗅：在場景裡找出藏起來的考古發現"},{lv:2,t:"轉圈圈＋對決加油：多一顆愛心"},{lv:3,t:"守護：對決時幫你擋下一次攻擊"}]};
+  skills:[{lv:1,t:"嗅嗅：在場景裡找出藏起來的考古發現"},{lv:2,t:"轉圈圈＋對決加油：多一顆愛心"},{lv:3,t:"守護：對決時幫你擋下一次攻擊"}],
+  bondStart:30,bondStep:15,
+  bondSkills:[{bond:2,t:"小鹿提示：對決時多一次放大鏡"},{bond:4,t:"雙重守護：對決時幫你擋兩次攻擊"},{bond:6,t:"豐收：對決勝利時，食物加倍"}],
+  wears:[
+   {id:"shell",cell:0,name:"貝殼項鍊",flag:"bossWin",era:"史前時代"},
+   {id:"sailor",cell:1,name:"水手領巾",flag:"boss_sea",era:"大航海時代"},
+   {id:"tigerbell",cell:2,name:"虎頭鈴鐺",flag:"boss_zheng",era:"明鄭時期"},
+   {id:"amulet",cell:3,name:"平安符",flag:"boss_qing1",era:"清領前期"},
+   {id:"teabag",cell:4,name:"茶葉小布包",flag:"boss_qing2",era:"清領後期"},
+   {id:"watch",cell:5,name:"懷錶項鍊",flag:"boss_jp1",era:"日治前期"},
+   {id:"dove",cell:6,name:"和平鴿領巾",flag:"boss_jp2",era:"日治中後期"},
+   {id:"hakka",cell:7,name:"花布領巾",flag:"boss_post",era:"戰後臺灣"}],
+  wearPos:{cx:.785,cy:.455,w:.39},
+  dailyN:3};
 const FOOD_DROPS=["berry","berry","rice","roastfish"];
 const HUB_MUSIC={root:131,scale:[0,2,4,7,9],tempo:900,wave:"sine"};
 const BOSS_MUSIC={root:98,scale:[0,1,5,7,8],tempo:420,wave:"sawtooth"};
@@ -951,7 +975,7 @@ const CHAPTERS=[
      fx:{take:["charcoal"],craft:{mode:"tap",from:"charcoal",to:"sickle",title:"敲打燒紅的鐵"},set:["sickle"],card:"shisanhang"},
      after:[["smith","打好了！一把鐵鐮刀。拿去送給田裡的農夫吧，他一定很高興。"]]}],
    wrong:[["smith","「{item}」放不進煉鐵爐啦！我要的是木炭。"]]},
-  {id:"coal",name:"裝木炭的竹簍",role:"",kind:"obj",s:"a",x:27,y:55,
+  {id:"coal",name:"裝木炭的竹簍",role:"",kind:"obj",s:"a",x:34,y:70,
    talks:[{if:["f:met","!i:charcoal","!f:sickle"],lines:[["旁白","竹簍裡裝滿黑漆漆的木炭。你抱了一把。"]],fx:{give:["charcoal"]}},{if:[],lines:[["旁白","黑黑的木炭，燒起來溫度很高。"]]}]},
   {id:"farmer",name:"農夫",role:"在田裡耕種的人",s:"a",x:68,y:31,
    talks:[{if:["!f:farm"],lines:[["farmer","我的石刀又鈍了，割一整天都割不完……"]]},{if:[],lines:[["farmer","用鐵鐮刀收割，又快又輕鬆！"]]}],
@@ -1528,7 +1552,7 @@ Object.assign(ITEMS,{
   sign:{name:"空白木牌",sheet:"items_zheng",icon:5,kind:"tool",ch:"z2",desc:"還沒寫上名字的營區木牌。"},
   yam:{name:"地瓜",sheet:"items_zheng",icon:6,kind:"food",feed:3,desc:"烤得香甜的地瓜。"},
   hat:{name:"屯田兵的斗笠",sheet:"items_zheng",icon:7,kind:"treasure",from:"第二章・屯田的營盤",desc:"隊長送你的斗笠。屯田兵平常戴著它下田，有戰事時就拿起武器。"},
-  brush:{name:"毛筆",sheet:"items_zheng",icon:8,kind:"tool",ch:"z3",desc:"學堂裡寫字用的毛筆。"},
+  brush:{name:"毛筆",sheet:"items_zheng",icon:8,kind:"treasure",from:"第三章・東寧的孔廟",desc:"學堂裡寫字用的毛筆。"},
   book:{name:"線裝書",sheet:"items_zheng",icon:9,kind:"tool",ch:"z3",desc:"從中國運來的書，學堂的學生要用它讀書。"},
   salt:{name:"一小袋鹽",sheet:"items_zheng",icon:10,kind:"food",feed:2,desc:"海水曬出來的鹽。{pet}很喜歡舔一舔鹽巴。"},
   inkstone:{name:"學堂的硯台",sheet:"items_zheng",icon:11,kind:"treasure",from:"第三章・東寧的孔廟",desc:"陳永華送你的硯台。他在臺灣建孔廟、辦學校，讓更多人有機會讀書。"},
@@ -2136,9 +2160,9 @@ QUIZ.push(
 Object.assign(ITEMS,{
   tealeaves:{name:"一簍茶葉",sheet:"items_qing2",icon:0,kind:"tool",ch:"r1",desc:"大稻埕揀好的茶葉，香氣撲鼻。"},
   teabox:{name:"烏龍茶茶箱",sheet:"items_qing2",icon:1,kind:"treasure",from:"第一章・茶香飄洋",desc:"印著「Formosa Oolong Tea」的茶箱。臺灣烏龍茶曾經大受歐美歡迎。"},
-  camphor:{name:"樟腦塊",sheet:"items_qing2",icon:2,kind:"tool",ch:"r1",desc:"從樟樹提煉的樟腦，可以防蟲，也是工業原料。"},
+  camphor:{name:"樟腦塊",sheet:"items_qing2",icon:2,kind:"treasure",from:"第一章・茶香飄洋",desc:"從樟樹提煉的樟腦，可以防蟲，也是工業原料。"},
   forceps:{name:"拔牙鉗",sheet:"items_qing2",icon:3,kind:"tool",ch:"r2",desc:"馬偕醫生拔牙用的鉗子。"},
-  medicine:{name:"藥瓶",sheet:"items_qing2",icon:4,kind:"tool",ch:"r2",desc:"西藥。當時很多臺灣人第一次看到西醫。"},
+  medicine:{name:"藥瓶",sheet:"items_qing2",icon:4,kind:"treasure",from:"第二章・馬偕的醫館",desc:"西藥。當時很多臺灣人第一次看到西醫。"},
   schoolbook:{name:"理學堂的課本",sheet:"items_qing2",icon:5,kind:"treasure",from:"第二章・馬偕的醫館",desc:"理學堂大書院的課本。馬偕在淡水辦學校，也讓女孩子能讀書。"},
   newspaper:{name:"府城教會報",sheet:"items_qing2",icon:6,kind:"tool",ch:"r2",desc:"巴克禮在臺南發行的報紙，用白話字（台語羅馬字）印成。"},
   brick:{name:"紅磚",sheet:"items_qing2",icon:7,kind:"tool",ch:"r3",desc:"蓋砲臺用的紅磚。"},
@@ -2524,6 +2548,7 @@ Object.assign(CARDS,{
   sotokufu:{ch:"j2",name:"臺灣總督府",kind:"統治方式",year:"日治時期",text:"日本在臺灣設立「臺灣總督府」，是統治臺灣的最高機關。臺灣總督的權力非常大，管理行政、法律和軍隊。日本把臺灣當成殖民地，主要是為了日本的利益。",key:"最高統治機關是<b>臺灣總督府</b>，臺灣是日本的<b>殖民地</b>。"},
   police:{ch:"j2",name:"警察制度",kind:"統治方式",year:"日治時期",text:"總督府在各地設立派出所，警察除了抓壞人，還要管戶口、衛生、收稅、農業，什麼都管，權力很大。所以臺灣人都叫警察「大人」，小孩子一聽到警察來了就不敢哭。",key:"<b>警察</b>管很多事，權力很大，被稱為<b>「大人」</b>。"},
   baojia:{ch:"j2",name:"保甲制度",kind:"統治方式",year:"日治時期",text:"總督府把十戶編成一「甲」，十甲編成一「保」，由保正、甲長協助警察管理地方。一戶有人犯錯，同一甲的人也要一起受罰，大家只好互相監督。",key:"<b>保甲制度</b>：十戶一甲、十甲一保，協助<b>警察</b>管理。"},
+  daren:{ch:"j2",hidden:true,name:"什麼都管的「大人」",kind:"隱藏發現",year:"日治時期",text:"派出所門口的公告板上，貼著查戶口、打掃衛生、繳稅的通知。警察什麼都管，抓小偷、查戶口、檢查家裡乾不乾淨，所以臺灣人都叫警察「大人」。",key:"警察什麼都管，被稱為<b>「大人」</b>。"},
   survey:{ch:"j2",name:"土地與戶口調查",kind:"統治方式",year:"日治初期",text:"總督府派人調查全臺灣的土地和戶口，弄清楚每塊地是誰的、每戶有幾個人。這讓政府能更有效地管理和收稅。",key:"總督府進行<b>土地調查</b>、<b>戶口調查</b>，方便管理和收稅。"},
   unequal:{ch:"j2",name:"不平等的待遇",kind:"統治的態度",year:"日治時期",text:"在殖民統治下，臺灣人和日本人的待遇不一樣：重要的官職大多是日本人擔任，讀書、工作的機會也不平等。",key:"殖民統治下，臺灣人受到<b>差別待遇</b>。"},
   xilaian:{ch:"j2",name:"武力抗日與西來庵事件",kind:"武力抗日",year:"1915 年",text:"日本統治初期，各地常有臺灣人拿起武器反抗。1915 年發生在臺南的西來庵事件，是規模很大的一次武力抗日，失敗後很多人被判刑。之後，臺灣人慢慢改用不用武力的方法爭取權利。",key:"<b>西來庵事件</b>是日治前期大規模的<b>武力抗日</b>。"},
@@ -2653,6 +2678,8 @@ CHAPTERS.push(
    ],
    gives:[{item:"censusbook",if:["f:met"],lines:[["keisatsu","嗯，我看看……每一戶幾個人、叫什麼名字、做什麼工作，都要寫清楚。"],["教授","總督府用戶口調查掌握每一個人，用土地調查掌握每一塊地，這樣就能更有效地管理和收稅。"]],fx:{take:["censusbook"],set:["census"]}}],
    wrong:[["keisatsu","「{item}」？我要的是戶口名簿！"]]},
+  {id:"board",name:"派出所的公告板",role:"",kind:"obj",hidden:true,s:"a",x:56,y:24,
+   talks:[{if:["!f:board"],lines:[["旁白","{pet}站起來，用鼻子頂了頂門邊的木板……上面貼滿了公告：查戶口、大掃除、繳稅、不准聚會……"],["教授","日治時期的警察什麼都管，所以大家都叫警察「大人」。"]],fx:{set:["board"],card:"daren",give:["bento"]}},{if:[],lines:[["旁白","公告板上的紙被風吹得啪啪響。"]]}]},
   {id:"koban",name:"派出所",role:"",kind:"obj",s:"a",x:42,y:42,
    talks:[{if:[],lines:[["教授","總督府在全臺灣設了很多派出所，連很小的村子都有。大人嚇小孩的時候，常說「再哭，大人來了！」"]]}]},
   {id:"farmer2",name:"老農夫",role:"村子裡的老農夫",s:"a",x:83,y:44,
@@ -2870,7 +2897,7 @@ Object.assign(ITEMS,{
   blueprint:{name:"大壩設計圖",sheet:"items_jp2",icon:7,kind:"tool",ch:"k3",desc:"烏山頭水庫的設計圖。"},
   helmetk:{name:"工程帽",sheet:"items_jp2",icon:8,kind:"treasure",from:"第三章・嘉南大圳",desc:"八田與一送你的工程帽。嘉南大圳讓嘉南平原變成臺灣的大糧倉。"},
   omamori:{name:"神社的木牌",sheet:"items_jp2",icon:9,kind:"treasure",from:"第四章・皇民化運動",desc:"神社的木牌。皇民化運動時，臺灣人被要求去參拜神社。"},
-  nameplate:{name:"新門牌",sheet:"items_jp2",icon:10,kind:"tool",ch:"k4",desc:"寫著日本姓名的新門牌。"},
+  nameplate:{name:"新門牌",sheet:"items_jp2",icon:10,kind:"treasure",from:"第四章・皇民化運動",desc:"寫著日本姓名的新門牌。"},
   hiddenpuppet:{name:"阿嬤藏的戲偶",sheet:"items_jp2",icon:11,kind:"tool",ch:"k4",desc:"阿嬤偷偷藏起來的布袋戲偶。"},
   ration:{name:"配給券",sheet:"items_jp2",icon:12,kind:"tool",ch:"k5",desc:"戰爭時期領米、糖、布要用的配給券。"},
   hood:{name:"防空頭巾",sheet:"items_jp2",icon:13,kind:"treasure",from:"第五章・戰爭與終戰",desc:"空襲時戴在頭上保護自己的頭巾。希望再也用不到它。"},
@@ -2902,6 +2929,8 @@ Object.assign(CARDS,{
   rename:{ch:"k4",name:"改日本姓名",kind:"皇民化",year:"皇民化時期",text:"皇民化運動鼓勵臺灣人把原本的姓名，改成日本式的姓名。",key:"鼓勵臺灣人<b>改日本姓名</b>。"},
   shrine:{ch:"k4",name:"參拜神社",kind:"皇民化",year:"皇民化時期",text:"日本在臺灣各地蓋了很多神社，要求學生和民眾去參拜。很多傳統的廟宇被整理、合併，布袋戲、歌仔戲等傳統戲劇也受到限制。",key:"要求<b>參拜神社</b>，傳統宗教和戲劇受到<b>限制</b>。"},
   oldgod:{ch:"k4",hidden:true,name:"藏起來的神明",kind:"隱藏發現",year:"皇民化時期",text:"有些家庭把祖先牌位和神明像偷偷藏在櫃子裡，等到可以公開的時候，再請出來拜。",key:"很多人<b>偷偷保存</b>自己的信仰和文化。"},
+  torii:{ch:"k4",hidden:true,name:"鳥居與石燈籠",kind:"隱藏發現",year:"皇民化時期",text:"神社入口有紅色的「鳥居」，路旁排著石燈籠。戰爭結束後，臺灣很多神社被拆掉或改建，有些變成了忠烈祠，但還留下一些石燈籠和鳥居可以看到。",key:"神社有<b>鳥居、石燈籠</b>，戰後許多神社被<b>改建</b>。"},
+  bucket:{ch:"k5",hidden:true,name:"水桶接力",kind:"隱藏發現",year:"戰爭末期",text:"為了準備空襲後的火災，大家常常要參加防空演習：排成一長排，用水桶一桶一桶傳水去滅火，連小孩子也要幫忙。",key:"防空演習時排成一排<b>用水桶傳水</b>滅火。"},
   pacific:{ch:"k5",name:"太平洋戰爭",kind:"二次世界大戰",year:"1941 年",text:"1941 年日本攻擊美國，太平洋戰爭爆發。臺灣成為日本向南方作戰的基地，建了很多軍事設施和軍需工廠。",key:"<b>1941 年太平洋戰爭</b>，臺灣成為日本的<b>南進基地</b>。"},
   ration:{ch:"k5",name:"物資配給",kind:"二次世界大戰",year:"戰爭時期",text:"戰爭時期物資都先給軍隊用。米、糖、布、油等日用品要拿配給券才能領，而且數量很少，大家的生活很辛苦。",key:"戰爭時期實施<b>物資配給</b>，生活艱苦。"},
   airraid:{ch:"k5",name:"空襲與疏開",kind:"二次世界大戰",year:"戰爭末期",text:"戰爭末期，美軍飛機常常來臺灣轟炸。大家要做防空演習、挖防空洞，城市裡的人也搬到鄉下躲避，叫做「疏開」。",key:"<b>空襲</b>時躲<b>防空洞</b>，城市居民<b>疏開</b>到鄉下。"},
@@ -3135,6 +3164,8 @@ CHAPTERS.push(
      fx:{set:["met"],card:"kominka"},after:[["kenichi","你去我家看看，我阿嬤最近好難過……"]]},
     {if:[],lines:[["kenichi","在家裡，我還是偷偷叫阿嬤「阿嬤」。"]]}
    ]},
+  {id:"lantern",name:"石燈籠",role:"",kind:"obj",hidden:true,s:"a",x:5,y:40,
+   talks:[{if:["!f:lantern"],lines:[["旁白","{pet}繞著一座長滿青苔的石燈籠轉圈圈，抬頭看著前面紅色的大門──那叫做「鳥居」。"],["教授","戰爭結束後，很多神社被拆掉或改建，可是有些石燈籠和鳥居一直留到今天喔。"]],fx:{set:["lantern"],card:"torii",give:["riceball"]}},{if:[],lines:[["旁白","石燈籠上長滿了青苔。"]]}]},
   {id:"jinja",name:"神社",role:"",kind:"obj",s:"a",x:71,y:30,
    talks:[
     {if:["!f:met"],lines:[["旁白","一座日式的神社，前面有紅色的鳥居。"]]},
@@ -3209,6 +3240,8 @@ CHAPTERS.push(
      after:[["leader","很好！戰爭末期，美軍的飛機常常來轟炸。警報一響，就要戴上防空頭巾，躲進防空洞！"],["leader","城市太危險了，很多人都搬到鄉下去躲，這叫「疏開」。"]]},
     {if:[],lines:[["leader","希望有一天，再也不用演習。"]]}
    ]},
+  {id:"buckets",name:"一排水桶",role:"",kind:"obj",hidden:true,s:"a",x:34,y:72,
+   talks:[{if:["!f:buckets"],lines:[["旁白","{pet}把頭伸進水桶裡，結果被潑了一臉水！大家正在排成一排，一桶一桶地傳水。"],["教授","這是防空演習，練習空襲後怎麼滅火。連小孩子都要幫忙。"]],fx:{set:["buckets"],card:"bucket",give:["riceball"]}},{if:[],lines:[["旁白","水桶一桶接一桶地傳過去。"]]}]},
   {id:"haikyu",name:"配給員",role:"配給所的配給員",s:"a",x:86,y:28,
    talks:[
     {if:["!c:pacific"],lines:[["haikyu","排隊！一個一個來！"]]},
@@ -3739,9 +3772,10 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random(
 
 /* ================= 存檔 ================= */
 const KEY="tw-time-explorer-v1";
-const fresh=()=>({hero:null,name:"",bag:{},cab:[],cards:[],log:[],pet:{has:false,name:"",aff:0},chs:{},g:[],battle:{best:0,wins:0,plays:0,bestCorrect:0},music:false,cur:null});
+const fresh=()=>({hero:null,name:"",bag:{},cab:[],cards:[],log:[],pet:{has:false,name:"",aff:0,wear:""},pr:{day:"",n:0,wrong:[]},chs:{},g:[],battle:{best:0,wins:0,plays:0,bestCorrect:0},music:false,cur:null});
 let S=fresh();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
+if(!S.pr)S.pr={day:"",n:0,wrong:[]};if(S.pet&&S.pet.wear===undefined)S.pet.wear="";
 /* 雲端存檔：從遊戲書房登入（有學生代碼）時，進度跟著代碼存到 Supabase，換裝置也能接著玩 */
 const CLOUD=(()=>{let c="";try{c=(localStorage.getItem("bz_code")||"").trim().toUpperCase();}catch(e){}
   return c?{code:c,game:"twtime",U:"https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/",K:"sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"}:null;})();
@@ -3931,7 +3965,7 @@ function layoutPano(){const P=PANO[CH.pano];const vh=pano.clientHeight;const h=M
   const fx=V.w?V.x/V.w:V.x0||0;V.w=w;V.h=h;V.x=fx*w;V.y=Math.min(0,Math.max(vh-h,V.y||(vh-h)/2));
   strip.style.height=h+"px";strip.querySelectorAll(".seg").forEach(s=>s.style.width=w+"px");applyPano();}
 function applyPano(){V.x=((V.x%V.w)+V.w)%V.w;const vh=pano.clientHeight;V.y=Math.min(0,Math.max(vh-V.h,V.y));
-  strip.style.transform=`translate(${-V.x}px,${V.y}px)`;drawCompass();}
+  strip.style.transform=`translate(${-V.x}px,${V.y}px)`;drawCompass();fitSoon();}
 function buildPano(){const P=PANO[CH.pano];strip.innerHTML="";
   for(let k=0;k<2;k++){const seg=document.createElement("div");seg.className="seg";seg.innerHTML=`<img src="${IMG["pano_"+CH.pano]}" alt="">`;strip.appendChild(seg);}
   V={x:0,y:0,w:0,h:0};V.x0=spotFrac(CH.start||{s:"a",x:30})-.5*pano.clientWidth/(pano.clientHeight*1.04*P.L/P.H);layoutPano();renderSpots();}
@@ -3944,7 +3978,7 @@ pano.addEventListener("wheel",e=>{V.x+=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.
 function panBy(dx){const s=V.x,t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/450);V.x=s+dx*(1-(1-k)**3);applyPano();if(k<1)requestAnimationFrame(step);};requestAnimationFrame(step);}
 $("pl").onclick=()=>panBy(-pano.clientWidth*.45);$("pr").onclick=()=>panBy(pano.clientWidth*.45);
 addEventListener("keydown",e=>{if($("play").hidden||!$("vn").hidden||!$("modal").hidden)return;if(e.key==="ArrowLeft")panBy(-200);if(e.key==="ArrowRight")panBy(200);});
-addEventListener("resize",()=>{if(!$("play").hidden&&CH)layoutPano();});
+addEventListener("resize",()=>{if(!$("play").hidden&&CH){layoutPano();fitSpots();}});
 function drawCompass(){if(!CH||!V.w)return;const vw=pano.clientWidth,center=(V.x+vw/2)/V.w;const tape=$("tape"),W=tape.clientWidth;
   const dirs=[["北",0],["東",.25],["南",.5],["西",.75]];let html="";
   const place=(f)=>{let d=f-center;d=((d+.5)%1+1)%1-.5;return W/2+d*W*1.6;};
@@ -3968,7 +4002,16 @@ function renderSpots(){strip.querySelectorAll(".seg").forEach(seg=>{seg.querySel
     b.innerHTML=`<span class="nm">${esc(sp.name)}</span><span class="bub">${nw?(sp.kind==="obj"?ICON_HAND:"<b>！</b>"):(sp.kind==="obj"?ICON_EYE:ICON_TALK)}</span><span class="stem"></span>`;
     b.setAttribute("aria-label",sp.name);
     b.onclick=e=>{if(dragMoved)return;e.stopPropagation();onSpot(sp);};seg.appendChild(b);});});
-  drawCompass();}
+  drawCompass();requestAnimationFrame(fitSpots);}
+/* 小螢幕：熱點不要被上方按鈕列擋住、也不要超出畫面下緣 */
+function fitSpots(){if($("play").hidden)return;
+  const ui=[...document.querySelectorAll(".hud-r,.compass,.hud-l")].filter(e=>getComputedStyle(e).display!=="none").map(e=>e.getBoundingClientRect()).filter(r=>r.height);
+  const band=Math.max(0,...ui.filter(r=>r.width>innerWidth*.5||r.left>innerWidth*.3).map(r=>r.bottom)),bottom=innerHeight-6;
+  strip.querySelectorAll(".hs").forEach(b=>{const m=parseFloat(b.style.marginTop)||0;const r0=b.getBoundingClientRect();const r={top:r0.top-m,bottom:r0.bottom-m,left:r0.left,right:r0.right};
+    let need=band+6;ui.forEach(u=>{if(r.right>u.left&&r.left<u.right)need=Math.max(need,u.bottom+6);});
+    let d=0;if(r.top<need)d=need-r.top;if(r.bottom+d>bottom)d=Math.max(band+6-r.top,bottom-r.bottom);
+    b.style.marginTop=d?d+"px":"0px";});}
+let fitQ=0;function fitSoon(){if(fitQ)return;fitQ=requestAnimationFrame(()=>{fitQ=0;fitSpots();});}
 function refresh(){renderSpots();renderQuest();renderBagBadge();renderPetBtn();}
 function renderQuest(){const st=chs(CH.id);let first=true;
   $("q-seal").textContent=CH.seal;$("q-era").textContent=eraOf(CH).name;$("q-title").textContent=CH.title;
@@ -4111,9 +4154,26 @@ function openCabinet(){const tr=Object.entries(ITEMS).filter(([,it])=>it.kind===
     $("cb-d").innerHTML=S.cab.includes(id)?`<div class="item-detail">${icon(id)}<div><b>${esc(it.name)}</b><p>${esc(T(it.desc))}</p></div></div>`:`<p style="color:var(--paper-dim)">${esc(it.hint||"繼續冒險就會找到。")}</p>`;});}
 
 /* ================= 夥伴 ================= */
+function bondLv(){const a=S.pet.aff;return a>=PET.bondStart?1+Math.floor((a-PET.bondStart)/PET.bondStep):0;}
+function bondNext(){return PET.bondStart+bondLv()*PET.bondStep;}
+const PETCOMP={};let WEARSHEET=null;
+function wearOK(w){return w&&S.g.includes(w.flag);}
+function petSrc(){const stg=petStage(),w=PET.wears.find(x=>x.id===S.pet.wear);
+  if(petLevel()<3||!wearOK(w))return IMG[stg.img];
+  if(PETCOMP[w.id])return PETCOMP[w.id];buildPetComp(w);return IMG[stg.img];}
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
+async function buildPetComp(w){if(PETCOMP[w.id]==="…")return;PETCOMP[w.id]="…";
+  try{const base=await loadImg(IMG.deer3);WEARSHEET=WEARSHEET||await loadImg(IMG.pet_wear);
+    const cw=WEARSHEET.width/4,ch=WEARSHEET.height/2,sx=(w.cell%4)*cw,sy=Math.floor(w.cell/4)*ch;
+    const t=document.createElement("canvas");t.width=cw;t.height=ch;const tc=t.getContext("2d");tc.drawImage(WEARSHEET,sx,sy,cw,ch,0,0,cw,ch);
+    const d=tc.getImageData(0,0,cw,ch).data;let x0=cw,y0=ch,x1=0,y1=0;for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(d[(y*cw+x)*4+3]>30){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+    const c=document.createElement("canvas");c.width=base.width;c.height=base.height;const g=c.getContext("2d");g.drawImage(base,0,0);
+    if(x1>x0){const P=PET.wearPos,ww=base.width*P.w,hh=ww*(y1-y0)/(x1-x0);g.drawImage(t,x0,y0,x1-x0,y1-y0,base.width*P.cx-ww/2,base.height*P.cy-hh*.25,ww,hh);}
+    PETCOMP[w.id]=c.toDataURL("image/png");}catch(e){delete PETCOMP[w.id];return;}
+  renderPetBtn();const im=$("pt-img");if(im&&!$("modal").hidden)im.src=PETCOMP[w.id];}
 function petLevel(){const a=S.pet.aff;return a>=PET.stages[2].min?3:a>=PET.stages[1].min?2:1;}
 function petStage(){return PET.stages[petLevel()-1];}
-function renderPetBtn(){const b=$("pet-btn");b.hidden=!S.pet.has;if(!S.pet.has)return;$("pet-img").src=IMG[petStage().img];$("pet-heart").textContent="♥"+S.pet.aff;}
+function renderPetBtn(){const b=$("pet-btn");b.hidden=!S.pet.has;if(!S.pet.has)return;$("pet-img").src=petSrc();$("pet-heart").textContent="♥"+S.pet.aff+(dailyLeft()>0&&reviewPool().length?" ❓":"");}
 $("pet-btn").onclick=()=>{if(HELD){const id=HELD;if(ITEMS[id].kind==="food"){dropHeld();feedPet(id);}else{toast(`${esc(S.pet.name)}聞了聞「${esc(ITEMS[id].name)}」，搖搖頭。`);}return;}openPet();};
 function petJoin(){return new Promise(res=>{S.pet.has=true;S.pet.aff=S.pet.aff||0;save();SFX.win();
   const p=modal(`<div class="kicker">新夥伴加入！</div><div class="pet-stage"><div class="pic"><img src="${IMG[PET.stages[0].img]}" alt=""></div><div style="display:grid;gap:12px">
@@ -4127,23 +4187,55 @@ function feedPet(id){if(!(S.bag[id]>0))return;const before=petLevel();takeItem(i
   const after=petLevel();
   if(after>before){SFX.win();openPet(`${esc(S.pet.name)}長大了！變成「${esc(petStage().name)}」！${after===2?"學會新技能：轉圈圈、對決時幫你加油（多一顆愛心）。":"學會新技能：對決時幫你擋下一次攻擊！"}`);}
   else if(!$("modal").hidden&&$("pet-stage-root"))openPet("",true);else toast(`${icon(id)}<span>${esc(S.pet.name)}吃得好開心！♥+${ITEMS[id].feed}</span>`);}
-function openPet(msg="",eat=false){if(!S.pet.has){toast("你還沒有夥伴。");return;}const lv=petLevel(),stg=petStage(),next=PET.stages[lv];
+function openPet(msg="",eat=false){if(!S.pet.has){toast("你還沒有夥伴。");return;}const lv=petLevel(),stg=petStage(),next=PET.stages[lv],bl=bondLv();
   const foods=Object.keys(S.bag).filter(id=>ITEMS[id]&&ITEMS[id].kind==="food");
+  const affTxt=next?`親密度 ♥ ${S.pet.aff}　（到 ${next.min} 會再長大）`:`親密度 ♥ ${S.pet.aff}　<b style="color:var(--brass-hi)">羈絆 Lv ${bl}</b>（到 ${bondNext()} 升級）`;
+  const affPct=next?Math.min(100,S.pet.aff/next.min*100):Math.min(100,(S.pet.aff-(bondNext()-PET.bondStep))/PET.bondStep*100);
+  const left=dailyLeft(),pool=reviewPool().length;
+  const wears=PET.wears.map(w=>{const got=wearOK(w),on=S.pet.wear===w.id;
+    return `<button class="wear ${on?"on":""}" data-w="${w.id}" ${got&&lv>=3?"":"disabled"} title="${esc(got?(lv>=3?w.name:"長成長角鹿才能穿"):"打敗"+w.era+"的魔王解鎖")}"><span class="wi" style="${wearIconStyle(w)}"></span><span>${got?esc(w.name):"🔒"}</span></button>`;}).join("");
   const p=modal(`<div class="panel-head"><h2>${esc(S.pet.name)}・${esc(stg.name)}</h2><button class="x" id="pt-x">✕</button></div>
-    <div class="pet-stage" id="pet-stage-root"><div class="pic"><img id="pt-img" class="${eat?"eat":""}" src="${IMG[stg.img]}" alt=""><span class="hearts" id="pt-h"></span></div>
+    <div class="pet-stage" id="pet-stage-root"><div class="pic"><img id="pt-img" class="${eat?"eat":""}" src="${petSrc()}" alt=""><span class="hearts" id="pt-h"></span></div>
     <div style="display:grid;gap:12px">${msg?`<p style="color:var(--brass-hi);font-weight:700">${msg}</p>`:""}
-      <div class="aff"><span style="font-size:14px">親密度 ♥ ${S.pet.aff}${next?`　（到 ${next.min} 會再長大）`:"　（已長到最大！）"}</span><span class="bar"><i style="width:${next?Math.min(100,S.pet.aff/next.min*100):100}%"></i></span></div>
-      <div class="skills">${PET.skills.map(s=>`<div class="${lv>=s.lv?"on":""}"><i>${lv>=s.lv?"✓":"🔒"}</i>${esc(s.t)}</div>`).join("")}</div>
-      <div><div style="font-size:13px;color:var(--paper-dim);margin-bottom:6px">餵食（點食物）</div><div class="food-row">${foods.length?foods.map(id=>`<button class="food" data-id="${id}">${icon(id)}${esc(ITEMS[id].name)} ×${S.bag[id]}</button>`).join(""):`<span style="font-size:14px;color:var(--paper-dim)">沒有食物了。在場景裡找，或去打「答題對決」，答對就有食物！</span>`}</div></div>
+      <div class="aff"><span style="font-size:14px">${affTxt}</span><span class="bar"><i style="width:${affPct}%"></i></span></div>
+      <button class="btn ${left>0&&pool?"":"ghost"}" id="pt-quiz" ${left>0&&pool?"":"disabled"}>📝 ${esc(S.pet.name)}考考你　${pool?(left>0?`今天還有 ${left} 題`:"今天考完了，明天再來！"):"先完成一章再來"}</button>
+      <div class="skills">${PET.skills.map(s=>`<div class="${lv>=s.lv?"on":""}"><i>${lv>=s.lv?"✓":"🔒"}</i>${esc(s.t)}</div>`).join("")}${PET.bondSkills.map(s=>`<div class="${bl>=s.bond?"on":""}"><i>${bl>=s.bond?"✓":"🔒"}</i>羈絆 Lv ${s.bond}・${esc(s.t)}</div>`).join("")}</div>
+      <div><div style="font-size:13px;color:var(--paper-dim);margin-bottom:6px">時代裝扮（打敗各時代魔王解鎖，長成長角鹿才能穿）</div><div class="wear-row">${wears}</div></div>
+      <div><div style="font-size:13px;color:var(--paper-dim);margin-bottom:6px">餵食（點食物）</div><div class="food-row">${foods.length?foods.map(id=>`<button class="food" data-id="${id}">${icon(id)}${esc(ITEMS[id].name)} ×${S.bag[id]}</button>`).join(""):`<span style="font-size:14px;color:var(--paper-dim)">沒有食物了。在場景裡找、打「答題對決」，或回答${esc(S.pet.name)}的題目，就有食物。</span>`}</div></div>
       <div class="row"><button class="btn ghost" id="pt-pat">摸摸頭</button>${lv>=2?`<button class="btn ghost" id="pt-spin">轉圈圈！</button>`:""}${!$("play").hidden?`<button class="btn jade" id="pt-sniff">嗅嗅（找隱藏發現）</button>`:""}</div>
     </div></div>`);
   $("pt-x").onclick=closeModal;
   p.querySelectorAll(".food").forEach(b=>b.onclick=()=>feedPet(b.dataset.id));
+  p.querySelectorAll(".wear").forEach(b=>b.onclick=()=>{const id=b.dataset.w;S.pet.wear=S.pet.wear===id?"":id;save();SFX.pick();renderPetBtn();openPet();});
+  $("pt-quiz").onclick=()=>{if(dailyLeft()>0&&reviewPool().length)petQuiz();};
   const hearts=()=>{const h=$("pt-h");for(let i=0;i<4;i++){const e=document.createElement("i");e.textContent="♥";e.style.left=(Math.random()*80-40)+"px";e.style.animationDelay=i*.12+"s";h.appendChild(e);}setTimeout(()=>h.innerHTML="",1600);};
   if(eat)hearts();
   $("pt-pat").onclick=()=>{SFX.ok();hearts();const im=$("pt-img");im.className="";void im.offsetWidth;im.className="eat";};
   const sp=$("pt-spin");if(sp)sp.onclick=()=>{SFX.pick();const im=$("pt-img");im.className="";void im.offsetWidth;im.className="spin";hearts();};
   const sn=$("pt-sniff");if(sn)sn.onclick=()=>{closeModal();sniff();};
+}
+function wearIconStyle(w){if(!IMG.pet_wear)return "";const c=w.cell;return `background-image:url(${IMG.pet_wear});background-size:400% 200%;background-position:${(c%4)*100/3}% ${Math.floor(c/4)*100}%`;}
+/* ===== 每日小鹿複習：從已完成的章節出題，答錯的之後會再出 ===== */
+function today(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+function dailyLeft(){if(!S.pr)S.pr={day:"",n:0,wrong:[]};if(S.pr.day!==today())return PET.dailyN;return Math.max(0,PET.dailyN-S.pr.n);}
+function reviewPool(){return QUIZ.filter(q=>chs(q.ch).done);}
+function petQuiz(){if(S.pr.day!==today()){S.pr.day=today();S.pr.n=0;}save();
+  const pool=reviewPool();const wrongQ=pool.filter(q=>S.pr.wrong.includes(q.q));
+  const pick=wrongQ.length&&Math.random()<.6?wrongQ[Math.random()*wrongQ.length|0]:pool[Math.random()*pool.length|0];
+  const opts=shuffle(pick.o.map((t,j)=>({t,ok:j===pick.a})));
+  const p=modal(`<div class="panel-head"><h2>📝 ${esc(S.pet.name)}考考你</h2><button class="x" id="pq-x">✕</button></div>
+    <div class="pet-stage"><div class="pic" style="height:150px"><img src="${petSrc()}" alt=""></div><div style="display:grid;gap:10px">
+    <div style="font-size:13px;color:var(--paper-dim)">今天第 ${S.pr.n+1} / ${PET.dailyN} 題${S.pr.wrong.includes(pick.q)?"　（上次答錯的題目喔！）":""}</div>
+    <div class="qt" style="font-size:18px;font-weight:700;line-height:1.6">${esc(pick.q)}</div>
+    <div class="b-opts">${opts.map((o,k)=>`<button class="b-opt" data-k="${k}"><span class="ab">${"ABCD"[k]}</span><span>${esc(o.t)}</span></button>`).join("")}</div><div id="pq-why"></div></div></div>`);
+  $("pq-x").onclick=()=>openPet();
+  p.querySelectorAll(".b-opt").forEach(b=>b.onclick=()=>{const ok=opts[+b.dataset.k].ok;p.querySelectorAll(".b-opt").forEach(x=>{x.disabled=true;if(opts[+x.dataset.k].ok)x.classList.add("right");});
+    S.pr.n++;let reward="";
+    if(ok){SFX.ok();S.pr.wrong=S.pr.wrong.filter(x=>x!==pick.q);S.pet.aff+=2;const ER=eraOf(CHAPTERS.find(c=>c.id===pick.ch));const FD=(ER&&ER.food)||FOOD_DROPS,f=FD[Math.random()*FD.length|0];addItem(f);reward=`♥+2　得到 ${icon(f)} ${esc(ITEMS[f].name)}`;}
+    else{SFX.no();b.classList.add("wrong");if(!S.pr.wrong.includes(pick.q))S.pr.wrong.push(pick.q);S.pr.wrong=S.pr.wrong.slice(-40);reward=`${esc(S.pet.name)}記下這題了，之後會再考你一次。`;}
+    save();renderPetBtn();
+    $("pq-why").innerHTML=`<div class="b-why">${ok?"✅ 答對了！":"❌ 差一點！"}${esc(pick.why||"")}<br><span style="color:#ff9db0">${reward}</span></div><div class="row" style="margin-top:8px">${dailyLeft()>0?`<button class="btn" id="pq-n">下一題</button>`:`<button class="btn" id="pq-n">今天完成了！回到${esc(S.pet.name)}身邊</button>`}</div>`;
+    $("pq-n").onclick=()=>{dailyLeft()>0?petQuiz():openPet(`今天的 ${PET.dailyN} 題都答完了！明天${esc(S.pet.name)}還會再考你喔。`);};});
 }
 async function sniff(){if(!CH)return;const st=chs(CH.id);SFX.tick();const b=$("pet-btn");b.classList.remove("hop");void b.offsetWidth;b.classList.add("hop");
   const center=(V.x+pano.clientWidth/2)/V.w;const near=CH.spots.filter(sp=>sp.hidden&&!st.flags.includes("seen:"+sp.id)&&(!sp.show||test(sp.show)));
@@ -4209,15 +4301,16 @@ function startBattle({story,era}){const ER=ERAS.find(x=>x.id===era)||(CH?eraOf(C
   let pool=QUIZ.filter(q=>avail.includes(q.ch));if(pool.length<6)pool=QUIZ.filter(q=>eraChs(ER.id).some(c=>c.id===q.ch&&chs(c.id).done)||q.ch===eraChs(ER.id)[0].id);
   const n=Math.min(10,pool.length);const qs=shuffle(pool).slice(0,n);
   const lv=S.pet.has?petLevel():0;
-  B={story,er:ER,qs,i:0,hp:100,hearts:5+(lv>=2?1:0),maxHearts:5+(lv>=2?1:0),combo:0,correct:0,guard:lv>=3,lens:2,timer:null,food:[],per:Math.ceil(100/Math.max(1,n*0.8))};
+  const bl=S.pet.has?bondLv():0;
+  B={story,er:ER,qs,i:0,hp:100,hearts:5+(lv>=2?1:0),maxHearts:5+(lv>=2?1:0),combo:0,correct:0,guard:(lv>=3?1:0)+(bl>=4?1:0),lens:2+(bl>=2?1:0),bond:bl,timer:null,food:[],per:Math.ceil(100/Math.max(1,n*0.8))};
   flashTo(()=>{show("battle");music.set(BOSS_MUSIC);$("b-bg").style.backgroundImage=`url(${IMG["pano_"+(CH&&CH.era===ER.id?CH.pano:eraChs(ER.id).slice(-1)[0].pano)]})`;
     $("b-boss-img").src=IMG[ER.boss.img];$("b-bossname").textContent=ER.boss.name;$("b-hero-img").src=IMG[S.hero];$("b-myname").textContent=S.name;
-    $("b-pet").hidden=!S.pet.has;if(S.pet.has)$("b-pet-img").src=IMG[petStage().img];
+    $("b-pet").hidden=!S.pet.has;if(S.pet.has)$("b-pet-img").src=petSrc();
     renderBHud();
     const intro=story?ER.boss.intro:[["旁白",`${ER.boss.name}又出現了！牠想偷走大家記得的歷史……答對題目就能打退牠！`]];
-    $("b-q").innerHTML=`<div class="qt">${esc(T(intro.map(l=>l[1]).join(" ")))}</div><div class="row">${lv>=2?`<span style="font-size:13px;color:#ff9db0;align-self:center">${esc(S.pet.name)}幫你加油：多一顆愛心！${lv>=3?"還會幫你擋一次攻擊！":""}</span>`:""}<button class="btn" id="b-start">開始！</button></div>`;
+    $("b-q").innerHTML=`<div class="qt">${esc(T(intro.map(l=>l[1]).join(" ")))}</div><div class="row">${lv>=2?`<span style="font-size:13px;color:#ff9db0;align-self:center">${esc(S.pet.name)}幫你加油：多一顆愛心！${lv>=3?(B.guard>=2?"還會幫你擋兩次攻擊！":"還會幫你擋一次攻擊！"):""}${B.lens>2?"放大鏡多一次！":""}</span>`:""}<button class="btn" id="b-start">開始！</button></div>`;
     $("b-start").onclick=nextQ;});}
-function renderBHud(){$("b-hearts").textContent="♥".repeat(B.hearts)+"♡".repeat(Math.max(0,B.maxHearts-B.hearts))+(B.guard?" 🛡":"");$("b-bosshp").style.width=Math.max(0,B.hp)+"%";}
+function renderBHud(){$("b-hearts").textContent="♥".repeat(B.hearts)+"♡".repeat(Math.max(0,B.maxHearts-B.hearts))+(B.guard?" "+"🛡".repeat(B.guard):"");$("b-bosshp").style.width=Math.max(0,B.hp)+"%";}
 function floatText(el,txt,cls=""){const r=el.getBoundingClientRect(),d=document.createElement("div");d.className="dmg "+cls;d.textContent=txt;d.style.left=(r.left+r.width/2-30)+"px";d.style.top=(r.top+r.height*.3)+"px";$("battle").appendChild(d);setTimeout(()=>d.remove(),1000);}
 function anim(el,c){el.classList.remove(c);void el.offsetWidth;el.classList.add(c);setTimeout(()=>el.classList.remove(c),600);}
 function nextQ(){clearInterval(B.timer);if(B.hp<=0)return endBattle(true);if(B.hearts<=0)return endBattle(false);if(B.i>=B.qs.length)return endBattle(B.hp<=0);
@@ -4235,13 +4328,14 @@ function nextQ(){clearInterval(B.timer);if(B.hp<=0)return endBattle(true);if(B.h
       const FD=B.er.food||FOOD_DROPS,f=FD[Math.random()*FD.length|0];B.food.push(f);
       if(B.combo>=3){const c=document.createElement("div");c.className="combo";c.textContent=`${B.combo} 連擊！`;$("battle").appendChild(c);setTimeout(()=>c.remove(),900);}}
     else{B.combo=0;anim($("b-boss"),"atk");await sleep(250);
-      if(B.guard){B.guard=false;floatText($("b-pet").hidden?$("b-hero"):$("b-pet"),"擋住了！","heal");SFX.ok();}
+      if(B.guard){B.guard--;floatText($("b-pet").hidden?$("b-hero"):$("b-pet"),"擋住了！","heal");SFX.ok();}
       else{B.hearts--;SFX.hurt();anim($("b-hero"),"hurt");floatText($("b-hero"),"-♥");}}
     renderBHud();
     $("b-why").innerHTML=`<div class="b-why">${ok?"✅ 答對了！":btn?"❌ 差一點！":"⏰ 時間到！"}${esc(q.why||"")}</div><div class="row" style="margin-top:8px"><button class="btn" id="b-n">${B.hp<=0||B.hearts<=0||B.i+1>=B.qs.length?"看結果":"下一題"}</button></div>`;
     B.i++;$("b-n").onclick=nextQ;}
 }
 async function endBattle(win){clearInterval(B.timer);if(B.hp<=0)win=true;
+  if(win&&B.bond>=6)B.food=B.food.concat(B.food);
   const counts={};B.food.forEach(f=>{counts[f]=(counts[f]||0)+1;addItem(f);});
   S.battle.plays++;if(win)S.battle.wins++;S.battle.bestCorrect=Math.max(S.battle.bestCorrect,B.correct);
   const ER=B.er,RW=ER.boss.reward;let firstWin=false;if(win&&!S.g.includes(ER.boss.flag)&&(B.story||eraChs(ER.id).every(c=>chs(c.id).done))){S.g.push(ER.boss.flag);firstWin=true;addItem(RW);const ids=eraChs(ER.id).map(c=>c.id);Object.keys(S.bag).forEach(id=>{const it=ITEMS[id];if(it&&it.kind==="tool"&&ids.includes(it.ch))delete S.bag[id];});}
