@@ -4130,9 +4130,15 @@ async function onSpot(sp){if(busy||flashing)return;busy=true;
     if(HELD){const id=HELD;const g=(sp.gives||[]).find(x=>x.item===id&&test(x.if));
       if(g){dropHeld(true);await runEntry(sp,g,"g");}
       else{await playLines(sp.wrong?sp.wrong.map(l=>[l[0],l[1].replace("{item}",ITEMS[id].name)]):[[sp.kind==="obj"?"旁白":sp.id,sp.kind==="obj"?`「${ITEMS[id].name}」在這裡好像用不上。`:`嗯？「${ITEMS[id].name}」？我現在不需要這個耶。`]],sp);closeVN();}
-    }else{const t=currentTalk(sp);if(t)await runEntry(sp,t,"t");}
+    }else{const t=currentTalk(sp);if(t)await runEntry(sp,t,"t");await spareFood(sp);}
   }finally{busy=false;refresh();}
 }
+/* 需要的食物被小鹿吃光時，教授補一份，避免卡關 */
+async function spareFood(sp){const need=(sp.gives||[]).filter(g=>ITEMS[g.item]&&ITEMS[g.item].kind==="food"&&test(g.if)&&!chs(CH.id).talked.includes(keyOf(sp,g,"g")));
+  if(!need.length||need.some(g=>(S.bag[g.item]||0)>0))return;
+  const id=need[0].item;addItem(id);save();
+  await playLines([["教授",`背包裡沒有「${ITEMS[id].name}」了嗎？別擔心，我這裡還有一份備用的，拿在手上再點一次就可以交給對方。`]],sp);closeVN();
+  toast(`${icon(id)}<span>得到「${ITEMS[id].name}」！已放進背包</span>`);refresh();}
 async function runEntry(sp,t,kind){const st=chs(CH.id),key=keyOf(sp,t,kind),first=!st.talked.includes(key);
   if(t.lines)await playLines(t.lines,sp);
   if(t.ask&&first){await askQ(t.ask,sp);}
