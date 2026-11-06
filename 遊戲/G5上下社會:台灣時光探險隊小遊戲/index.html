@@ -75,7 +75,7 @@ input{-webkit-user-select:text;user-select:text;}
 .arrow svg{width:24px;height:24px;}
 #prev{left:max(16px,env(safe-area-inset-left,0px));}
 #next{right:max(16px,env(safe-area-inset-right,0px));}
-.info{grid-column:3;align-self:center;justify-self:start;width:min(320px,100%);background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:10px;margin-left:8px;}
+.info{position:relative;z-index:6;max-height:calc(100% - 8px);overflow:auto;grid-column:3;align-self:center;justify-self:start;width:min(320px,100%);background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:10px;margin-left:8px;}
 .info .type{font-family:var(--f-display);font-weight:900;font-size:28px;}
 .info .tag{justify-self:start;font-size:12px;font-weight:700;letter-spacing:.15em;color:#2a1a04;background:var(--brass);padding:3px 10px;border-radius:4px;}
 .info p{margin:0;font-size:15px;line-height:1.7;}
@@ -210,7 +210,7 @@ input{-webkit-user-select:text;user-select:text;}
 #pet-btn .heart{position:absolute;right:-4px;top:-4px;background:var(--cinnabar);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:2px 7px;}
 .held{display:flex;align-items:center;gap:8px;background:var(--brass);color:#2a1a04;border-radius:999px;padding:6px 8px 6px 6px;font-weight:700;font-size:14px;animation:rise .25s;box-shadow:0 0 0 4px rgba(246,207,115,.3);}
 .held .ic{width:36px;height:36px;border-radius:50%;background:#fff6dc;}
-.held button{border:0;background:rgba(0,0,0,.15);border-radius:50%;width:26px;height:26px;font-size:14px;}
+.held{cursor:pointer;}.held .held-hint{font-weight:500;font-size:12px;opacity:.75;}.held button{border:0;background:#2a1a04;color:#f6cf73;border-radius:999px;min-height:36px;padding:0 14px;font-size:14px;font-weight:900;cursor:pointer;}
 body.holding #pano{cursor:copy;}
 .toast{position:fixed;z-index:80;left:50%;top:22%;transform:translateX(-50%);background:var(--glass-2);border:1px solid var(--brass);border-radius:14px;padding:10px 16px;font-weight:700;display:flex;align-items:center;gap:10px;animation:rise .3s;max-width:calc(100vw - 32px);}
 .toast .ic{width:40px;height:40px;flex:none;}
@@ -408,6 +408,8 @@ body.holding #pano{cursor:copy;}
   .hpbox{min-width:0;flex:1;}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+@media (max-height:640px){.info p,.stats{display:none;}.info{gap:8px;padding:14px;}.info .type{font-size:22px;}}
+@media (max-height:480px){.stage{padding-top:56px;padding-bottom:84px;}.roster{padding-top:6px;padding-bottom:6px;}.chip{width:44px;height:56px;}.info{position:absolute!important;right:max(12px,env(safe-area-inset-right,0px));left:auto!important;width:min(300px,45%)!important;top:56px;bottom:auto!important;}.pick-head{display:none;}}
 </style>
 
 <!-- 封面 -->
@@ -486,7 +488,7 @@ body.holding #pano{cursor:copy;}
   </div>
   <div class="hud-b">
     <button id="pet-btn" hidden aria-label="夥伴"><img id="pet-img" alt=""><span class="heart" id="pet-heart"></span></button>
-    <div class="held" id="held" hidden><span class="ic" id="held-ic"></span><span id="held-nm"></span><button id="held-x" aria-label="放回背包">✕</button></div>
+    <div class="held" id="held" hidden><span class="ic" id="held-ic"></span><span id="held-nm"></span><span class="held-hint">點人物交給他</span><button id="held-x" aria-label="放回背包">放下 ✕</button></div>
   </div>
 </section>
 
@@ -3289,7 +3291,24 @@ const KEY="tw-time-explorer-v1";
 const fresh=()=>({hero:null,name:"",bag:{},cab:[],cards:[],log:[],pet:{has:false,name:"",aff:0},chs:{},g:[],battle:{best:0,wins:0,plays:0,bestCorrect:0},music:false,cur:null});
 let S=fresh();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+/* 雲端存檔：從遊戲書房登入（有學生代碼）時，進度跟著代碼存到 Supabase，換裝置也能接著玩 */
+const CLOUD=(()=>{let c="";try{c=(localStorage.getItem("bz_code")||"").trim().toUpperCase();}catch(e){}
+  return c?{code:c,game:"twtime",U:"https://wbxpqyrkgdaqvtsmijoe.supabase.co/rest/v1/rpc/",K:"sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"}:null;})();
+if(CLOUD&&S._code&&S._code!==CLOUD.code)S=fresh();   // 同一台裝置換了另一位學生
+let cloudSettled=!CLOUD,pushT=null;
+function save(){if(cloudSettled){S._t=Date.now();if(CLOUD)S._code=CLOUD.code;}
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(CLOUD&&cloudSettled){clearTimeout(pushT);pushT=setTimeout(()=>cloudSend(false),2500);}}
+function cloudRpc(fn,args,keep){return fetch(CLOUD.U+fn,{method:"POST",keepalive:!!keep,headers:{apikey:CLOUD.K,"Content-Type":"application/json"},body:JSON.stringify(args)});}
+function cloudSend(keep){if(!CLOUD)return;clearTimeout(pushT);pushT=null;
+  cloudRpc("save_progress",{p_code:CLOUD.code,p_game:CLOUD.game,p_data:S,p_saved_at:S._t||0},keep).catch(()=>{});}
+addEventListener("visibilitychange",()=>{if(document.hidden&&pushT)cloudSend(true);});
+addEventListener("pagehide",()=>{if(pushT)cloudSend(true);});
+const cloudReady=!CLOUD?Promise.resolve():cloudRpc("load_progress",{p_code:CLOUD.code,p_game:CLOUD.game})
+  .then(r=>r.ok?r.json():null).then(rows=>{const r=rows&&rows[0];cloudSettled=true;
+    if(r&&r.data&&(+r.saved_at||0)>(S._t||0)){S=Object.assign(fresh(),r.data);try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(window.onCloudLoaded)onCloudLoaded();}
+    else if(S.hero&&(!r||(+r.saved_at||0)<(S._t||0)||!S._t)){save();cloudSend(false);}})
+  .catch(()=>{cloudSettled=true;});
 function chs(id){return S.chs[id]||(S.chs[id]={flags:[],talked:[],miss:0,done:false,stars:0,missed:[]});}
 const heroOf=id=>HEROES.find(h=>h.id===id)||HEROES[0];
 const T=s=>String(s).replace(/\{name\}/g,S.name||"探險家").replace(/\{pet\}/g,S.pet.name||"小鹿");
@@ -3349,7 +3368,9 @@ if(!matchMedia("(prefers-reduced-motion: reduce)").matches)sparkLoop();
 function show(id){["cover","pick","hub","play","battle"].forEach(s=>$(s).hidden=s!==id);sparkOn=id==="cover";if(sparkOn)sparkLoop();}
 let flashing=false;
 async function flashTo(fn){if(flashing)return;flashing=true;$("flash").className="on";SFX.portal();await sleep(950);try{fn();}finally{flashing=false;}$("flash").className="off";await sleep(700);$("flash").className="";}
-$("go").onclick=()=>{if(S.music&&!music.on){music.toggle();syncMusicBtns();}
+$("go").onclick=async()=>{if(flashing||$("go").disabled)return;
+  if(CLOUD&&!cloudSettled){$("go").disabled=true;const t=$("go").textContent;$("go").textContent="讀取進度中…";await Promise.race([cloudReady,sleep(5000)]);cloudSettled=true;$("go").disabled=false;$("go").textContent=t;}
+  if(S.music&&!music.on){music.toggle();syncMusicBtns();}
   flashTo(()=>{if(S.hero&&S.name)openHub();else{show("pick");showHero(Math.max(0,HEROES.findIndex(h=>h.id===S.hero)),0);}});};
 
 /* ================= 選角 ================= */
@@ -3366,7 +3387,11 @@ let sx=null;$("pick").addEventListener("pointerdown",e=>{if(!e.target.closest("b
 $("pick").addEventListener("pointerup",e=>{if(sx===null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>50)showHero(cur+(d<0?1:-1),d<0?1:-1);});
 $("choose").onclick=()=>{const h=HEROES[cur];SFX.pick();$("hero").classList.add("cheer");setTimeout(()=>$("hero").classList.remove("cheer"),700);
   setTimeout(()=>askName(h),350);};
+const BZ_NAME=(()=>{try{return (localStorage.getItem("bz_name")||"").trim();}catch(e){return "";}})();
+if(BZ_NAME&&S.name&&S.name!==BZ_NAME){S.name=BZ_NAME;save();}
+if(BZ_NAME){const k=document.querySelector("#pick .pick-head .kicker");if(k)k.textContent=BZ_NAME+"，你好！";}
 function askName(h){
+  if(BZ_NAME){S.hero=h.id;S.name=BZ_NAME;save();SFX.win();flashTo(openHub);return;}
   const p=modal(`<div class="namecard" style="display:grid;gap:16px"><div class="por" style="position:static;height:auto"><img src="${IMG[h.id]}" alt=""></div><div class="body">
     <div class="kicker">STEP 2 ／ 2</div><h2>幫你的探險家取名字</h2>
     <label class="field" for="n-name">探險家名字（劇情裡的人會這樣叫你）<input id="n-name" maxlength="8" autocomplete="off" placeholder="最多 8 個字" value="${S.hero===h.id?esc(S.name):""}"></label>
@@ -3587,9 +3612,10 @@ async function giveHint(){if(busy||!CH)return;busy=true;const g=CH.goals.find(g=
 
 /* ================= 背包 ================= */
 let HELD=null;
-function holdItem(id){HELD=id;$("held").hidden=false;$("held-ic").setAttribute("style",iconStyle(id));$("held-nm").textContent="拿著："+ITEMS[id].name+"（點人物交給他）";document.body.classList.add("holding");}
+function holdItem(id){HELD=id;$("held").hidden=false;$("held-ic").setAttribute("style",iconStyle(id));$("held-nm").textContent="拿著："+ITEMS[id].name+"";document.body.classList.add("holding");}
 function dropHeld(silent){HELD=null;$("held").hidden=true;document.body.classList.remove("holding");}
-$("held-x").onclick=()=>dropHeld();
+$("held").onclick=()=>{dropHeld();SFX.tick();toast("已經放回背包");};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&HELD&&!busy)dropHeld();});
 function openBag(sel){const ids=Object.keys(S.bag).filter(id=>ITEMS[id]&&ITEMS[id].kind!=="treasure"||ITEMS[id]&&ITEMS[id].kind==="treasure");
   const order=["tool","food","treasure"];ids.sort((a,b)=>order.indexOf(ITEMS[a].kind)-order.indexOf(ITEMS[b].kind));
   const pick=sel&&S.bag[sel]?sel:ids[0];const slots=Math.max(12,Math.ceil(ids.length/4)*4);
@@ -3602,7 +3628,7 @@ function openBag(sel){const ids=Object.keys(S.bag).filter(id=>ITEMS[id]&&ITEMS[i
     p.querySelectorAll(".slot").forEach(s=>s.classList.toggle("on",s.dataset.id===id));
     const inPlay=!$("play").hidden;
     $("bg-detail").innerHTML=`<div class="item-detail">${icon(id)}<div><b>${esc(it.name)}</b>${it.kind==="food"?` <span style="font-size:12px;color:#ff9db0">夥伴食物 ♥+${it.feed}</span>`:""}<p>${esc(T(it.desc))}</p></div></div>
-      <div class="row">${it.kind==="food"&&S.pet.has?`<button class="btn jade" id="bg-feed">餵給${esc(S.pet.name)}</button>`:""}${inPlay&&it.kind!=="treasure"?`<button class="btn" id="bg-hold">拿在手上（再點人物交給他）</button>`:""}</div>`;
+      <div class="row">${it.kind==="food"&&S.pet.has?`<button class="btn jade" id="bg-feed">餵給${esc(S.pet.name)}</button>`:""}${inPlay?`<button class="btn" id="bg-hold">拿在手上（再點人物交給他）</button>`:""}</div>`;
     const f=$("bg-feed");if(f)f.onclick=()=>{closeModal();feedPet(id);};
     const h=$("bg-hold");if(h)h.onclick=()=>{closeModal();holdItem(id);SFX.pick();};};
   p.querySelectorAll(".slot[data-id]").forEach(s=>s.onclick=()=>{SFX.tick();detail(s.dataset.id);});detail(pick);
@@ -3783,5 +3809,6 @@ async function endBattle(win){clearInterval(B.timer);if(B.hp<=0)win=true;
 /* ================= 啟動 ================= */
 syncMusicBtns();
 if(S.hero&&S.name){$("go").textContent="繼續冒險";}
+window.onCloudLoaded=()=>{if(BZ_NAME&&S.hero)S.name=BZ_NAME;if(S.hero&&S.name)$("go").textContent="繼續冒險";};
 
 </script>
