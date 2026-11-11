@@ -1,0 +1,36 @@
+島嶼時光局 v17.5 存檔欄位
+
+I/O入口：save-storage.js → SaveStorage.read / write / remove。
+序列化：SaveStorage.serialize / parse。遊戲邏輯透過這些入口存取，不直接呼叫 localStorage。
+主存檔保留整個 state JSON，不含登入密碼、服務憑證或後端資訊。
+
+儲存鍵
+island-time-rpg-v3：完整主存檔。
+island-time-rpg-v1：僅供相容舊版讀取。
+其餘史前知識與大航海備份鍵見下方清單；?qa=1 使用獨立測試鍵。
+
+主存檔欄位
+version、storyRevision：存檔格式與故事遷移版本。
+name、avatar：玩家暱稱、角色選擇。
+chapter、progress：史前章節，任務flags、星等、錯誤次數、角色位置與複習完成狀態。
+inventory：背包道具及數量。carryV172：拿在手上的任務物品與所屬時代／章節。
+cards：史前故事線索卡；collection：歷史卡片、抽卡券／碎片／素材、背包、圖鑑、隊伍、抽卡揭曉狀態、補領與知識委託進度。
+food、bond、pet、petName、petHome：夥伴食物、羈絆、是否解鎖、名字、小窩裝飾／服裝／遊玩進度。
+practice、reviewNotes：動手活動／複習進度、錯題紀錄。
+prehistoryKnowledge：史前文化判讀、排序、地點與總複習進度。
+ocean：大航海場景、位置、航行、船貨、任務、對話與歷史知識委託。
+zheng、qing、japan、postwar：各時代目前章節、章節任務／活動／答題／交付、背包、總複習及完成獎勵狀態。
+learning17：首答判定、線索手帳與學習獎勵紀錄。
+recallV15、lastRecallDay：總複習／回想相關進度。
+finished、ending174：史前完成與六時代結局／總成就觀看狀態。
+resume、lastEra、uiEra：繼續遊玩位置與時代選擇。
+sound、music、volume、feedbackVersion：聲音、音樂、音量與回饋設定版本。
+
+備份：史前知識備份記錄 owner、avatar、knowledge；大航海備份記錄 owner、avatar、voyage。
+兩者會核對玩家與儲存時間，再恢復較新的有效進度；主存檔仍包含同樣內容。
+部分欄位完成該活動或首次開啟該系統後才建立，匯入後由遊戲各系統驗證與補上預設值。
+
+實際儲存鍵定義
+const QA=new URLSearchParams(location.search).has('qa'),KEY=QA?'island-time-rpg-qa-v3':'island-time-rpg-v3';
+const SEA_SAVE_KEY=KEY+'-voyage-v1';
+const PRE_SAVE_KEY=KEY+'-prehistory-v1';let preValidated=null;
