@@ -14,9 +14,9 @@
 ## 每次執行的步驟
 
 1. 讀試算表。找出 F 欄 = 「前製素材整理完成」的列。
-2. 跟 `automation/handled.json` 比對（key = `D 欄文字`）。已經處理過的跳過。沒有新的就直接結束，不要通知。
+2. 跟 `automation/handled.json` 比對（key = `A欄年級|D欄文字`，例如 `三|南一L7-L12成語`；不同年級可能有同名單元，所以一定要帶年級）。已經處理過的跳過。沒有新的就直接結束，不要通知。
 3. 對每個新的需求（一次最多做一個，其他留給下一小時）：
-   1. 先在 `handled.json` 加上這筆（`{"key": D欄, "row": 列號, "started": 日期, "branch": 分支名}`），commit 到 main 並 push，避免下一次重複做。
+   1. 先在 `handled.json` 加上這筆（`{"key": "年級|D欄", "row": 列號, "started": 日期, "branch": 分支名}`），commit 到 main 並 push，避免下一次重複做。
    2. 到素材庫找對應子資料夾，讀所有檔案。找不到素材或內容不夠做遊戲 → 不要硬做，改成通知 pi 缺什麼。
    3. 用 `course-game-maker` skill 做遊戲，關卡依 E 欄構想和〈關卡建議〉。
    4. 用 `add-to-game-lobby` skill 的規則做成 Netlify 版本，放進 `遊戲/G<年級><學期><科目>:<名稱>小遊戲/index.html`，並在 `遊戲/index.html` 的遊戲清單加一筆、`遊戲/admin.html` 的 #which 選單加一個選項。
