@@ -102,8 +102,16 @@ td.name{font-weight:700}
     <div class="stats" id="twStats"></div>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>姓名</th><th>代碼</th><th>玩到哪裡</th><th>完成章數</th><th>星星</th><th>史料卡</th><th>打倒魔王</th><th>最後玩</th></tr></thead>
+        <thead><tr><th>姓名</th><th>代碼</th><th>玩到哪裡</th><th>完成章數</th><th>星星</th><th>史料卡</th><th>打倒魔王</th><th>錯題</th><th>最後玩</th></tr></thead>
         <tbody id="twBody"></tbody>
+      </table>
+    </div>
+    <h3 style="margin:18px 0 4px">全班最常錯的題目</h3>
+    <p class="sub" style="margin:0">依「答錯過的人數」排序。孩子在遊戲裡的錯題本連續答對 2 次，才算練會。</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>題目</th><th>答錯過</th><th>還沒練會</th></tr></thead>
+        <tbody id="twWrong"></tbody>
       </table>
     </div>
     <p class="note">共 41 章、8 個時代魔王，每章最多 3 顆星（滿分 123 顆）。「玩到哪裡」是完成的最後一章。</p>
@@ -202,6 +210,10 @@ const TW_ERAS=[["史前時代",["ch1","ch2","ch3","ch4"]],["大航海時代",["s
   ["清領前期",["q1","q2","q3","q4","q5"]],["清領後期",["r1","r2","rm","r3","r4"]],["日治前期",["j1","jm","j2","j3","j4","jx"]],["日治中後期",["k1","k2","k3","kw","k4","k5"]],["戰後臺灣",["p1","p2","p3","p4","p5"]]];
 function twWhere(done){let last=null;TW_ERAS.forEach(([n,ids])=>ids.forEach((id,k)=>{if(done.includes(id))last=n+" 第 "+(k+1)+" 章";}));return last||"剛開始";}
 let TW=[];
+function twWbLeft(wb){return Object.values(wb||{}).filter(e=>!e.m).length;}
+function renderTwWrong(rows){const agg={};rows.forEach(r=>Object.entries(r.wb||{}).forEach(([id,e])=>{const a=agg[id]||(agg[id]={q:e.q||id,n:0,left:0});a.n++;if(!e.m)a.left++;}));
+  const top=Object.values(agg).sort((a,b)=>b.n-a.n||b.left-a.left).slice(0,10);
+  $('twWrong').innerHTML=top.length?top.map((a,i)=>`<tr><td class="num">${i+1}</td><td class="name" style="white-space:normal">${esc(a.q)}</td><td class="num" data-l="答錯過">${a.n} 人</td><td class="num" data-l="還沒練會">${a.left} 人</td></tr>`).join(''):'<tr><td colspan="4">還沒有錯題紀錄。</td></tr>';}
 async function loadTw(){
   const show=['all','twtime'].includes($('game').value);
   if(!show){$('tw').hidden=true;return;}
@@ -212,8 +224,9 @@ function renderTw(){
   const q=$('q').value.trim().toUpperCase();
   const rows=TW.filter(r=>!q||r.name.toUpperCase().includes(q)||r.code.includes(q));
   $('twStats').innerHTML=`<span><b>${rows.length}</b>位孩子玩過</span><span><b>${rows.filter(r=>r.chapters>=41).length}</b>位全部完成</span>`;
-  $('twBody').innerHTML=rows.length?rows.map(r=>`<tr><td class="name">${esc(r.name)}</td><td data-l="代碼">${esc(r.code)}</td><td data-l="玩到">${esc(twWhere(r.done_chs||[]))}</td><td class="num" data-l="完成">${r.chapters} / 41</td><td class="num" data-l="星星">${r.stars} / 123</td><td class="num" data-l="史料卡">${r.cards}</td><td class="num" data-l="魔王">${r.bosses} / 8</td><td data-l="最後玩">${fmt(r.last_played)}</td></tr>`).join('')
-    :`<tr><td colspan="8">${q?'找不到這個名字。':'還沒有孩子玩過。'}</td></tr>`;
+  $('twBody').innerHTML=rows.length?rows.map(r=>`<tr><td class="name">${esc(r.name)}</td><td data-l="代碼">${esc(r.code)}</td><td data-l="玩到">${esc(twWhere(r.done_chs||[]))}</td><td class="num" data-l="完成">${r.chapters} / 41</td><td class="num" data-l="星星">${r.stars} / 123</td><td class="num" data-l="史料卡">${r.cards}</td><td class="num" data-l="魔王">${r.bosses} / 8</td><td class="num" data-l="錯題">${twWbLeft(r.wb)}</td><td data-l="最後玩">${fmt(r.last_played)}</td></tr>`).join('')
+    :`<tr><td colspan="9">${q?'找不到這個名字。':'還沒有孩子玩過。'}</td></tr>`;
+  renderTwWrong(rows);
 }
 $('game').addEventListener('change', loadTw);
 $('q').addEventListener('input', renderTw);
