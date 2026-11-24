@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<a class="bz-back" href="../index.html" style="display:block;padding:10px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'PingFang TC','Noto Sans TC',sans-serif;color:#24302B;background:#EEF0E8;border-bottom:1px solid #C9D0C4;text-decoration:none;letter-spacing:.06em">← 回遊戲書房</a>
+<title>邏輯偵探大挑戰</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+/* 版面：偵探紫，四個世界卡片；遊戲畫面上方操作區、下方題目卡 */
+:root{
+  --sky:#F0EDF8; --paper:#FFFFFF; --ink:#1B2140; --soft:#5D6788;
+  --sea:#6A4BC4; --sea-l:#DCD3F5; --leaf:#2F9E5F; --sun:#F2AE2E; --coral:#D9443A;
+  --line:#DDD6EE; --air:#F7F5FC;
+  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--sky);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+button{font-family:var(--display);font-size:18px;cursor:pointer;border:0;border-radius:14px;padding:10px 18px;background:var(--sea);color:#fff;box-shadow:0 3px 0 #4A3290;transition:transform .08s}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #4A3290}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button.ghost{background:var(--paper);color:var(--ink);box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+button.warn{background:var(--coral);box-shadow:0 3px 0 #9E3727}
+button:disabled{opacity:.45;cursor:default}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:28px;color:var(--sea)}
+.chip{font-family:var(--display);background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-size:16px}
+.panel{background:var(--paper);border-radius:20px;padding:18px;border:2px solid var(--line)}
+.hero{display:block}
+.hero>*,.world>*,.stage>*,.gamehead>*{min-width:0}
+.hero p{margin:4px 0 0;color:var(--soft)}
+.namerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.namerow input{flex:1 1 200px;width:100%;min-width:0;font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);font-family:var(--body)}
+.players{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.players button{font-size:15px;padding:4px 12px;box-shadow:none;background:var(--sky);color:var(--ink)}
+.players button.on{background:var(--sun);color:var(--ink)}
+.worlds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:520px){.worlds{grid-template-columns:1fr}.namerow button{flex:1 1 100%}.logo h1{font-size:24px}.world{grid-template-columns:56px 1fr}.world .ico{width:56px;height:56px}.world .ico svg{width:44px;height:44px}}
+.world{position:relative;text-align:left;background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center}
+.world .ico{width:72px;height:72px;border-radius:16px;display:grid;place-items:center}
+.world h3{font-size:21px}
+.world .sub{font-family:var(--body);font-size:14px;color:var(--soft);line-height:1.4}
+.world .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:15px}
+.stars{color:var(--sun);letter-spacing:2px}
+.stars .off{color:var(--line)}
+.world.locked{opacity:.55}
+.world .lock{font-family:var(--body);font-size:14px;color:var(--coral)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.gamehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gamehead h2{font-size:24px;flex:1 1 auto}
+.score{font-family:var(--display);font-size:20px;color:var(--sea);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);width:0;transition:width .3s}
+.stage{background:var(--paper);border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px}
+.stage svg{width:100%;height:auto;max-height:360px;display:block}
+.tag{font-family:var(--display);color:var(--soft);font-size:15px}
+.q{font-family:var(--display);font-size:21px;line-height:1.6;white-space:pre-line}
+.opts{display:grid;gap:8px}
+.opts button{background:var(--sky);color:var(--ink);box-shadow:0 3px 0 var(--line);text-align:left;font-size:18px}
+.opts button.sel{background:var(--sun)}
+.opts button.ok{background:var(--leaf);color:#fff;box-shadow:0 3px 0 #1E6B40}
+.opts button.bad{background:var(--coral);color:#fff;box-shadow:0 3px 0 #9E3727}
+.fb{border-radius:14px;padding:10px 14px;font-size:16px}
+.fb.ok{background:#E3F5EA;color:#1E6B40}
+.fb.bad{background:#FCE8E4;color:#9E3727}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sent{font-family:var(--display);font-size:22px;line-height:2.1}
+.sent button{font-size:22px;padding:2px 8px;margin:2px;background:var(--sky);color:var(--ink);box-shadow:0 2px 0 var(--line);border-radius:10px}
+.sent button.ok{background:var(--leaf);color:#fff}
+.sent button.bad{background:var(--coral);color:#fff}
+.sent button.hint{background:var(--sun)}
+.meter{position:relative;height:22px;border-radius:99px;background:linear-gradient(90deg,#D7EEF8,#7CC6E6,#1C8DB7);border:2px solid var(--line);overflow:hidden;flex:1 1 200px}
+.meter i{position:absolute;top:0;bottom:0;width:6px;background:var(--ink);border-radius:3px;left:0}
+.big{font-size:22px;padding:14px 26px}
+.result{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result .bigstars{font-size:56px;color:var(--sun);letter-spacing:6px}
+.result .bigstars .off{color:var(--line)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font-size:15px;padding:6px 12px;background:var(--sky);color:var(--ink);box-shadow:none}
+.tabs button.on{background:var(--sea);color:#fff}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-family:var(--display);font-weight:400;color:var(--soft)}
+td.n{text-align:right;font-family:var(--display);font-size:19px}
+tr.me td{background:#FFF5DD}
+.card{border:3px dashed var(--sea);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;background:var(--air)}
+.card .code{font-family:var(--display);font-size:26px;letter-spacing:4px;color:var(--sea)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.small{font-size:14px;color:var(--soft)}
+.foot{text-align:center;color:var(--soft);font-size:14px;padding-block:24px 8px}
+.sdk{display:grid;grid-template-columns:repeat(6,1fr);border:3px solid var(--ink);border-radius:10px;overflow:hidden;max-width:440px;width:100%;margin:0 auto}
+.sdk button{aspect-ratio:1;border-radius:0;box-shadow:none;background:#fff;color:var(--sea);font-size:28px;padding:0;border:1px solid var(--line);min-height:48px}
+.sdk button:active{transform:none}
+.sdk button.g{color:var(--ink);background:var(--air);font-weight:700}
+.sdk button.rc{background:#F1ECFB}
+.sdk button.cur{background:#FFE9B0}
+.sdk button.err{color:var(--coral);background:#FCE8E4}
+.sdk .br{border-right:3px solid var(--ink)}
+.sdk .bb{border-bottom:3px solid var(--ink)}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:440px;width:100%;margin:0 auto}
+.pad button{font-size:26px;padding:10px 0;min-height:52px}
+.clues{margin:0;padding-left:26px;font-size:18px;line-height:1.8}
+.clues li{cursor:pointer}
+.clues li.used{text-decoration:line-through;color:var(--soft)}
+table.lg{max-width:520px;margin:0 auto}
+table.lg th,table.lg td{text-align:center;padding:3px;border:0}
+table.lg th{font-size:16px;color:var(--ink)}
+table.lg button{width:100%;min-height:54px;font-size:26px;background:#fff;color:var(--ink);box-shadow:none;border:2px solid var(--line);padding:0;border-radius:10px}
+table.lg button.x{color:#A9A3BC;background:var(--air)}
+table.lg button.v{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+.slots{display:flex;gap:10px;justify-content:center}
+.slots span{width:62px;height:72px;border:3px solid var(--sea);border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-size:38px;background:#fff}
+.pad10{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:440px;width:100%;margin:0 auto}
+.pad10 button{font-size:26px;padding:10px 0;min-height:52px}
+.hist{display:flex;flex-direction:column;gap:4px;font-family:var(--display);font-size:20px}
+.hist div{display:flex;justify-content:space-between;background:var(--air);border-radius:10px;padding:4px 14px;font-variant-numeric:tabular-nums}
+.marks{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.marks button{min-width:48px;min-height:48px;font-size:20px;padding:4px 8px;background:#fff;color:var(--ink);box-shadow:none;border:2px solid var(--line)}
+.marks button.x{text-decoration:line-through;color:#B5AFC6;background:var(--air)}
+.marks button.y{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+
+/* 童趣版：卡通粗描邊、糖果色、圓點底 */
+:root{--sky:#FFF4D6;--ink:#2B2350;--soft:#6B6390;--sea:#3A8DF5;--leaf:#2DBE7E;--sun:#FFC93C;--coral:#FF5E6C;--line:#2B2350;--air:#F2F8FF}
+html,body{background:#FFF4D6 radial-gradient(circle,#FFE29A 3px,transparent 3.5px) 0 0/28px 28px}
+button{border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);border-radius:18px}
+button:active{box-shadow:0 1px 0 var(--ink)}
+button.ghost{background:#fff;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+button.warn{box-shadow:0 4px 0 var(--ink)}
+.panel,.stage{border:3px solid var(--ink);border-radius:26px;box-shadow:0 6px 0 var(--ink)}
+.chip{border:3px solid var(--ink);background:var(--sun)}
+.logo h1{font-size:32px;letter-spacing:1px;-webkit-text-stroke:1px var(--ink)}
+.logo h1 span:nth-child(5n+1){color:#FF7AA8}.logo h1 span:nth-child(5n+2){color:#FF9F43}.logo h1 span:nth-child(5n+3){color:#2DBE7E}.logo h1 span:nth-child(5n+4){color:#3A8DF5}.logo h1 span:nth-child(5n){color:#9B7BFF}
+.hero{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;align-items:center}
+.hero h2{color:var(--coral)}
+.say{display:inline-block;background:#DDF3FF;border:3px solid var(--ink);border-radius:18px;padding:6px 14px;font-family:var(--display);margin-top:6px;position:relative}
+.mascot{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-3deg)}}
+.world{border:3px solid var(--ink);box-shadow:0 6px 0 var(--ink);border-radius:26px;transition:transform .15s}
+.world:nth-child(1){background:#FFE1EC}.world:nth-child(2){background:#DDF3FF}.world:nth-child(3){background:#DDF7E9}.world:nth-child(4){background:#FFF0C2}
+.world:not(.locked):hover{transform:translateY(-3px) rotate(-1deg)}
+.world .ico{background:#fff!important;border:3px solid var(--ink);border-radius:20px}
+.world .sub{color:#4A4270}
+.world.locked{opacity:.65;filter:grayscale(.7)}
+.stars{color:var(--sun);-webkit-text-stroke:1px var(--ink)}
+.stars .off,.result .bigstars .off{color:#fff}
+.result .bigstars{-webkit-text-stroke:2px var(--ink)}
+.result .mascot{width:120px}
+.bar{height:18px;border:3px solid var(--ink);background:#fff}
+.bar i{background:repeating-linear-gradient(45deg,#2DBE7E 0 10px,#5FDCA2 10px 20px)}
+.gamehead h2{color:var(--coral)}
+.tag{color:var(--ink);font-size:16px}
+.namerow input{border:3px solid var(--ink)}
+.players button{border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);background:#fff}
+.opts button{border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+.opts button:nth-child(4n+1){background:#FFE1EC}.opts button:nth-child(4n+2){background:#DDF3FF}.opts button:nth-child(4n+3){background:#DDF7E9}.opts button:nth-child(4n){background:#FFF0C2}
+.opts button.ok{background:var(--leaf)!important;color:#fff}
+.opts button.bad{background:var(--coral)!important;color:#fff}
+.fb{border:3px solid var(--ink);font-size:17px;animation:pop .35s}
+.fb.ok{background:#D7F7E7;color:#145C3B}.fb.bad{background:#FFE0E3;color:#A3202E}
+@keyframes pop{0%{transform:scale(.85)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+td,th{border-bottom:2px dotted #DCD3F0}
+.tabs button{border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);background:#fff}
+.card{border:3px dashed var(--ink);background:#fff}
+.sdk{border:4px solid var(--ink);border-radius:18px}
+.sdk button{border:1px solid #CFC7E6;box-shadow:none;border-radius:0;color:#3A8DF5}
+.sdk button.g{background:#FFF6DA;color:var(--ink)}
+.sdk button.rc{background:#EAF6FF}
+.sdk .br{border-right:4px solid var(--ink)}.sdk .bb{border-bottom:4px solid var(--ink)}
+.pad button:nth-child(6n+1),.pad10 button:nth-child(5n+1){background:#FF7AA8}
+.pad button:nth-child(6n+2),.pad10 button:nth-child(5n+2){background:#FF9F43}
+.pad button:nth-child(6n+3),.pad10 button:nth-child(5n+3){background:#FFC93C;color:var(--ink)}
+.pad button:nth-child(6n+4),.pad10 button:nth-child(5n+4){background:#2DBE7E}
+.pad button:nth-child(6n+5),.pad10 button:nth-child(5n){background:#3A8DF5}
+.pad button:nth-child(6n){background:#9B7BFF}
+.clues{padding-left:0;list-style:none;counter-reset:c}
+.clues li{counter-increment:c;background:#fff;border:2px dashed #BFB5DD;border-radius:14px;padding:6px 12px;margin-bottom:6px}
+.clues li::before{content:counter(c);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--sun);border:2px solid var(--ink);margin-right:8px;font-family:var(--display);font-size:16px}
+table.lg button{border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink)}
+table.lg button.x{background:#F1EEF8;color:#A9A3BC}
+table.lg button.v{border-color:var(--ink)}
+.slots span{border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+.hist div{border:2px solid var(--ink);background:#fff}
+.marks button{border:3px solid var(--ink);box-shadow:0 2px 0 var(--ink)}
+.marks button.y{border-color:var(--ink)}
+@media (max-width:520px){.hero{grid-template-columns:84px minmax(0,1fr)}.logo h1{font-size:26px}}
+
+.ctwrap{display:flex;flex-direction:column;gap:6px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px;animation:pop .35s}
+table.ct{border-collapse:separate;border-spacing:4px;width:100%;font-size:16px}
+table.ct th{text-align:center;font-size:14px;color:var(--ink);border:0;padding:4px;background:#FFF0C2;border-radius:8px}
+table.ct td{text-align:center;border:0;padding:6px 4px;border-radius:8px;background:#F4F1FA;white-space:pre-line;font-family:var(--display)}
+table.ct td.t{background:#D7F7E7;color:#145C3B}
+table.ct td.f{background:#FFE0E3;color:#A3202E}
+table.ct tr.good td{box-shadow:inset 0 0 0 3px var(--sun);font-weight:700}
+table.ct tr.good td:first-child{background:var(--sun);color:var(--ink)}
+
+</style>
+
+<div class="wrap" id="app"></div>
+<footer class="foot">© 倍思學院 版權所有</footer>
+
+<script>
+(()=>{
+/* ---------- 工具 ---------- */
+const app=document.getElementById('app');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+const NS='http://www.w3.org/2000/svg';
+function svg(viewBox,inner){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',viewBox);s.innerHTML=inner;return s}
+let actx=null;
+function sfx(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);const t=actx.currentTime;o.type='triangle';if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.1)}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(160,t+.12)}g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}catch(e){}}
+function tween(ms,fn){return new Promise(res=>{const t0=performance.now();const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;function f(now){let p=reduce?1:Math.min(1,(now-t0)/ms);fn(p);if(p<1)requestAnimationFrame(f);else res()}requestAnimationFrame(f)})}
+const ease=p=>1-Math.pow(1-p,3);
+
+/* ---------- 紀錄（存在這台裝置） ---------- */
+const KEY='logic_v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+let DB=load();
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:[0,0,0,0],stars:[0,0,0,0],plays:0};const p=DB.players[n];if(!p.time)p.time=[0,0,0,0];return p}
+/* 名次規則：分數高的在前；同分時，秒數少的在前 */
+function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
+function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function cmpRow(a,b){return b.v-a.v||((a.t||1e9)-(b.t||1e9))}
+
+/* ====== Supabase 設定（和其他課程遊戲同一個專案，資料存在 logic_scores 表；要開雲端需先建表與 RPC） ====== */
+const SUPABASE_URL="https://wbxpqyrkgdaqvtsmijoe.supabase.co";
+const SUPABASE_KEY="sb_publishable_04ZnsTSBxbREalRf2NWfeA_L1rzM9V4"; /* anon / publishable key，可以公開 */
+const WKEY=['w1','w2','w3','w4'];
+const REMOTE=/*CLOUD_ON*/false;
+function sb(path,body){return fetch(SUPABASE_URL+path,{method:body?'POST':'GET',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text().then(t=>t?JSON.parse(t):null)})}
+function pid(name){const s=name+'|';let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0}return 'p'+(h>>>0).toString(36)}
+/* 換裝置時，從資料庫把自己的進度接回來 */
+async function pullMine(){if(!REMOTE||!DB.current)return;try{
+  const rows=await sb('/rest/v1/logic_scores?player_id=eq.'+pid(DB.current)+'&world=in.(w1,w2,w3,w4)&select=world,score,secs,stars')||[];
+  const p=player();rows.forEach(r=>{const i=WKEY.indexOf(r.world);if(i<0)return;
+    if(better(r.score,r.secs,p.best[i],p.time[i])){p.best[i]=r.score;p.time[i]=r.secs}p.stars[i]=Math.max(p.stars[i],r.stars)});save()}catch(e){}}
+/* 送出這一關和總分，回傳這一關的名次 */
+async function pushScore(i,secs,stars){const p=player();const id=pid(DB.current);
+  const rank=await sb('/rest/v1/rpc/submit_logic',{p_world:WKEY[i],p_id:id,p_name:DB.current,p_score:p.best[i],p_secs:p.time[i]||secs,p_stars:p.stars[i]});
+  const tot=p.best.reduce((a,b)=>a+b,0),ts=p.time.reduce((a,b,k)=>a+(p.best[k]>0?(b||0):0),0)||secs;
+  await sb('/rest/v1/rpc/submit_logic',{p_world:'total',p_id:id,p_name:DB.current,p_score:tot,p_secs:ts,p_stars:p.stars.reduce((a,b)=>a+b,0)});
+  return rank}
+async function cloudBoard(world){const rows=await sb('/rest/v1/logic_scores?world=eq.'+world+'&select=name,score,secs&order=score.desc,secs.asc&limit=30')||[];
+  return rows.map(r=>({n:r.name,v:r.score,t:r.secs}))}
+function starsFor(s,m){const r=s/m;return r>=.9?3:r>=.7?2:r>=.4?1:0}
+function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>'}
+
+/* ---------- 世界設定 ---------- */
+const OWL='<svg viewBox="0 0 120 120" width="100%" aria-hidden="true"><ellipse cx="60" cy="113" rx="34" ry="5" fill="#2B2350" opacity=".15"/><path d="M24 60 Q24 24 60 24 Q96 24 96 60 L96 84 Q96 108 60 108 Q24 108 24 84Z" fill="#FF9F43" stroke="#2B2350" stroke-width="4"/><ellipse cx="60" cy="86" rx="22" ry="19" fill="#FFE3B8"/><path d="M50 80 l4 4 l4 -4 M62 80 l4 4 l4 -4 M56 92 l4 4 l4 -4" stroke="#E7A86A" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="45" cy="54" r="14" fill="#fff" stroke="#2B2350" stroke-width="4"/><circle cx="75" cy="54" r="14" fill="#fff" stroke="#2B2350" stroke-width="4"/><circle cx="47" cy="56" r="6" fill="#2B2350"/><circle cx="77" cy="56" r="6" fill="#2B2350"/><circle cx="49" cy="53" r="2" fill="#fff"/><circle cx="79" cy="53" r="2" fill="#fff"/><path d="M55 66 L65 66 L60 74Z" fill="#FFC93C" stroke="#2B2350" stroke-width="3" stroke-linejoin="round"/><circle cx="33" cy="70" r="5" fill="#FF7AA8" opacity=".7"/><circle cx="87" cy="70" r="5" fill="#FF7AA8" opacity=".7"/><path d="M32 32 Q60 4 88 32Z" fill="#8C6A4F" stroke="#2B2350" stroke-width="4" stroke-linejoin="round"/><path d="M26 32 L94 32" stroke="#2B2350" stroke-width="5" stroke-linecap="round"/><circle cx="101" cy="88" r="11" fill="#DDF3FF" stroke="#2B2350" stroke-width="4"/><path d="M94 97 L86 107" stroke="#2B2350" stroke-width="6" stroke-linecap="round"/></svg>';
+const WORLDS=[
+ {name:'數獨工坊',sub:'6×6 數獨三題，從暖身到挑戰，每排每區 1～6 不重複',color:'#E4DCF7',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M32 8V56" stroke="#1B2140" stroke-width="3"/><text x="16" y="21" font-size="12" text-anchor="middle" fill="#6A4BC4">3</text><text x="48" y="37" font-size="12" text-anchor="middle" fill="#6A4BC4">5</text><text x="32" y="53" font-size="12" text-anchor="middle" fill="#1B2140">?</text>',run:sudokuWorld},
+ {name:'誠實島疑案',sub:'誰說真話、誰在說謊？用假設法一個一個檢驗',color:'#FCE3DF',ico:'<path d="M10 10h40a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H26l-10 10v-10h-6a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="30" y="35" font-size="22" text-anchor="middle" fill="#D9443A" font-weight="700">?!</text>',run:liarWorld},
+ {name:'推理表格',sub:'讀線索、打 ✗ 和 ✓，找出每個人的正確配對',color:'#DDF1E5',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M11 16 l4 4 l7 -8" stroke="#2F9E5F" stroke-width="3" fill="none"/><path d="M28 28 l8 8 M36 28 l-8 8 M44 44 l8 8 M52 44 l-8 8" stroke="#D9443A" stroke-width="3"/>',run:gridWorld},
+ {name:'密碼破解 1A2B',sub:'猜出電腦藏的 3 位數密碼，猜愈少次分數愈高',color:'#FDEBC4',ico:'<rect x="6" y="16" width="52" height="32" rx="8" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="32" y="39" font-size="17" text-anchor="middle" fill="#6A4BC4" font-weight="700">1A2B</text>',run:abWorld}
+];
+
+
+/* ---------- 畫面：首頁 ---------- */
+function header(){
+  const p=DB.current;
+  return el('div',{class:'top'},
+    el('div',{class:'logo'},el('span',{html:'<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="16" cy="16" r="11" fill="#fff" stroke="#6A4BC4" stroke-width="4"/><path d="M24 24 L35 35" stroke="#1B2140" stroke-width="6" stroke-linecap="round"/><text x="16" y="21" font-size="14" text-anchor="middle" fill="#F2AE2E" font-weight="700">?</text></svg>'}),el('h1',{html:[...'邏輯偵探大挑戰'].map(c=>'<span>'+c+'</span>').join('')})),
+    p?el('span',{class:'chip'},'玩家：'+p):null);
+}
+let taps=0;function tapOwl(){if(++taps>=5){taps=0;DB.teacher=!DB.teacher;save();home()}}
+function home(){
+  app.innerHTML='';
+  app.append(header());
+  const pl=player();
+  const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||(()=>{try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})()});
+  const names=Object.keys(DB.players);
+  app.append(el('div',{class:'panel hero'},el('div',{class:'mascot',html:OWL,onclick:tapOwl,style:'cursor:pointer'}),
+    el('div',{},el('h2',{style:'font-size:22px'},'三年級 邏輯推理特訓'),
+      el('div',{class:'say'},'我是偵探貓頭鷹咕咕，一起來破案吧！'),DB.teacher?el('div',{class:'chip',style:'display:inline-block;margin-left:8px;background:#FF7AA8;color:#fff'},'老師模式：全部解鎖'):null,el('p',{},'數獨、誠實島、推理表格、猜數字密碼，四個世界一關一關破解。分數一樣時，比誰的時間短。'),
+      el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v){input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);input.focus();return}DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
+      names.length?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null
+    )));
+  const grid=el('div',{class:'worlds'});
+  WORLDS.forEach((w,i)=>{
+    const unlocked=i===0||DB.teacher||(pl&&pl.stars[i-1]>=1);
+    const b=el('button',{class:'world'+(unlocked?'':' locked'),onclick:()=>{if(!pl){input.focus();input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);return}if(unlocked)play(i)}},
+      el('div',{class:'ico',style:'background:'+w.color,html:'<svg width="56" height="56" viewBox="0 0 64 64">'+w.ico+'</svg>'}),
+      el('div',{},el('h3',{},'世界 '+(i+1)+'　'+w.name),el('div',{class:'sub'},w.sub),
+        el('div',{class:'meta',html:starStr(pl?pl.stars[i]:0)+(unlocked?'<span>最高 '+(pl?pl.best[i]:0)+' 分'+(pl&&pl.time[i]?'・'+fmt(pl.time[i]):'')+'</span>':'<span class="lock">🔒 上一關拿到 1 顆星就打開</span>')})));
+    if(!unlocked)b.setAttribute('aria-disabled','true');
+    grid.append(b);
+  });
+  app.append(grid);
+  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+}
+
+/* ---------- 排行榜 ---------- */
+async function board(tab=0){
+  if(typeof tab!=='number')tab=0;
+  app.innerHTML='';app.append(header());
+  const tabs=['總分',...WORLDS.map(w=>w.name)];
+  let rows=[],failed=false;
+  if(REMOTE){app.append(el('div',{class:'panel'},'正在讀取排行榜…'));
+    try{rows=await cloudBoard(tab===0?'total':WKEY[tab-1])}catch(e){failed=true}
+    app.innerHTML='';app.append(header());}
+  else rows=Object.entries(DB.players).map(([n,p])=>{const tm=p.time||[0,0,0,0];return tab===0
+      ?{n,v:p.best.reduce((a,b)=>a+b,0),t:tm.reduce((a,b,i)=>a+(p.best[i]>0?(b||0):0),0)}
+      :{n,v:p.best[tab-1],t:tm[tab-1]}}).filter(r=>r.v>0).sort(cmpRow);
+  const tbl=el('table',{},el('tr',{},el('th',{},'名次'),el('th',{},'名字'),el('th',{style:'text-align:right'},'時間'),el('th',{style:'text-align:right'},'分數')));
+  rows.forEach((r,i)=>tbl.append(el('tr',{class:r.n===DB.current?'me':''},el('td',{},i<3?['🥇','🥈','🥉'][i]:String(i+1)),el('td',{},r.n),el('td',{style:'text-align:right'},fmt(r.t)),el('td',{class:'n'},String(r.v)))));
+  let armed=false;
+  const clr=el('button',{class:'ghost',onclick:()=>{if(!armed){armed=true;clr.textContent='再按一次確定清除';clr.className='warn';return}DB={players:{},current:''};save();home()}},'清除這台裝置的紀錄');
+  app.append(el('div',{class:'panel',style:'display:flex;flex-direction:column;gap:12px'},
+    el('h2',{style:'font-size:24px'},REMOTE?'全校排行榜（前 30 名）':'排行榜（這台裝置）'),
+    el('div',{class:'tabs'},tabs.map((t,i)=>el('button',{class:i===tab?'on':'',onclick:()=>board(i)},t))),
+    failed?el('p',{class:'small'},'排行榜暫時連不上，請確認網路後按「重新整理」。'):rows.length?el('div',{style:'overflow-x:auto'},tbl):el('p',{class:'small'},'還沒有人上榜。輸入名字開始玩，第一名就是你！'),
+    el('p',{class:'small'},'分數高的排前面；分數一樣，時間短的排前面。'+(REMOTE?'':'這個版本的排行榜只記在這台裝置上。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖'),REMOTE?el('button',{class:'ghost',onclick:()=>board(tab)},'重新整理'):clr));
+}
+
+/* ---------- 成績卡 ---------- */
+function card(){
+  const p=player();if(!p)return home();
+  const total=p.best.reduce((a,b)=>a+b,0);
+  const d=new Date();const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+  const raw=DB.current+'|'+p.best.join(',')+'|'+p.time.join(',')+'|'+p.stars.join(',');let h=7;for(const c of raw)h=(h*31+c.charCodeAt(0))>>>0;
+  const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
+  app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel'},el('div',{class:'card'},
+    el('h2',{style:'font-size:24px'},'邏輯偵探大挑戰 成績卡'),
+    el('div',{},'名字：'+DB.current+'　　日期：'+ds),
+    WORLDS.map((w,i)=>el('div',{html:'世界 '+(i+1)+' '+w.name+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / 12'),
+    el('div',{},'驗證碼 ',el('span',{class:'code'},code)),
+    el('div',{class:'small'},'把這張卡截圖傳給老師。'))));
+  app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
+}
+
+/* ---------- 遊戲框架 ---------- */
+let CUR=null;
+function play(i){
+  const w=WORLDS[i];
+  app.innerHTML='';
+  const sc=el('span',{class:'score'},'0 分');
+  const tm=el('span',{class:'score',style:'color:var(--ink)'},'⏱ 0:00');
+  const bar=el('i');
+  const stage=el('div',{class:'stage'});
+  const t0=Date.now();
+  const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
+  app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},'世界 '+(i+1)+'　'+w.name),tm,sc),el('div',{class:'bar'},bar),stage);
+  const token={};CUR=token;
+  const ctx={stage,score:0,alive:()=>CUR===token,add(n){this.score+=n;sc.textContent=this.score+' 分'},prog(k,n){bar.style.width=(k/n*100)+'%'}};
+  window.scrollTo(0,0);
+  w.run(ctx).then(max=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
+}
+function finish(i,score,max,secs){
+  const p=player();const st=starsFor(score,max);
+  const isBest=better(score,secs,p.best[i],p.time[i]);
+  if(isBest){p.best[i]=score;p.time[i]=secs}
+  p.stars[i]=Math.max(p.stars[i],st);p.plays++;save();
+  app.innerHTML='';app.append(header());
+  const msg=st===3?'太厲害了，滿分等級！':st===2?'很棒！再挑戰一次拿三顆星？':st===1?'過關了！下一個世界已經打開。':'再練習一次，拿到 1 顆星就能過關。';
+  const up=REMOTE?el('div',{class:'small'},'成績上傳中…'):null;
+  if(REMOTE)pushScore(i,secs,st).then(r=>{up.textContent='已登記到全校排行榜！這一關你目前第 '+r+' 名。'}).catch(()=>{up.textContent='連線失敗，成績先存在這台裝置，下次玩完會一起上傳。'});
+  app.append(el('div',{class:'panel result'},el('div',{class:'mascot',html:OWL}),
+    el('h2',{style:'font-size:26px'},WORLDS[i].name+' 完成'),
+    el('div',{class:'bigstars',html:'★'.repeat(st)+'<span class="off">'+'★'.repeat(3-st)+'</span>'}),
+    el('div',{style:'font-family:var(--display);font-size:30px;color:var(--sea)'},score+' / '+max+' 分'),
+    el('div',{style:'font-family:var(--display);font-size:20px'},'用時 '+fmt(secs)+(p.time[i]&&!isBest?'　（最佳 '+p.best[i]+' 分・'+fmt(p.time[i])+'）':'')),
+    isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,
+    up,
+    el('p',{},msg),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<3&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一個世界'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+  sfx(st>0);
+}
+
+/* 題目卡：單選 / 複選，回傳是否答對 */
+function ask(parent,{q,opts,ans,explain,multi=false,tag,onAnswer,after}){
+  return new Promise(res=>{
+    const box=el('div',{style:'display:flex;flex-direction:column;gap:10px'});
+    if(tag)box.append(el('div',{class:'tag'},tag));
+    box.append(el('div',{class:'q'},q));
+    const order=multi?shuffle(opts.map((_,i)=>i)):opts.map((_,i)=>i);
+    const wrap=el('div',{class:'opts'});const sel=new Set();let done=false;
+    const btns={};
+    const good=multi?new Set(ans):new Set([ans]);
+    function judge(){
+      done=true;
+      const ok=multi?(sel.size===good.size&&[...sel].every(x=>good.has(x))):sel.has(ans);
+      Object.entries(btns).forEach(([k,b])=>{k=+k;b.disabled=true;b.style.opacity=1;b.classList.remove('sel');if(good.has(k))b.classList.add('ok');else if(sel.has(k))b.classList.add('bad')});
+      sfx(ok);if(onAnswer)onAnswer(ok);
+      box.append(el('div',{class:'fb '+(ok?'ok':'bad')},(ok?'答對了！':'差一點！')+(explain?' '+explain:'')));if(after)box.append(after());
+      const nx=el('button',{onclick:()=>{box.remove();res(ok)}},'下一步 →');
+      if(okBtn)okBtn.remove();
+      box.append(el('div',{class:'ctrl'},nx));nx.focus({preventScroll:true});
+    }
+    order.forEach(i=>{const b=el('button',{onclick:()=>{if(done)return;if(multi){sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle('sel')}else{sel.add(i);judge()}}},(multi?'□ ':'')+opts[i]);btns[i]=b;wrap.append(b)});
+    box.append(wrap);
+    let okBtn=null;
+    if(multi){box.insertBefore(el('div',{class:'small'},'可以選很多個，選好按「確定」'),wrap);okBtn=el('button',{onclick:()=>{if(!sel.size)return;judge()}},'確定');box.append(okBtn)}
+    parent.append(box);
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+}
+function waitBtn(parent,label,cls=''){return new Promise(r=>{const b=el('button',{class:'big '+cls,onclick:()=>{b.remove();r()}},label);parent.append(b)})}
+/* ================= 世界 1：數獨工坊 ================= */
+function sdkOk(g,r,c,v){for(let i=0;i<6;i++){if(g[r*6+i]===v||g[i*6+c]===v)return false}const br=r-r%2,bc=c-c%3;for(let i=0;i<2;i++)for(let j=0;j<3;j++)if(g[(br+i)*6+bc+j]===v)return false;return true}
+function sdkCount(p){let n=0;const a=p.slice();(function s(){if(n>1)return;const k=a.indexOf(0);if(k<0){n++;return}const r=k/6|0,c=k%6;for(let v=1;v<=6;v++)if(sdkOk(a,r,c,v)){a[k]=v;s();a[k]=0}})();return n}
+function genSudoku(givens){
+  const g=Array(36).fill(0);
+  (function fill(k){if(k===36)return true;const r=k/6|0,c=k%6;for(const v of shuffle([1,2,3,4,5,6])){if(sdkOk(g,r,c,v)){g[k]=v;if(fill(k+1))return true;g[k]=0}}return false})(0);
+  const sol=g.slice(),puz=sol.slice();let filled=36;
+  for(const k of shuffle([...Array(36).keys()])){if(filled<=givens)break;const v=puz[k];puz[k]=0;if(sdkCount(puz)!==1)puz[k]=v;else filled--}
+  return{puz,sol};
+}
+async function sudokuWorld(ctx){
+  const S=ctx.stage;let max=0;
+  const LV=[{g:20,name:'暖身'},{g:16,name:'進階'},{g:12,name:'挑戰'}];
+  for(let li=0;li<LV.length;li++){
+    if(!ctx.alive())return max;
+    max+=30;
+    const {puz,sol}=genSudoku(LV[li].g);
+    const cur=puz.slice();let sel=-1,pts=30,over=false;
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'第 '+(li+1)+' 題（'+LV[li].name+'）　每一橫排、每一直排、每個粗框小區（2×3），1～6 都只能出現一次。'));
+    const info=el('div',{class:'small'},'先點一個空格，再點下面的數字。變紅色＝跟同一排或同一區重複了（扣 2 分）。');
+    const ptEl=el('span',{class:'score'},'本題 30 分');
+    const grid=el('div',{class:'sdk'});const cells=[];
+    const conflict=k=>{const v=cur[k];if(!v)return false;const r=k/6|0,c=k%6;for(let j=0;j<36;j++){if(j===k||cur[j]!==v)continue;const r2=j/6|0,c2=j%6;if(r2===r||c2===c||((r2>>1)===(r>>1)&&Math.floor(c2/3)===Math.floor(c/3)))return true}return false};
+    const paint=()=>{const sr=sel>=0?sel/6|0:-1,sc=sel>=0?sel%6:-1;cells.forEach((b,k)=>{const r=k/6|0,c=k%6;b.classList.toggle('g',!!puz[k]);b.classList.toggle('cur',k===sel);b.classList.toggle('rc',sel>=0&&k!==sel&&(r===sr||c===sc));b.classList.toggle('err',conflict(k));b.textContent=cur[k]?String(cur[k]):''})};
+    for(let k=0;k<36;k++){const r=k/6|0,c=k%6;const b=el('button',{class:(c===2?'br ':'')+(r===1||r===3?'bb':''),'aria-label':'第'+(r+1)+'排第'+(c+1)+'格',onclick:()=>{if(over||puz[k])return;sel=k;paint()}});cells.push(b);grid.append(b)}
+    let resolve;const done=new Promise(r=>resolve=r);
+    const solved=()=>cur.every((x,i)=>x===sol[i]);
+    const setV=v=>{if(over)return;if(sel<0||puz[sel]){info.textContent='先點一個空格。';return}cur[sel]=v;
+      if(v&&conflict(sel)){pts=Math.max(5,pts-2);sfx(false);info.textContent='重複了！扣 2 分，看看同一排、同一直排、同一區。'}else if(v)info.textContent=' ';
+      paint();ptEl.textContent='本題 '+pts+' 分';if(solved())resolve(true)};
+    const pad=el('div',{class:'pad'},[1,2,3,4,5,6].map(v=>el('button',{onclick:()=>setV(v)},String(v))));
+    const hintB=el('button',{class:'ghost',onclick:()=>{if(over)return;const wrong=[...Array(36).keys()].filter(k=>cur[k]!==sol[k]);if(!wrong.length)return;
+      const k=(sel>=0&&cur[sel]!==sol[sel])?sel:wrong[Math.random()*wrong.length|0];cur[k]=sol[k];puz[k]=sol[k];pts=Math.max(5,pts-5);sel=-1;paint();
+      ptEl.textContent='本題 '+pts+' 分';info.textContent='提示幫你填好一格（扣 5 分）。想想看：為什麼是這個數字？';if(solved())resolve(true)}},'💡 提示 -5');
+    const clr=el('button',{class:'ghost',onclick:()=>setV(0)},'清除');
+    const quit=el('button',{class:'ghost',onclick:()=>{if(!over)resolve(false)}},'放棄這題');
+    S.append(el('div',{class:'ctrl'},ptEl),grid,pad,el('div',{class:'ctrl'},clr,hintB,quit),info);
+    paint();
+    const ok=await done;over=true;
+    if(!ctx.alive())return max;
+    pad.querySelectorAll('button').forEach(b=>b.disabled=true);[clr,hintB,quit].forEach(b=>b.disabled=true);
+    sel=-1;
+    if(ok){ctx.add(pts);sfx(true);info.className='fb ok';info.textContent='完成！這題得到 '+pts+' 分。'}
+    else{for(let k=0;k<36;k++)cur[k]=sol[k];sfx(false);info.className='fb bad';info.textContent='這是正確答案。小訣竅：先找「只差一兩個數字」的排或區，最容易下手。'}
+    paint();ctx.prog(li+1,LV.length);
+    const nx=el('div');S.append(nx);await waitBtn(nx,li<LV.length-1?'下一題 →':'完成 →');
+  }
+  return max;
+}
+
+/* ================= 世界 2：誠實島疑案 ================= */
+/* 解說表格：每一種假設排成一列，真＝綠、假＝紅，符合的那一列用黃色標出來 */
+function caseTable(head,rows,good,legend){
+  const t=el('table',{class:'ct'});
+  t.append(el('tr',{},head.map(h=>el('th',{},h))));
+  rows.forEach((r,i)=>t.append(el('tr',{class:i===good?'good':''},r.map(c=>typeof c==='string'?el('td',{},c):el('td',{class:c.c},c.t)))));
+  return el('div',{class:'ctwrap'},el('div',{class:'small'},legend),el('div',{style:'overflow-x:auto'},t));
+}
+/* 犯人題：假設是誰，看每個人的話是真是假，數一數 */
+function culpritTable(names,says,want,count){
+  return ()=>{let good=-1;const rows=names.map((x,i)=>{const v=says.map(f=>f(x));const n=v.filter(b=>b===(count==='真')).length;const hit=n===want;if(hit)good=i;
+    return ['如果是 '+x,...v.map(b=>b?{t:'真',c:'t'}:{t:'假',c:'f'}),{t:(count==='真'?'說真話 ':'說謊 ')+n+' 人'+(hit?' ✓':''),c:hit?'t':''}]});
+    return caseTable(['假設',...names.map(n=>n+' 說的話'),'結果'],rows,good,'把每個人都假設一次：他是犯人的話，每句話是「真」還是「假」？題目說'+(count==='真'?'說真話':'說謊')+'的只有 '+want+' 人，找那一列。')}
+}
+/* 誠實島：假設每個人是哪一種，誠實的人的話要是真、說謊的人的話要是假 */
+function isleTable(people,says){
+  return ()=>{const n=people.length;let good=-1;const rows=[];
+    for(let m=(1<<n)-1;m>=0;m--){const h=people.map((_,i)=>!!(m&(1<<(n-1-i))));let all=true;
+      const cells=says.map(s=>{const tr=s.f(h),fit=tr===h[s.who];if(!fit)all=false;return {t:(tr?'真':'假')+(fit?' ✓':' ✗'),c:fit?'t':'f'}});
+      if(all)good=rows.length;
+      rows.push([people.map((p,i)=>p+(h[i]?'😊誠實':'🤥說謊')).join('\n'),...cells,{t:all?'成立 ✓':'矛盾',c:all?'t':'f'}])}
+    return caseTable(['假設',...says.map(s=>people[s.who]+' 說的話'),'結果'],rows,good,'誠實的人說的話一定是「真」，說謊的人說的話一定是「假」。對得上打 ✓，對不上打 ✗（矛盾）。全部 ✓ 的那一列就是答案。')}
+}
+const ISLE='誠實島上，誠實的人永遠說真話，說謊的人永遠說假話。\n';
+const LIARS=[
+ {tag:'只有一人說真話',q:'花瓶被打破了，是 A、B、C、D 其中一人做的。\nA：「是 C 打破的。」\nB：「不是我。」\nC：「是 D 打破的。」\nD：「C 在說謊。」\n只有一個人說真話，是誰打破的？',opts:['A','B','C','D'],ans:1,
+  explain:'只有假設是 B 的時候，說真話的剛好 1 人。',after:culpritTable(['A','B','C','D'],[x=>x==='C',x=>x!=='B',x=>x==='D',x=>x!=='D'],1,'真')},
+ {tag:'只有一人說謊',q:'A、B、C、D 賽跑，其中一人得第一名。\nA：「第一名是 B 或 C。」\nB：「不是我，也不是 A。」\nC：「是我。」\nD：「是 B。」\n只有一個人說謊，誰是第一名？',opts:['A','B','C','D'],ans:2,
+  explain:'只有假設是 C 的時候，說謊的剛好 1 人（D）。',after:culpritTable(['A','B','C','D'],[x=>x==='B'||x==='C',x=>x!=='B'&&x!=='A',x=>x==='C',x=>x==='B'],1,'謊')},
+ {tag:'只有一人說真話',q:'有人偷吃了糖果，是 A、B、C 其中一人。\nA：「我沒吃。」\nB：「是 A 吃的。」\nC：「我沒吃。」\n只有一個人說真話，是誰吃的？',opts:['A','B','C'],ans:2,
+  explain:'只有假設是 C 的時候，說真話的剛好 1 人（A）。',after:culpritTable(['A','B','C'],[x=>x!=='A',x=>x==='A',x=>x!=='C'],1,'真')},
+ {tag:'誠實島',q:ISLE+'A 說：「我們兩個都是說謊的人。」\nA 和 B 各是哪一種人？',opts:['A 誠實，B 說謊','A 說謊，B 誠實','兩個都誠實','兩個都說謊'],ans:1,
+  explain:'誠實的人不可能說「我是說謊的人」，所以 A 一定說謊，那 B 就是誠實的。',after:isleTable(['A','B'],[{who:0,f:h=>!h[0]&&!h[1]}])},
+ {tag:'誠實島',q:ISLE+'A 說：「B 是說謊的人。」\nB 說：「A 和我是同一種人。」\n誰在說謊？',opts:['只有 A','只有 B','兩個都說謊','兩個都誠實'],ans:1,
+  explain:'四種可能一個一個試，只有「A 誠實、B 說謊」沒有矛盾。',after:isleTable(['A','B'],[{who:0,f:h=>!h[1]},{who:1,f:h=>h[0]===h[1]}])},
+ {tag:'誠實島',q:ISLE+'A 說：「B 說謊。」\nB 說：「C 說謊。」\nC 說：「A 和 B 都說謊。」\n誰是誠實的人？',opts:['只有 A','只有 B','只有 C','A 和 C'],ans:1,
+  explain:'八種可能裡，只有「A 說謊、B 誠實、C 說謊」每一格都對得上。',after:isleTable(['A','B','C'],[{who:0,f:h=>!h[1]},{who:1,f:h=>!h[2]},{who:2,f:h=>!h[0]&&!h[1]}])},
+ {tag:'標籤全錯',q:'三個盒子分別貼著「蘋果」「橘子」「蘋果＋橘子」，但三張標籤全部貼錯了。\n你只能從一個盒子拿出一顆水果來看，就要說出每盒裝什麼。要從哪一盒拿？',opts:['貼「蘋果」的盒子','貼「橘子」的盒子','貼「蘋果＋橘子」的盒子','怎麼拿都不可能知道'],ans:2,
+  explain:'貼「蘋果＋橘子」的盒子一定不是混合的，所以拿到什麼，整盒就是什麼。下面是拿到蘋果的情況：',
+  after:()=>caseTable(['盒子上的標籤','裡面其實是','為什麼'],[['蘋果＋橘子',{t:'蘋果',c:'t'},'拿出來看到蘋果'],['橘子',{t:'蘋果＋橘子',c:'t'},'不能是橘子，蘋果被拿走了'],['蘋果',{t:'橘子',c:'t'},'只剩橘子']],0,'標籤全錯，所以「裡面」一定跟「標籤」不一樣。')},
+ {tag:'最倒楣的情況',q:'抽屜裡有紅襪子、藍襪子各 10 隻。關著燈看不到顏色，最少要拿幾隻，才能「保證」有兩隻同色？',opts:['2 隻','3 隻','11 隻','20 隻'],ans:1,
+  explain:'想想最倒楣的拿法：',after:()=>caseTable(['拿第幾隻','最倒楣會拿到','有一雙了嗎'],[['第 1 隻','🔴 紅',{t:'還沒',c:'f'}],['第 2 隻','🔵 藍',{t:'還沒',c:'f'}],['第 3 隻','🔴 或 🔵',{t:'一定有！',c:'t'}]],2,'「保證」就是連最倒楣的情況都要成功。')},
+ {tag:'日期推理',q:'「前天」是星期五，那麼「明天的後天」是星期幾？',opts:['星期一','星期二','星期三','星期四'],ans:2,
+  explain:'把日子排成一排就清楚了：',after:()=>caseTable(['前天','昨天','今天','明天','明天的後天'],[['五','六','日','一',{t:'三',c:'t'}]],-1,'從前天往後一天一天數。')},
+ {tag:'排排看',q:'小安比小布高，小可比小安高，小德比小布矮。\n四個人裡誰最矮？',opts:['小安','小布','小可','小德'],ans:3,
+  explain:'把四個人從高排到矮：',after:()=>caseTable(['最高','','','最矮'],[['小可','小安','小布',{t:'小德',c:'t'}]],-1,'小可＞小安＞小布＞小德')},
+ {tag:'排排看',q:'五個人排一排。小安前面有 2 個人，小布在小安後面，中間隔 1 個人。\n小布排第幾個？',opts:['第 3 個','第 4 個','第 5 個','排不下'],ans:2,
+  explain:'畫出隊伍就看得到：',after:()=>caseTable(['第1','第2','第3','第4','第5'],[['👤','👤','小安','👤',{t:'小布',c:'t'}]],-1,'小安前面有 2 人，所以小安是第 3 個；往後隔 1 人，就是第 5 個。')},
+ {tag:'一定對嗎',q:'所有的貓都會爬樹。小花不會爬樹。\n下面哪一句「一定」對？',opts:['小花是貓','小花不是貓','小花是狗','小花會游泳'],ans:1,
+  explain:'用假設法試試看：',after:()=>caseTable(['假設','那牠會…','可是題目說','結果'],[['小花是貓','會爬樹','不會爬樹',{t:'矛盾',c:'f'}],['小花不是貓','不一定','不會爬樹',{t:'成立 ✓',c:'t'}]],1,'是不是狗、會不會游泳，題目都沒說，不能確定。')}
+];
+async function liarWorld(ctx){
+  const S=ctx.stage;let max=0;const L=shuffle(LIARS).slice(0,6);
+  S.innerHTML='';
+  S.append(el('div',{class:'small'},'偵探技巧：「假設法」——先假設一種情況，看會不會矛盾。答完會有表格，一列一列幫你檢查。'));
+  const box=el('div');S.append(box);
+  for(let i=0;i<L.length;i++){
+    if(!ctx.alive())return max;
+    max+=10;const ok=await ask(box,{...L[i],tag:'第 '+(i+1)+' 題　'+L[i].tag});
+    if(ok)ctx.add(10);ctx.prog(i+1,L.length);
+  }
+  return max;
+}
+
+/* ================= 世界 3：推理表格 ================= */
+const PEOPLE=['小安','小布','小可','小德'];
+const GRIDS=[
+ {title:'誰吃了什麼點心？',cols:['布丁','餅乾','蛋糕','果凍'],ans:[2,0,1,3],
+  clues:['小安不吃布丁，也不吃餅乾。','小布吃的不是蛋糕。','小可吃的是果凍或餅乾。','吃布丁的人不是小德。','小安不吃果凍。','小德不吃餅乾。'],
+  explain:'小安不吃布丁、餅乾、果凍，只剩蛋糕。小德不吃布丁、餅乾，蛋糕又是小安的，所以是果凍。小可是果凍或餅乾，只剩餅乾。最後小布是布丁。'},
+ {title:'排隊買冰淇淋，誰排第幾個？',cols:['第1個','第2個','第3個','第4個'],ans:[2,1,3,0],
+  clues:['小可不是第 2 個，也不是第 3 個。','小可排在小安的後面。','小安排在小德的後面。','小布和小德前後相鄰。','小布不是第 1 個。'],
+  explain:'小可只能第 1 或第 4；小可在小安後面，不能第 1，所以是第 4。剩下第 1～3：小安在小德後面，不能第 1；小布也不是第 1，所以小德第 1。小布和小德相鄰，小布第 2，小安第 3。'},
+ {title:'誰參加了哪個社團？',cols:['籃球','畫畫','跳舞','圍棋'],ans:[2,1,0,3],
+  clues:['小安和小布都不打籃球。','小可不參加畫畫，也不下圍棋。','小德不跳舞，也不打籃球。','下圍棋的不是小安。','小布不跳舞，也不下圍棋。'],
+  explain:'小安、小布、小德都不打籃球，所以籃球是小可。小布不打籃球、不跳舞、不下圍棋，只剩畫畫。小安不下圍棋，只剩跳舞，小德就是圍棋。'}
+];
+async function gridWorld(ctx){
+  const S=ctx.stage;let max=0;
+  for(let gi=0;gi<GRIDS.length;gi++){
+    if(!ctx.alive())return max;
+    const G=GRIDS[gi];max+=30;
+    let locked=false,pts=30,tries=3;
+    const st=PEOPLE.map(()=>Array(4).fill(0));
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'第 '+(gi+1)+' 題：'+G.title));
+    S.append(el('ol',{class:'clues'},G.clues.map(c=>{const li=el('li',{onclick:()=>li.classList.toggle('used')},c);return li})));
+    S.append(el('div',{class:'small'},'點格子：空白 → ✗ → ✓。打 ✓ 時，同一排、同一欄會自動打 ✗。用過的線索點一下就會劃掉。'));
+    const btn=[];const tbl=el('table',{class:'lg'});
+    tbl.append(el('tr',{},el('th',{}),G.cols.map(c=>el('th',{},c))));
+    const sub=el('button',{class:'big'},'送出答案');
+    const fb=el('div');
+    const paint=()=>{st.forEach((row,r)=>row.forEach((v,c)=>{const b=btn[r][c];b.textContent=['','✗','✓'][v];b.className=['','x','v'][v]}));
+      const ready=st.every(row=>row.filter(x=>x===2).length===1)&&[0,1,2,3].every(c=>st.filter(row=>row[c]===2).length===1);sub.disabled=!ready||locked};
+    PEOPLE.forEach((n,r)=>{btn[r]=[];tbl.append(el('tr',{},el('th',{},n),G.cols.map((_,c)=>{const b=el('button',{'aria-label':n+' '+G.cols[c],onclick:()=>{if(locked)return;st[r][c]=(st[r][c]+1)%3;
+      if(st[r][c]===2){for(let k=0;k<4;k++){if(k!==c&&st[r][k]===0)st[r][k]=1;if(k!==r&&st[k][c]===0)st[k][c]=1}}paint()}});btn[r][c]=b;return el('td',{},b)})))});
+    S.append(el('div',{style:'overflow-x:auto'},tbl));
+    const resetB=el('button',{class:'ghost',onclick:()=>{if(locked)return;st.forEach(row=>row.fill(0));paint()}},'全部清空');
+    S.append(el('div',{class:'ctrl'},sub,resetB),fb);
+    paint();
+    await new Promise(res=>{sub.onclick=()=>{if(sub.disabled)return;
+      const wrong=st.filter((row,r)=>row.indexOf(2)!==G.ans[r]).length;
+      if(!wrong){locked=true;ctx.add(pts);sfx(true);fb.className='fb ok';fb.textContent='破案了！得到 '+pts+' 分。'+G.explain;paint();res();return}
+      tries--;pts=Math.max(0,pts-10);sfx(false);
+      if(tries>0){fb.className='fb bad';fb.textContent='有 '+wrong+' 個人配錯了（扣 10 分）。再一條一條檢查線索，看哪一條沒有符合。還有 '+tries+' 次機會。';return}
+      locked=true;st.forEach((row,r)=>{row.fill(1);row[G.ans[r]]=2});paint();
+      fb.className='fb bad';fb.textContent='機會用完了，表格已換成正確答案。'+G.explain;res()}});
+    if(!ctx.alive())return max;
+    resetB.disabled=true;ctx.prog(gi+1,GRIDS.length);
+    const nx=el('div');S.append(nx);await waitBtn(nx,gi<GRIDS.length-1?'下一題 →':'完成 →');
+  }
+  return max;
+}
+
+/* ================= 世界 4：密碼破解 1A2B ================= */
+function abScore(n){return n<=5?30:n===6?25:n===7?20:n===8?15:n===9?10:5}
+async function abWorld(ctx){
+  const S=ctx.stage;let max=0;const ROUNDS=3;
+  for(let ri=0;ri<ROUNDS;ri++){
+    if(!ctx.alive())return max;
+    max+=30;
+    const secret=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,3);
+    let inp=[],hist=[],over=false;const marks=Array(10).fill(0);
+    S.innerHTML='';
+    S.append(el('div',{class:'tag'},'第 '+(ri+1)+' 局　電腦藏了一個 3 位數密碼：3 個數字都不一樣，也可能 0 開頭。'));
+    S.append(el('div',{class:'small'},'A＝數字對、位置也對；B＝數字對、位置不對。例：密碼 382，猜 328 → 1A2B。5 次內猜中拿滿分！'));
+    const slots=el('div',{class:'slots'});const histEl=el('div',{class:'hist'});
+    const fb=el('div',{class:'small'},'用下面的數字鍵輸入 3 個數字，再按「送出」。');
+    const markRow=el('div',{class:'marks'});
+    const pad=el('div',{class:'pad10'});const keys=[];
+    const drawSlots=()=>{slots.innerHTML='';for(let i=0;i<3;i++)slots.append(el('span',{},inp[i]!=null?String(inp[i]):''));keys.forEach((b,d)=>b.disabled=over||inp.includes(d)||inp.length>=3);subB.disabled=over||inp.length<3;delB.disabled=over||!inp.length};
+    const drawMarks=()=>{markRow.innerHTML='';markRow.append(el('span',{class:'tag'},'筆記'));for(let d=0;d<10;d++){const b=el('button',{class:['','x','y'][marks[d]],'aria-label':'數字 '+d+' 記號',onclick:()=>{marks[d]=(marks[d]+1)%3;drawMarks()}},String(d));markRow.append(b)}};
+    const drawHist=()=>{histEl.innerHTML='';hist.forEach((h,i)=>histEl.prepend(el('div',{},el('span',{},'第 '+(i+1)+' 次　'+h.g.join(' ')),el('b',{},h.a+'A'+h.b+'B'))))};
+    for(let d=1;d<=10;d++){const v=d%10;const b=el('button',{onclick:()=>{if(inp.length<3&&!inp.includes(v)){inp.push(v);drawSlots()}}},String(v));keys[v]=b;pad.append(b)}
+    const delB=el('button',{class:'ghost',onclick:()=>{inp.pop();drawSlots()}},'⌫ 刪除');
+    const subB=el('button',{},'送出');
+    const giveB=el('button',{class:'ghost'},'放棄這局');
+    S.append(slots,pad,el('div',{class:'ctrl',style:'justify-content:center'},delB,subB,giveB),fb,markRow,el('div',{class:'small'},'點筆記的數字做記號：一次 ✗（不可能）、兩次 ●（一定有）。猜到 0A0B 時，那三個數字全都可以打 ✗！'),histEl);
+    drawMarks();
+    await new Promise(res=>{
+      subB.onclick=()=>{if(over||inp.length<3)return;let a=0,b=0;inp.forEach((d,i)=>{if(secret[i]===d)a++;else if(secret.includes(d))b++});
+        hist.push({g:inp.slice(),a,b});inp=[];drawHist();
+        if(a===3){over=true;const p=abScore(hist.length);ctx.add(p);sfx(true);fb.className='fb ok';fb.textContent='破解成功！密碼是 '+secret.join('')+'，你猜了 '+hist.length+' 次，得到 '+p+' 分。';drawSlots();res();return}
+        sfx(a+b>0);fb.className='small';fb.textContent=a+'A'+b+'B。'+(a+b===0?'三個數字都不在密碼裡，記得打 ✗！':a+b===3?'三個數字都對了，只差位置！':'想想看哪些數字可以刪掉。');drawSlots()};
+      giveB.onclick=()=>{if(over)return;over=true;sfx(false);fb.className='fb bad';fb.textContent='密碼是 '+secret.join('')+'。下一局試試：先猜 012、345、678，看哪些數字在密碼裡。';drawSlots();res()};
+      drawSlots();
+    });
+    if(!ctx.alive())return max;
+    giveB.disabled=true;ctx.prog(ri+1,ROUNDS);
+    const nx=el('div');S.append(nx);await waitBtn(nx,ri<ROUNDS-1?'下一局 →':'完成 →');
+  }
+  return max;
+}
+
+/* ---------- 密碼鎖：老師輸入密碼才能玩，這個分頁關掉前都記得（遊戲書房開過鎖也算） ---------- */
+const LOCK_HASH='27b106acfc9f97d73952426627dcddb18f41babc443f3ad4edd73488d6b4c2a0';
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function lockOk(){try{return sessionStorage.getItem('bz_lock_ok')===LOCK_HASH}catch(e){return false}}
+function start(){home();if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()})}
+function lockScreen(){
+  app.innerHTML='';
+  const inp=el('input',{type:'password',inputmode:'numeric',placeholder:'老師密碼',autocomplete:'off',style:'text-align:center;letter-spacing:.3em;font-size:24px'});
+  const msg=el('div',{class:'small',style:'color:var(--coral);min-height:1.5em;margin-top:6px'});
+  const go=async()=>{let ok=false;try{ok=await sha(inp.value.trim())===LOCK_HASH}catch(e){}
+    if(ok){try{sessionStorage.setItem('bz_lock_ok',LOCK_HASH)}catch(e){}start()}
+    else{msg.textContent='密碼不對，請找老師幫忙開鎖。';inp.value='';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);inp.focus()}};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  app.append(header(),el('div',{class:'panel hero'},el('div',{class:'mascot',html:OWL}),
+    el('div',{},el('h2',{style:'font-size:22px'},'這個遊戲上鎖了'),el('div',{class:'say'},'請老師輸入密碼，咕咕才能開門！'),
+      el('div',{class:'namerow'},inp,el('button',{onclick:go},'開鎖')),msg)));
+  setTimeout(()=>inp.focus(),50);
+}
+lockOk()?start():lockScreen();
+})();
+</script>
+
+</body></html>
