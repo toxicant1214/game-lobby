@@ -202,8 +202,8 @@ const GAMES = [
   { folder:"G5上下社會:島嶼時光局小遊戲", file:"index.html", grade:5, term:"上下", subject:"社會",
     title:"島嶼時光局", en:"ARCHIVUM INSULAE", unit:"臺灣歷史", levels:"6 個時代・77 單元",
     desc:"像素風 RPG：選角探索、背包交付、收集歷史卡，和時光小獸走過六個時代。", art:"isle" },
-  { folder:"G3上邏輯:邏輯偵探小遊戲", file:"index.html", grade:3, term:"上", subject:"邏輯",
-    title:"邏輯偵探大挑戰", en:"ARS LOGICA", unit:"邏輯推理", levels:"4 個世界",
+  { folder:"邏輯:邏輯偵探小遊戲", file:"index.html", grade:0, term:"", subject:"邏輯",
+    title:"邏輯偵探大挑戰", en:"ARS LOGICA", unit:"分堂次", levels:"第 1 堂起",
     desc:"數獨、誠實島說謊題、推理表格、1A2B 密碼，用假設法一關一關破案。", art:"logic", lock:true },
 ];
 
@@ -243,15 +243,15 @@ function chips(el, label, key, values, fmt){
 }
 function buildFilters(){
   const subs = [...new Set(GAMES.map(g=>g.subject))];
-  const grades = [...new Set(GAMES.map(g=>g.grade))].sort((a,b)=>a-b);
+  const grades = [...new Set(GAMES.map(g=>g.grade))].filter(v=>v>0).sort((a,b)=>a-b);  // grade:0 = 不分年級
   chips(document.getElementById('f-subject'), '科目', 'subject', subs, v=>v);
   chips(document.getElementById('f-grade'), '年級', 'grade', grades, v=>(CN[v]||v)+'年級');
 }
 function render(){
-  const list = GAMES.filter(g => (state.subject==='all'||g.subject===state.subject) && (state.grade==='all'||String(g.grade)===state.grade));
+  const list = GAMES.filter(g => (state.subject==='all'||g.subject===state.subject) && (state.grade==='all'||!g.grade||String(g.grade)===state.grade));
   grid.innerHTML = list.length ? list.map(g=>`
     <a class="card" href="${hrefOf(g)}"${g.lock?' data-lock="1"':''} style="--c:${SUBJECTS[g.subject]||'var(--moss)'}">
-      <div class="no"><span>No. ${String(GAMES.indexOf(g)+1).padStart(3,'0')}</span><span>${CN[g.grade]||g.grade}${g.term}・${g.subject}</span></div>
+      <div class="no"><span>No. ${String(GAMES.indexOf(g)+1).padStart(3,'0')}</span><span>${g.grade?(CN[g.grade]||g.grade)+g.term+'・':''}${g.subject}</span></div>
       <div class="art" aria-hidden="true">${ART[g.art]||''}</div>
       <div>
         <h2>${g.title}</h2>
