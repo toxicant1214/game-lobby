@@ -199,6 +199,8 @@ table.ct td.f{background:#FFE0E3;color:#A3202E}
 table.ct tr.good td{box-shadow:inset 0 0 0 3px var(--sun);font-weight:700}
 table.ct tr.good td:first-child{background:var(--sun);color:var(--ink)}
 
+.lno{font-family:var(--display);font-size:38px;color:var(--coral);line-height:1}
+
 </style>
 
 <div class="wrap" id="app"></div>
@@ -219,11 +221,11 @@ function tween(ms,fn){return new Promise(res=>{const t0=performance.now();const 
 const ease=p=>1-Math.pow(1-p,3);
 
 /* ---------- 紀錄（存在這台裝置） ---------- */
-const KEY='logic_v1';
+let KEY='logic_L1_v1';
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{players:{},current:''}}catch(e){return{players:{},current:''}}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
 let DB=load();
-function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:[0,0,0,0],stars:[0,0,0,0],plays:0};const p=DB.players[n];if(!p.time)p.time=[0,0,0,0];return p}
+function player(){const n=DB.current;if(!n)return null;if(!DB.players[n])DB.players[n]={best:WORLDS.map(()=>0),stars:WORLDS.map(()=>0),plays:0};const p=DB.players[n];if(!p.time)p.time=WORLDS.map(()=>0);return p}
 /* 名次規則：分數高的在前；同分時，秒數少的在前 */
 function better(s,t,os,ot){return s>os||(s===os&&s>0&&t>0&&(!ot||t<ot))}
 function fmt(sec){if(!sec)return '—';sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
@@ -254,12 +256,7 @@ function starStr(n){return '<span class="stars">'+'★'.repeat(n)+'<span class="
 
 /* ---------- 世界設定 ---------- */
 const OWL='<svg viewBox="0 0 120 120" width="100%" aria-hidden="true"><ellipse cx="60" cy="113" rx="34" ry="5" fill="#2B2350" opacity=".15"/><path d="M24 60 Q24 24 60 24 Q96 24 96 60 L96 84 Q96 108 60 108 Q24 108 24 84Z" fill="#FF9F43" stroke="#2B2350" stroke-width="4"/><ellipse cx="60" cy="86" rx="22" ry="19" fill="#FFE3B8"/><path d="M50 80 l4 4 l4 -4 M62 80 l4 4 l4 -4 M56 92 l4 4 l4 -4" stroke="#E7A86A" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="45" cy="54" r="14" fill="#fff" stroke="#2B2350" stroke-width="4"/><circle cx="75" cy="54" r="14" fill="#fff" stroke="#2B2350" stroke-width="4"/><circle cx="47" cy="56" r="6" fill="#2B2350"/><circle cx="77" cy="56" r="6" fill="#2B2350"/><circle cx="49" cy="53" r="2" fill="#fff"/><circle cx="79" cy="53" r="2" fill="#fff"/><path d="M55 66 L65 66 L60 74Z" fill="#FFC93C" stroke="#2B2350" stroke-width="3" stroke-linejoin="round"/><circle cx="33" cy="70" r="5" fill="#FF7AA8" opacity=".7"/><circle cx="87" cy="70" r="5" fill="#FF7AA8" opacity=".7"/><path d="M32 32 Q60 4 88 32Z" fill="#8C6A4F" stroke="#2B2350" stroke-width="4" stroke-linejoin="round"/><path d="M26 32 L94 32" stroke="#2B2350" stroke-width="5" stroke-linecap="round"/><circle cx="101" cy="88" r="11" fill="#DDF3FF" stroke="#2B2350" stroke-width="4"/><path d="M94 97 L86 107" stroke="#2B2350" stroke-width="6" stroke-linecap="round"/></svg>';
-const WORLDS=[
- {name:'數獨工坊',sub:'6×6 數獨三題，從暖身到挑戰，每排每區 1～6 不重複',color:'#E4DCF7',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M32 8V56" stroke="#1B2140" stroke-width="3"/><text x="16" y="21" font-size="12" text-anchor="middle" fill="#6A4BC4">3</text><text x="48" y="37" font-size="12" text-anchor="middle" fill="#6A4BC4">5</text><text x="32" y="53" font-size="12" text-anchor="middle" fill="#1B2140">?</text>',run:sudokuWorld},
- {name:'誠實島疑案',sub:'誰說真話、誰在說謊？用假設法一個一個檢驗',color:'#FCE3DF',ico:'<path d="M10 10h40a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H26l-10 10v-10h-6a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="30" y="35" font-size="22" text-anchor="middle" fill="#D9443A" font-weight="700">?!</text>',run:liarWorld},
- {name:'推理表格',sub:'讀線索、打 ✗ 和 ✓，找出每個人的正確配對',color:'#DDF1E5',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M11 16 l4 4 l7 -8" stroke="#2F9E5F" stroke-width="3" fill="none"/><path d="M28 28 l8 8 M36 28 l-8 8 M44 44 l8 8 M52 44 l-8 8" stroke="#D9443A" stroke-width="3"/>',run:gridWorld},
- {name:'密碼破解 1A2B',sub:'猜出電腦藏的 3 位數密碼，猜愈少次分數愈高',color:'#FDEBC4',ico:'<rect x="6" y="16" width="52" height="32" rx="8" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="32" y="39" font-size="17" text-anchor="middle" fill="#6A4BC4" font-weight="700">1A2B</text>',run:abWorld}
-];
+let CURL=0,WORLDS=[];
 
 
 /* ---------- 畫面：首頁 ---------- */
@@ -277,7 +274,7 @@ function home(){
   const input=el('input',{id:'nm',placeholder:'輸入你的名字',maxlength:'12',value:DB.current||(()=>{try{return localStorage.getItem('bz_name')||''}catch(e){return ''}})()});
   const names=Object.keys(DB.players);
   app.append(el('div',{class:'panel hero'},el('div',{class:'mascot',html:OWL,onclick:tapOwl,style:'cursor:pointer'}),
-    el('div',{},el('h2',{style:'font-size:22px'},'三年級 邏輯推理特訓'),
+    el('div',{},el('h2',{style:'font-size:22px'},LESSONS[CURL].title+'：'+LESSONS[CURL].theme),
       el('div',{class:'say'},'我是偵探貓頭鷹咕咕，一起來破案吧！'),DB.teacher?el('div',{class:'chip',style:'display:inline-block;margin-left:8px;background:#FF7AA8;color:#fff'},'老師模式：全部解鎖'):null,el('p',{},'數獨、誠實島、推理表格、猜數字密碼，四個世界一關一關破解。分數一樣時，比誰的時間短。'),
       el('div',{class:'namerow'},input,el('button',{onclick:()=>{const v=input.value.trim();if(!v){input.classList.add('shake');setTimeout(()=>input.classList.remove('shake'),400);input.focus();return}DB.current=v;player();save();home();if(REMOTE)pullMine().then(home)}},'就是我')),
       names.length?el('div',{class:'players'},el('span',{class:'small'},'這台裝置玩過的人：'),names.map(n=>el('button',{class:n===DB.current?'on':'',onclick:()=>{DB.current=n;save();home()}},n))):null
@@ -293,7 +290,7 @@ function home(){
     grid.append(b);
   });
   app.append(grid);
-  app.append(el('div',{class:'row'},el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+  app.append(el('div',{class:'row'},el('button',{onclick:lessonPick},'← 選堂次'),el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
 }
 
 /* ---------- 排行榜 ---------- */
@@ -329,10 +326,10 @@ function card(){
   const code=(h%1679616).toString(36).toUpperCase().padStart(4,'0');
   app.innerHTML='';app.append(header());
   app.append(el('div',{class:'panel'},el('div',{class:'card'},
-    el('h2',{style:'font-size:24px'},'邏輯偵探大挑戰 成績卡'),
+    el('h2',{style:'font-size:24px'},'邏輯偵探 '+LESSONS[CURL].title+' 成績卡'),
     el('div',{},'名字：'+DB.current+'　　日期：'+ds),
     WORLDS.map((w,i)=>el('div',{html:'世界 '+(i+1)+' '+w.name+'：<b>'+p.best[i]+'</b> 分（'+fmt(p.time[i])+'） '+starStr(p.stars[i])})),
-    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / 12'),
+    el('div',{style:'font-family:var(--display);font-size:22px'},'總分 '+total+'　星星 '+p.stars.reduce((a,b)=>a+b,0)+' / '+WORLDS.length*3),
     el('div',{},'驗證碼 ',el('span',{class:'code'},code)),
     el('div',{class:'small'},'把這張卡截圖傳給老師。'))));
   app.append(el('div',{class:'row'},el('button',{onclick:home},'回地圖')));
@@ -372,7 +369,7 @@ function finish(i,score,max,secs){
     isBest&&score>0?el('div',{class:'chip'},'新紀錄！'):null,
     up,
     el('p',{},msg),
-    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<3&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一個世界'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
+    el('div',{class:'row',style:'justify-content:center'},el('button',{onclick:()=>play(i)},'再玩一次'),i<WORLDS.length-1&&p.stars[i]>=1?el('button',{onclick:()=>play(i+1)},'下一個世界'):null,el('button',{class:'ghost',onclick:home},'回地圖'),el('button',{class:'ghost',onclick:()=>board()},'排行榜'))));
   sfx(st>0);
 }
 
@@ -415,9 +412,9 @@ function genSudoku(givens){
   for(const k of shuffle([...Array(36).keys()])){if(filled<=givens)break;const v=puz[k];puz[k]=0;if(sdkCount(puz)!==1)puz[k]=v;else filled--}
   return{puz,sol};
 }
-async function sudokuWorld(ctx){
+async function sudokuWorld(ctx,cfg={}){
   const S=ctx.stage;let max=0;
-  const LV=[{g:20,name:'暖身'},{g:16,name:'進階'},{g:12,name:'挑戰'}];
+  const LV=(cfg.levels||[20,16,12]).map((n,i)=>({g:n,name:['暖身','進階','挑戰','魔王'][i]||'挑戰'}));
   for(let li=0;li<LV.length;li++){
     if(!ctx.alive())return max;
     max+=30;
@@ -507,8 +504,8 @@ const LIARS=[
  {tag:'一定對嗎',q:'所有的貓都會爬樹。小花不會爬樹。\n下面哪一句「一定」對？',opts:['小花是貓','小花不是貓','小花是狗','小花會游泳'],ans:1,
   explain:'用假設法試試看：',after:()=>caseTable(['假設','那牠會…','可是題目說','結果'],[['小花是貓','會爬樹','不會爬樹',{t:'矛盾',c:'f'}],['小花不是貓','不一定','不會爬樹',{t:'成立 ✓',c:'t'}]],1,'是不是狗、會不會游泳，題目都沒說，不能確定。')}
 ];
-async function liarWorld(ctx){
-  const S=ctx.stage;let max=0;const L=shuffle(LIARS).slice(0,6);
+async function liarWorld(ctx,cfg={}){
+  const S=ctx.stage;let max=0;const L=shuffle(cfg.bank||LIARS).slice(0,cfg.n||6);
   S.innerHTML='';
   S.append(el('div',{class:'small'},'偵探技巧：「假設法」——先假設一種情況，看會不會矛盾。答完會有表格，一列一列幫你檢查。'));
   const box=el('div');S.append(box);
@@ -522,7 +519,7 @@ async function liarWorld(ctx){
 
 /* ================= 世界 3：推理表格 ================= */
 const PEOPLE=['小安','小布','小可','小德'];
-const GRIDS=[
+const GRID_BANK=[
  {title:'誰吃了什麼點心？',cols:['布丁','餅乾','蛋糕','果凍'],ans:[2,0,1,3],
   clues:['小安不吃布丁，也不吃餅乾。','小布吃的不是蛋糕。','小可吃的是果凍或餅乾。','吃布丁的人不是小德。','小安不吃果凍。','小德不吃餅乾。'],
   explain:'小安不吃布丁、餅乾、果凍，只剩蛋糕。小德不吃布丁、餅乾，蛋糕又是小安的，所以是果凍。小可是果凍或餅乾，只剩餅乾。最後小布是布丁。'},
@@ -533,8 +530,8 @@ const GRIDS=[
   clues:['小安和小布都不打籃球。','小可不參加畫畫，也不下圍棋。','小德不跳舞，也不打籃球。','下圍棋的不是小安。','小布不跳舞，也不下圍棋。'],
   explain:'小安、小布、小德都不打籃球，所以籃球是小可。小布不打籃球、不跳舞、不下圍棋，只剩畫畫。小安不下圍棋，只剩跳舞，小德就是圍棋。'}
 ];
-async function gridWorld(ctx){
-  const S=ctx.stage;let max=0;
+async function gridWorld(ctx,cfg={}){
+  const S=ctx.stage;let max=0;const GRIDS=cfg.puzzles||GRID_BANK;
   for(let gi=0;gi<GRIDS.length;gi++){
     if(!ctx.alive())return max;
     const G=GRIDS[gi];max+=30;
@@ -572,34 +569,34 @@ async function gridWorld(ctx){
 
 /* ================= 世界 4：密碼破解 1A2B ================= */
 function abScore(n){return n<=5?30:n===6?25:n===7?20:n===8?15:n===9?10:5}
-async function abWorld(ctx){
-  const S=ctx.stage;let max=0;const ROUNDS=3;
+async function abWorld(ctx,cfg={}){
+  const S=ctx.stage;let max=0;const ROUNDS=cfg.rounds||3,D=cfg.digits||3;
   for(let ri=0;ri<ROUNDS;ri++){
     if(!ctx.alive())return max;
     max+=30;
-    const secret=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,3);
+    const secret=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,D);
     let inp=[],hist=[],over=false;const marks=Array(10).fill(0);
     S.innerHTML='';
-    S.append(el('div',{class:'tag'},'第 '+(ri+1)+' 局　電腦藏了一個 3 位數密碼：3 個數字都不一樣，也可能 0 開頭。'));
+    S.append(el('div',{class:'tag'},'第 '+(ri+1)+' 局　電腦藏了一個 '+D+' 位數密碼：'+D+' 個數字都不一樣，也可能 0 開頭。'));
     S.append(el('div',{class:'small'},'A＝數字對、位置也對；B＝數字對、位置不對。例：密碼 382，猜 328 → 1A2B。5 次內猜中拿滿分！'));
     const slots=el('div',{class:'slots'});const histEl=el('div',{class:'hist'});
     const fb=el('div',{class:'small'},'用下面的數字鍵輸入 3 個數字，再按「送出」。');
     const markRow=el('div',{class:'marks'});
     const pad=el('div',{class:'pad10'});const keys=[];
-    const drawSlots=()=>{slots.innerHTML='';for(let i=0;i<3;i++)slots.append(el('span',{},inp[i]!=null?String(inp[i]):''));keys.forEach((b,d)=>b.disabled=over||inp.includes(d)||inp.length>=3);subB.disabled=over||inp.length<3;delB.disabled=over||!inp.length};
+    const drawSlots=()=>{slots.innerHTML='';for(let i=0;i<D;i++)slots.append(el('span',{},inp[i]!=null?String(inp[i]):''));keys.forEach((b,d)=>b.disabled=over||inp.includes(d)||inp.length>=D);subB.disabled=over||inp.length<D;delB.disabled=over||!inp.length};
     const drawMarks=()=>{markRow.innerHTML='';markRow.append(el('span',{class:'tag'},'筆記'));for(let d=0;d<10;d++){const b=el('button',{class:['','x','y'][marks[d]],'aria-label':'數字 '+d+' 記號',onclick:()=>{marks[d]=(marks[d]+1)%3;drawMarks()}},String(d));markRow.append(b)}};
     const drawHist=()=>{histEl.innerHTML='';hist.forEach((h,i)=>histEl.prepend(el('div',{},el('span',{},'第 '+(i+1)+' 次　'+h.g.join(' ')),el('b',{},h.a+'A'+h.b+'B'))))};
-    for(let d=1;d<=10;d++){const v=d%10;const b=el('button',{onclick:()=>{if(inp.length<3&&!inp.includes(v)){inp.push(v);drawSlots()}}},String(v));keys[v]=b;pad.append(b)}
+    for(let d=1;d<=10;d++){const v=d%10;const b=el('button',{onclick:()=>{if(inp.length<D&&!inp.includes(v)){inp.push(v);drawSlots()}}},String(v));keys[v]=b;pad.append(b)}
     const delB=el('button',{class:'ghost',onclick:()=>{inp.pop();drawSlots()}},'⌫ 刪除');
     const subB=el('button',{},'送出');
     const giveB=el('button',{class:'ghost'},'放棄這局');
     S.append(slots,pad,el('div',{class:'ctrl',style:'justify-content:center'},delB,subB,giveB),fb,markRow,el('div',{class:'small'},'點筆記的數字做記號：一次 ✗（不可能）、兩次 ●（一定有）。猜到 0A0B 時，那三個數字全都可以打 ✗！'),histEl);
     drawMarks();
     await new Promise(res=>{
-      subB.onclick=()=>{if(over||inp.length<3)return;let a=0,b=0;inp.forEach((d,i)=>{if(secret[i]===d)a++;else if(secret.includes(d))b++});
+      subB.onclick=()=>{if(over||inp.length<D)return;let a=0,b=0;inp.forEach((d,i)=>{if(secret[i]===d)a++;else if(secret.includes(d))b++});
         hist.push({g:inp.slice(),a,b});inp=[];drawHist();
-        if(a===3){over=true;const p=abScore(hist.length);ctx.add(p);sfx(true);fb.className='fb ok';fb.textContent='破解成功！密碼是 '+secret.join('')+'，你猜了 '+hist.length+' 次，得到 '+p+' 分。';drawSlots();res();return}
-        sfx(a+b>0);fb.className='small';fb.textContent=a+'A'+b+'B。'+(a+b===0?'三個數字都不在密碼裡，記得打 ✗！':a+b===3?'三個數字都對了，只差位置！':'想想看哪些數字可以刪掉。');drawSlots()};
+        if(a===D){over=true;const p=abScore(hist.length);ctx.add(p);sfx(true);fb.className='fb ok';fb.textContent='破解成功！密碼是 '+secret.join('')+'，你猜了 '+hist.length+' 次，得到 '+p+' 分。';drawSlots();res();return}
+        sfx(a+b>0);fb.className='small';fb.textContent=a+'A'+b+'B。'+(a+b===0?'這幾個數字都不在密碼裡，記得打 ✗！':a+b===D?'數字都對了，只差位置！':'想想看哪些數字可以刪掉。');drawSlots()};
       giveB.onclick=()=>{if(over)return;over=true;sfx(false);fb.className='fb bad';fb.textContent='密碼是 '+secret.join('')+'。下一局試試：先猜 012、345、678，看哪些數字在密碼裡。';drawSlots();res()};
       drawSlots();
     });
@@ -610,11 +607,40 @@ async function abWorld(ctx){
   return max;
 }
 
+/* ================= 堂次設定：新的一堂就在 LESSONS 加一筆 ================= */
+const WT={
+ sudoku:{name:'數獨工坊',sub:'數獨三題，從暖身到挑戰，每排每區數字不重複',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M32 8V56" stroke="#1B2140" stroke-width="3"/><text x="16" y="21" font-size="12" text-anchor="middle" fill="#6A4BC4">3</text><text x="48" y="37" font-size="12" text-anchor="middle" fill="#6A4BC4">5</text><text x="32" y="53" font-size="12" text-anchor="middle" fill="#1B2140">?</text>',run:sudokuWorld},
+ liar:{name:'誠實島疑案',sub:'誰說真話、誰在說謊？用假設法一個一個檢驗',ico:'<path d="M10 10h40a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H26l-10 10v-10h-6a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="30" y="35" font-size="22" text-anchor="middle" fill="#D9443A" font-weight="700">?!</text>',run:liarWorld},
+ grid:{name:'推理表格',sub:'讀線索、打 ✗ 和 ✓，找出每個人的正確配對',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M11 16 l4 4 l7 -8" stroke="#2F9E5F" stroke-width="3" fill="none"/><path d="M28 28 l8 8 M36 28 l-8 8 M44 44 l8 8 M52 44 l-8 8" stroke="#D9443A" stroke-width="3"/>',run:gridWorld},
+ ab:{name:'密碼破解 1A2B',sub:'猜出電腦藏的密碼，猜愈少次分數愈高',ico:'<rect x="6" y="16" width="52" height="32" rx="8" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="32" y="39" font-size="17" text-anchor="middle" fill="#6A4BC4" font-weight="700">1A2B</text>',run:abWorld}
+};
+const W=(type,cfg,sub)=>({name:WT[type].name,sub:sub||WT[type].sub,ico:WT[type].ico,color:'#fff',run:ctx=>WT[type].run(ctx,cfg||{})});
+const LESSONS=[
+ {id:'L1',title:'第 1 堂',theme:'假設法入門',desc:'6×6 數獨、誠實島說謊題、4×4 推理表格、3 位數密碼',
+  worlds:[W('sudoku',{levels:[20,16,12]},'6×6 數獨三題，從暖身到挑戰，每排每區 1～6 不重複'),W('liar',{bank:LIARS,n:6}),W('grid',{puzzles:GRID_BANK}),W('ab',{digits:3,rounds:3},'猜出電腦藏的 3 位數密碼，猜愈少次分數愈高')]}
+];
+function useLesson(i){const nm=DB.current;CURL=i;KEY='logic_'+LESSONS[i].id+'_v1';DB=load();if(nm&&!DB.current){DB.current=nm;save()}WORLDS=LESSONS[i].worlds}
+function lessonStars(L){try{const d=JSON.parse(localStorage.getItem('logic_'+L.id+'_v1'))||{};const p=(d.players||{})[DB.current];return p?p.stars.reduce((a,b)=>a+b,0):0}catch(e){return 0}}
+function lessonPick(){
+  CUR=null;app.innerHTML='';app.append(header());
+  app.append(el('div',{class:'panel hero'},el('div',{class:'mascot',html:OWL}),
+    el('div',{},el('h2',{style:'font-size:22px'},'邏輯推理特訓'),el('div',{class:'say'},'今天上第幾堂？選好就出發破案！'))));
+  const g=el('div',{class:'worlds'});
+  LESSONS.forEach((L,i)=>{const st=lessonStars(L),mx=L.worlds.length*3;
+    g.append(el('button',{class:'world',onclick:()=>{useLesson(i);home()}},
+      el('div',{class:'ico',html:'<span class="lno">'+(i+1)+'</span>'}),
+      el('div',{},el('h3',{},L.title+'　'+L.theme),el('div',{class:'sub'},L.desc),
+        el('div',{class:'meta',html:'<span>'+starStr(Math.min(3,Math.round(st/mx*3)))+' '+st+' / '+mx+'</span><span>'+L.worlds.length+' 個世界</span>'}))))});
+  g.append(el('div',{class:'world locked',style:'border-style:dashed'},el('div',{class:'ico',html:'<span class="lno">'+(LESSONS.length+1)+'</span>'}),
+    el('div',{},el('h3',{},'第 '+(LESSONS.length+1)+' 堂'),el('div',{class:'sub'},'咕咕正在準備新的案件…'))));
+  app.append(g);window.scrollTo(0,0);
+}
+
 /* ---------- 密碼鎖：老師輸入密碼才能玩，這個分頁關掉前都記得（遊戲書房開過鎖也算） ---------- */
 const LOCK_HASH='27b106acfc9f97d73952426627dcddb18f41babc443f3ad4edd73488d6b4c2a0';
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function lockOk(){try{return sessionStorage.getItem('bz_lock_ok')===LOCK_HASH}catch(e){return false}}
-function start(){home();if(REMOTE&&DB.current)pullMine().then(()=>{if(!CUR)home()})}
+function start(){lessonPick()}
 function lockScreen(){
   app.innerHTML='';
   const inp=el('input',{type:'password',inputmode:'numeric',placeholder:'老師密碼',autocomplete:'off',style:'text-align:center;letter-spacing:.3em;font-size:24px'});
@@ -628,6 +654,7 @@ function lockScreen(){
       el('div',{class:'namerow'},inp,el('button',{onclick:go},'開鎖')),msg)));
   setTimeout(()=>inp.focus(),50);
 }
+useLesson(0);
 lockOk()?start():lockScreen();
 })();
 </script>
