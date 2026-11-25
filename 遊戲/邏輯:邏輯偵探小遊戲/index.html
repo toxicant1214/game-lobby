@@ -201,6 +201,44 @@ table.ct tr.good td:first-child{background:var(--sun);color:var(--ink)}
 
 .lno{font-family:var(--display);font-size:38px;color:var(--coral);line-height:1}
 
+.solve{display:flex;flex-direction:column;gap:12px}
+.numbox{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:10px;display:flex;flex-direction:column;gap:8px;max-width:440px;width:100%;margin:0 auto}
+.ansrow{display:flex;align-items:center;gap:10px;justify-content:center;font-family:var(--display);font-size:18px}
+.ansv{min-width:110px;text-align:center;font-size:34px;border-bottom:4px solid var(--sea);padding:0 8px;color:var(--sea)}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.kp button{font-size:24px;padding:8px 0;min-height:50px}
+.hints{display:flex;flex-direction:column;gap:6px}
+.hint{background:#FFF0C2;border:2px dashed var(--ink);border-radius:14px;padding:8px 12px;font-size:17px}
+.teach{background:#FFE1EC;border:3px solid var(--ink);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 5px 0 var(--ink);animation:pop .35s}
+.teach-h{font-family:var(--display);font-size:22px;color:var(--coral)}
+button.hold{position:relative;overflow:hidden;background:var(--ink);color:#fff;touch-action:none;user-select:none;-webkit-user-select:none}
+button.hold span{position:relative;z-index:1}
+button.hold i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--leaf)}
+.dots{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:flex-end;text-align:center}
+.chain{display:flex;align-items:center;gap:6px;justify-content:center;padding:6px 0;min-width:max-content}
+.chain .op{font-family:var(--display);font-size:17px;color:var(--soft);white-space:nowrap}
+.cell{display:inline-grid;place-items:center;min-width:58px;height:54px;border:3px solid var(--ink);border-radius:12px;background:#fff;font-family:var(--display);font-size:24px}
+table.back td.cell{display:table-cell;height:48px;border-radius:10px}
+.cell.active{background:#FFE9B0;box-shadow:0 0 0 4px var(--sun)}
+.cell.ok{background:#D7F7E7;color:#145C3B}
+.cell.rev{background:#FFE0E3;color:#A3202E}
+.wellwrap{display:flex;gap:12px;align-items:stretch}
+.well{position:relative;width:46px;min-height:220px;border:3px solid var(--ink);border-top:0;border-radius:0 0 12px 12px;background:linear-gradient(#DDF3FF,#9FB8D9)}
+.well .mark{position:absolute;left:50%;width:26px;height:26px;margin-left:-13px;margin-bottom:-2px;border-radius:50% 50% 40% 40%;background:#FF9F43;border:2px solid var(--ink);transition:bottom .5s}
+.track{display:flex;flex-wrap:wrap;gap:5px}
+.track span{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:50%;background:#fff;font-family:var(--display);font-size:17px}
+.track span.k{background:var(--sea);color:#fff}.track span.c{background:#FF7AA8;color:#fff}
+.coins{display:flex;flex-wrap:wrap;gap:6px;min-height:46px}
+.coins span{width:40px;height:40px;border-radius:50%;background:#FFC93C;border:3px solid var(--ink);box-shadow:inset 0 -4px 0 #E7A82A}
+.wl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.wlc{border:3px solid var(--ink);border-radius:14px;background:#fff;padding:6px;text-align:center;font-family:var(--display);display:flex;flex-direction:column;gap:4px;opacity:.55}
+.wlc b{font-size:22px;min-height:28px}
+.wlc .row{justify-content:center;gap:4px}.wlc button{padding:6px 10px;min-height:44px;font-size:17px}
+.wlc.active{opacity:1;background:#FFE9B0;box-shadow:0 0 0 4px var(--sun)}
+.wlc.win,.wlc.lose{opacity:1}.wlc.win b{color:#145C3B}.wlc.lose b{color:#A3202E}.wlc.rev{background:#FFE0E3}
+table.rep{font-size:14px}table.rep td{font-family:inherit}
+@media (max-width:520px){.wl{grid-template-columns:repeat(2,minmax(0,1fr))}.cell{min-width:46px}}
+
 </style>
 
 <div class="wrap" id="app"></div>
@@ -290,7 +328,7 @@ function home(){
     grid.append(b);
   });
   app.append(grid);
-  app.append(el('div',{class:'row'},el('button',{onclick:lessonPick},'← 選堂次'),el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
+  app.append(el('div',{class:'row'},el('button',{onclick:lessonPick},'← 選堂次'),el('button',{class:'ghost',onclick:report},'📋 學習紀錄'),el('button',{class:'ghost',onclick:()=>board(0)},'排行榜'),pl?el('button',{class:'ghost',onclick:card},'我的成績卡'):null));
 }
 
 /* ---------- 排行榜 ---------- */
@@ -348,7 +386,7 @@ function play(i){
   const timer=setInterval(()=>{if(CUR!==token){clearInterval(timer);return}tm.textContent='⏱ '+fmt((Date.now()-t0)/1000||0.4)},500);
   app.append(el('div',{class:'gamehead'},el('button',{class:'ghost',onclick:()=>{CUR=null;home()}},'← 地圖'),el('h2',{},'世界 '+(i+1)+'　'+w.name),tm,sc),el('div',{class:'bar'},bar),stage);
   const token={};CUR=token;
-  const ctx={stage,score:0,alive:()=>CUR===token,add(n){this.score+=n;sc.textContent=this.score+' 分'},prog(k,n){bar.style.width=(k/n*100)+'%'}};
+  const ctx={stage,score:0,wi:i,alive:()=>CUR===token,add(n){this.score+=n;sc.textContent=this.score+' 分'},prog(k,n){bar.style.width=(k/n*100)+'%'}};
   window.scrollTo(0,0);
   w.run(ctx).then(max=>{if(CUR!==token)return;clearInterval(timer);finish(i,ctx.score,max,Math.max(1,Math.round((Date.now()-t0)/1000)))});
 }
@@ -607,6 +645,325 @@ async function abWorld(ctx,cfg={}){
   return max;
 }
 
+/* ================= 思考引擎（第 2 堂起共用） =================
+   原則：先自己算 → 提示用反問、用了扣分 → 答對要選理由 → 換數字再一題 → 關鍵題說給老師聽 → 全部記錄 */
+function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1))}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function logRec(ctx,rec){const p=player();if(!p)return;p.log=p.log||[];
+  p.log.push(Object.assign({L:LESSONS[CURL].id,w:ctx.wi,at:Date.now()},rec));if(p.log.length>400)p.log.splice(0,p.log.length-400);save()}
+
+/* 數字鍵盤輸入 */
+function numBox(label,unit){
+  let v='';const disp=el('span',{class:'ansv'},'？');
+  const set=s=>{v=s;disp.textContent=v===''?'？':v};
+  const keys=[1,2,3,4,5,6,7,8,9,'⌫',0,'清除'].map(k=>el('button',{class:typeof k==='number'?'':'ghost',onclick:()=>{
+    if(k==='⌫')set(v.slice(0,-1));else if(k==='清除')set('');else if(v.length<5)set(v==='0'?String(k):v+k)}},String(k)));
+  const node=el('div',{class:'numbox'},el('div',{class:'ansrow'},el('span',{},label),disp,unit?el('span',{},unit):null),el('div',{class:'kp'},keys));
+  return{node,get:()=>v===''?null:Number(v),clear:()=>set(''),lock(){keys.forEach(b=>b.disabled=true)},unlock(){keys.forEach(b=>b.disabled=false)}};
+}
+
+/* 說給老師聽：老師按住 2 秒才通過 */
+function teacherCheck(parent,prompt){return new Promise(res=>{
+  const fill=el('i');const btn=el('button',{class:'hold'},el('span',{},'老師按住 2 秒：通過'),fill);let t=null;
+  const box=el('div',{class:'teach'},el('div',{class:'teach-h'},'🗣 說給老師聽'),el('div',{class:'q'},prompt),
+    el('div',{class:'small'},'用自己的話說清楚，說完請老師按住下面的按鈕。'),btn);
+  btn.addEventListener('pointerdown',e=>{e.preventDefault();fill.style.transition='width 2s linear';fill.style.width='100%';
+    t=setTimeout(()=>{btn.disabled=true;btn.firstChild.textContent='老師說：通過！';sfx(true);res(true)},2000)});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,()=>{if(btn.disabled)return;clearTimeout(t);fill.style.transition='none';fill.style.width='0'}));
+  parent.append(box);setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'center'}),50);
+})}
+
+/* 理由題：opts[0] 是正確的，顯示時會打亂 */
+function askReason(box,R){const o=shuffle(R.opts.map((t,i)=>({t,i})));
+  return ask(box,{tag:'你是怎麼知道的？',q:R.q||'哪一句最能說明你的想法？',opts:o.map(x=>x.t),ans:o.findIndex(x=>x.i===0),explain:R.why||''})}
+
+/* 一題完整流程。item：{tag,q,qNode,ans,unit,hints,traps,explain,sim,reason,teacher,variant}
+   主題滿分 10＝答案 6（錯一次 -2、提示一次 -1）＋理由 2＋變式題 2 */
+async function solveItem(ctx,item,main=true){
+  const S=ctx.stage;S.innerHTML='';const t0=Date.now();
+  const box=el('div',{class:'solve'});S.append(box);
+  box.append(el('div',{class:'tag'},item.tag),item.qNode?item.qNode():null,el('div',{class:'q'},item.q),
+    main?el('div',{class:'small'},'✏️ 可以用計算紙，算好再輸入。'):null);
+  const nb=numBox('你的答案',item.unit);box.append(nb.node);
+  const fb=el('div');const hintBox=el('div',{class:'hints'});
+  let tries=0,hints=0,solved=false;const maxTry=main?3:2;
+  const sub=el('button',{},'送出答案');
+  const hb=main&&item.hints&&item.hints.length?el('button',{class:'ghost'},'💡 提示（-1 分）'):null;
+  box.append(el('div',{class:'ctrl'},sub,hb),hintBox,fb);
+  if(hb)hb.onclick=()=>{if(hints>=item.hints.length)return;hintBox.append(el('div',{class:'hint'},'提示 '+(hints+1)+'：'+item.hints[hints]));hints++;if(hints>=item.hints.length)hb.disabled=true};
+  await new Promise(res=>{sub.onclick=()=>{const v=nb.get();
+    if(v==null){fb.className='fb bad';fb.textContent='先輸入你的答案。';return}
+    if(v===item.ans){solved=true;sfx(true);fb.className='fb ok';fb.textContent='答對了！'+(item.explain?' '+item.explain:'');res();return}
+    tries++;sfx(false);const trap=item.traps&&item.traps[v];
+    if(tries>=maxTry){fb.className='fb bad';fb.textContent=(trap?trap+' ':'')+'正確答案是 '+item.ans+(item.unit||'')+'。'+(item.explain?' '+item.explain:'');res();return}
+    fb.className='fb bad';fb.textContent=(trap||'不對喔，再檢查一次你的算法。')+'（還有 '+(maxTry-tries)+' 次機會）';nb.clear()}});
+  sub.disabled=true;nb.lock();if(hb)hb.disabled=true;
+  if(!ctx.alive())return 0;
+  if(!main){const p=solved?(tries===0?2:1):0;ctx.add(p);return p}
+  let pts=solved?Math.max(1,6-2*tries-hints):0;ctx.add(pts);
+  return await afterSolve(ctx,box,item,{pts,tries,hints,solved,t0});
+}
+/* 答完之後：動手驗證 → 選理由 → 說給老師聽 → 變式題 → 記錄 */
+async function afterSolve(ctx,box,item,st){
+  let pts=st.pts;
+  if(item.sim&&ctx.alive()){const sb=el('div');box.append(sb);await waitBtn(sb,'🔍 動手驗證看看');if(ctx.alive())await item.sim(sb)}
+  let rOk=null;if(item.reason&&ctx.alive()){const rb=el('div');box.append(rb);rOk=await askReason(rb,item.reason);if(rOk){pts+=2;ctx.add(2)}}
+  let tOk=null;if(item.teacher&&ctx.alive())tOk=await teacherCheck(box,item.teacher);
+  let vOk=null;
+  if(item.variant&&ctx.alive()){const nx=el('div');box.append(nx);await waitBtn(nx,'換個數字再一題 →');
+    if(ctx.alive()){const v=item.variant();v.tag='換個數字再一題（不能用提示）';const vp=await solveItem(ctx,v,false);vOk=vp===2;pts+=vp}}
+  logRec(ctx,{item:item.short||item.tag,wrong:st.tries,hints:st.hints,ok:st.solved,reason:rOk,variant:vOk,teacher:tOk,secs:Math.round((Date.now()-st.t0)/1000)});
+  return pts;
+}
+/* 依序做完一串題目 */
+async function itemsWorld(ctx,items){let max=0;
+  for(let i=0;i<items.length;i++){if(!ctx.alive())return max;max+=10;
+    await solveItem(ctx,items[i]);ctx.prog(i+1,items.length);
+    if(ctx.alive()){const nx=el('div');ctx.stage.append(nx);await waitBtn(nx,i<items.length-1?'下一題 →':'完成 →')}}
+  return max}
+
+/* 依序填格子（倒推表格、倒推機器用）。每格錯 2 次就直接填上答案 */
+function fillCells(cells,nb,btn,fb){return new Promise(res=>{let k=0,wrong=0,cw=0;
+  const act=()=>cells.forEach((c,i)=>c.el.classList.toggle('active',i===k));act();
+  const next=()=>{k++;cw=0;nb.clear();if(k>=cells.length){btn.disabled=true;act();res(wrong)}else act()};
+  btn.onclick=()=>{const v=nb.get();if(v==null)return;const c=cells[k];
+    if(v===c.ans){c.el.textContent=v;c.el.classList.add('ok');sfx(true);fb.className='small';fb.textContent=c.okMsg||'對！繼續往下一格。';next()}
+    else{wrong++;cw++;sfx(false);
+      if(cw>=2){c.el.textContent=c.ans;c.el.classList.add('rev');fb.className='fb bad';fb.textContent=(c.msg||'')+' 這格是 '+c.ans+'，看懂了再繼續。';next()}
+      else{fb.className='fb bad';fb.textContent=c.msg||'再想想看。';nb.clear()}}};
+})}
+
+/* ============ 第 2 堂：順著推 ============ */
+/* 數列偵探 */
+const SEQGEN={
+  add(){const a=rnd(2,9),d=rnd(3,12);const s=[0,1,2,3,4].map(i=>a+d*i);
+    return{s,ans:a+d*5,ok:'每次都加 '+d,bad:['每次都乘 2','每次加的數越來越大'],traps:{}}},
+  alt(){const a=rnd(5,9),b=rnd(2,a-2),x=rnd(3,15);const s=[x];for(let i=1;i<7;i++)s.push(s[i-1]+(i%2?a:-b));
+    return{s:s.slice(0,6),ans:s[6],ok:'輪流「加 '+a+'」和「減 '+b+'」',bad:['每次都加 '+(a-b),'每次都加 '+a],traps:{[s[5]+a-b]:'看清楚：是一加一減輪流，不是每次加一樣多。'}}},
+  mul(){const r=pick([2,3]),a=rnd(2,5);const s=[0,1,2,3].map(i=>a*r**i);
+    return{s,ans:a*r**4,ok:'每次都乘 '+r,bad:['每次都加 '+(s[1]-s[0]),'每次都加 '+r],traps:{[s[3]+(s[3]-s[2])]:'相差的數不一樣喔，試試看是不是「乘」。'}}},
+  grow(){const a=rnd(1,9),d=rnd(1,3);const s=[a];for(let i=1;i<6;i++)s.push(s[i-1]+d+i-1);const last=s[4]-s[3];
+    return{s:s.slice(0,5),ans:s[5],ok:'相差的數每次多 1（差是 '+d+'、'+(d+1)+'、'+(d+2)+'…）',bad:['每次都加 '+d,'每次都乘 2'],traps:{[s[4]+last]:'相差的數有沒有每次變大？'}}},
+  fib(){const a=rnd(1,4),b=rnd(a+1,a+4);const s=[a,b];for(let i=2;i<7;i++)s.push(s[i-1]+s[i-2]);
+    return{s:s.slice(0,6),ans:s[6],ok:'每個數都是「前兩個數相加」',bad:['每次都乘 2','相差的數每次多 1'],traps:{[s[5]*2]:'不是乘 2 喔，看看前兩個數加起來是多少。'}}}
+};
+function seqItem(type,teacher){const g=SEQGEN[type]();
+  return{tag:'數列偵探',short:'數列：'+g.ok,q:'找出規律，□ 裡應該填多少？\n'+g.s.join('、')+'、□',ans:g.ans,traps:g.traps,
+    hints:['把相鄰兩個數相減，把差寫在兩數中間。','差有規律嗎？如果看不出來，試試看是不是「乘」，或是「前兩個數相加」。'],
+    explain:'規律是：'+g.ok+'。',reason:{opts:[g.ok,...g.bad],why:'規律是：'+g.ok+'。'},
+    teacher:teacher?'把你找到的規律說給老師聽：前一個數是怎麼變成下一個數的？':null,variant:()=>seqItem(type,false)}}
+function dotsSVG(n,hl){const r=9,gap=22,W=n*gap+10,H=n*gap+6;let s='';
+  for(let row=1;row<=n;row++)for(let i=0;i<row;i++){const x=W/2+(i-(row-1)/2)*gap,y=row*gap-6;s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+(hl&&row===n?'#FF7AA8':'#FFC93C')+'" stroke="#2B2350" stroke-width="2"/>'}
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="'+Math.min(W,240)+'">'+s+'</svg>'}
+function triItem(teacher){const n=rnd(6,9);const ans=n*(n+1)/2;
+  return{tag:'花片三角形',short:'三角形花片（底層 '+n+' 個）',
+    qNode:()=>el('div',{class:'dots'},[2,3,4].map(k=>el('div',{},el('div',{html:dotsSVG(k)}),el('div',{class:'small'},'底層 '+k+' 個，共 '+(k*(k+1)/2)+' 個')))),
+    q:'花片排成三角形。照這個規律，底層有 '+n+' 個時，總共有幾個花片？',unit:'個',ans,
+    traps:{[n*n]:'那是排成正方形的數法喔。',[n*(n+1)]:'你是不是多算了一倍？',[n*3]:'每一層的個數不一樣多喔。'},
+    hints:['底層 2 個時共 3 個，底層 3 個時共 6 個。多一層，多了幾個？','每多一層，就多加「這一層的個數」。1＋2＋3＋…一直加到 '+n+'。'],
+    explain:'1＋2＋…＋'+n+'＝'+ans+'。',
+    sim:box=>new Promise(r=>{let k=1;const pic=el('div',{class:'dots'});const t=el('div',{class:'small'});
+      const show=()=>{pic.innerHTML=dotsSVG(k,true);t.textContent='底層 '+k+' 個：總共 '+(k*(k+1)/2)+' 個（這一層加了 '+k+' 個）'};show();
+      const b=el('button',{onclick:()=>{if(k<n){k++;show()}if(k>=n){b.disabled=true;r()}}},'再加一層 →');box.append(pic,t,b)}),
+    reason:{opts:['每多一層，就多加「這一層的個數」：1＋2＋3＋…','每多一層，就多加固定 3 個','底層個數乘以 2 就是總數'],why:'多一層就多加那一層的個數。'},
+    teacher:teacher?'說給老師聽：底層多 1 個的時候，總數會多幾個？為什麼？':null,variant:()=>triItem(false)}}
+async function seqWorld(ctx){const types=shuffle(['alt','mul','grow','fib']).slice(0,3);
+  const items=[seqItem(types[0],false),seqItem(types[1],true),triItem(false),seqItem(types[2],false)];
+  return itemsWorld(ctx,items)}
+
+/* 空瓶換飲料 */
+function bottleCalc(B,k){let drink=B,empty=B;const rows=[];while(empty>=k){const n=Math.floor(empty/k);drink+=n;empty=empty%k+n;rows.push([n,empty,drink])}return{drink,rows}}
+function bottleItem(teacher){let k,p,B,c;do{k=pick([2,3]);p=pick([1,2,5]);B=rnd(k===2?6:8,k===2?13:20);c=bottleCalc(B,k)}while(c.rows.length<2);
+  const M=B*p,one=B+Math.floor(B/k);const traps={};if(one!==c.drink)traps[one]='換來的飲料喝完，又變成空瓶，還可以再換喔！';if(B!==c.drink)traps[B]='別忘了空瓶可以換飲料。';
+  return{tag:'空瓶換飲料',short:'空瓶換飲料（'+M+'元、'+k+'瓶換1）',
+    q:'福利社一瓶飲料 '+p+' 元，'+k+' 個空瓶可以再換 1 瓶飲料（不能跟老闆借瓶子）。小安有 '+M+' 元，最多可以喝幾瓶？',unit:'瓶',ans:c.drink,traps,
+    hints:['先算：一開始用錢可以買幾瓶？喝完有幾個空瓶？','每換一次，手上的空瓶＝「沒換掉的」＋「新喝完的」。用表格一輪一輪記下來。'],
+    explain:'一開始買 '+B+' 瓶，再一輪一輪換，總共 '+c.drink+' 瓶。',
+    sim:box=>new Promise(r=>{const tb=el('table',{class:'ct'});tb.append(el('tr',{},['','換到','喝完後手上空瓶','總共喝了'].map(h=>el('th',{},h))));
+      tb.append(el('tr',{},el('td',{},'用錢買'),el('td',{},B+' 瓶'),el('td',{},B+' 個'),el('td',{},B+' 瓶')));let i=0;
+      const b=el('button',{onclick:()=>{const[n,e,d]=c.rows[i];tb.append(el('tr',{},el('td',{},'第 '+(i+1)+' 次換'),el('td',{class:'t'},n+' 瓶'),el('td',{},e+' 個'),el('td',{},d+' 瓶')));i++;
+        if(i>=c.rows.length){b.disabled=true;box.append(el('div',{class:'small'},'剩 '+c.rows[i-1][1]+' 個空瓶，不夠 '+k+' 個，換不了了。'));r()}}},'換一次 →');
+      box.append(el('div',{style:'overflow-x:auto'},tb),b)}),
+    reason:{opts:['一直把空瓶拿去換，換來的喝完又是空瓶，直到空瓶不夠換','用錢買的瓶數，加上空瓶換一次就好','空瓶數除以 '+k+' 就是答案'],why:'換來的飲料喝完也是空瓶，要一直換到不夠換為止。'},
+    teacher:teacher?'說給老師聽：為什麼要換好幾次？最後剩下的空瓶為什麼不能再換？':null,variant:()=>bottleItem(false)}}
+async function bottleWorld(ctx){return itemsWorld(ctx,[bottleItem(true),bottleItem(false),bottleItem(false)])}
+
+/* 蝸牛爬井 */
+const CLIMBERS=[{n:'蝸牛',w:'井',top:'井口'},{n:'青蛙',w:'深坑',top:'坑口'},{n:'小松鼠',w:'光滑的竹竿',top:'竿頂'}];
+function climbDays(D,u,d){return D<=u?1:Math.ceil((D-u)/(u-d))+1}
+function snailItem(teacher){let D,u,d,a;do{u=rnd(3,7);d=rnd(1,u-1);D=(u-d)*rnd(4,9);a=climbDays(D,u,d)}while(a<3||D/(u-d)===a||D>40);
+  const C=pick(CLIMBERS);const traps={[D/(u-d)]:'你是不是用「全長 ÷ 每天淨爬的公尺」？最後一天白天爬到頂就出去了，不會再滑下來喔！'};
+  if(!traps[a+1])traps[a+1]='再算一次，最後那天白天就已經到了。';
+  return{tag:'爬出去要幾天',short:C.n+'爬'+D+'公尺（上'+u+'下'+d+'）',
+    q:C.n+'在一個 '+D+' 公尺的'+C.w+'底部。牠每天白天往上爬 '+u+' 公尺，晚上睡覺時會滑下 '+d+' 公尺。請問牠在第幾天可以到達'+C.top+'？',unit:'天',ans:a,traps,
+    hints:['每天「白天＋晚上」合起來，實際往上多少公尺？','最後一天白天要從多高的地方出發，才能一口氣到'+C.top+'？在那之前要花幾天？'],
+    explain:'前 '+(a-1)+' 天每天淨爬 '+(u-d)+' 公尺，到 '+((a-1)*(u-d))+' 公尺；第 '+a+' 天白天再爬 '+u+' 公尺就到了。',
+    sim:box=>new Promise(r=>{let day=0,h=0;const tb=el('table',{class:'ct'});tb.append(el('tr',{},['天','白天爬到','晚上滑到'].map(x=>el('th',{},x))));
+      const well=el('div',{class:'well'},el('div',{class:'mark'}));const mk=well.firstChild;const put=x=>mk.style.bottom=(x/D*100)+'%';put(0);
+      const b=el('button',{onclick:()=>{day++;const top=h+u;if(top>=D){tb.append(el('tr',{class:'good'},el('td',{},'第 '+day+' 天'),el('td',{class:'t'},D+' 公尺，到了！'),el('td',{},'—')));put(D);b.disabled=true;r();return}
+        h=top-d;tb.append(el('tr',{},el('td',{},'第 '+day+' 天'),el('td',{},top+' 公尺'),el('td',{},h+' 公尺')));put(h)}},'過一天 →');
+      box.append(el('div',{class:'wellwrap'},well,el('div',{style:'overflow-x:auto;flex:1'},tb)),b)}),
+    reason:{opts:['最後一天白天就到頂了，不會再滑下來，所以最後一天要分開算','全長除以每天淨爬的公尺數就是答案','全長除以白天爬的公尺數就是答案'],why:'最後一天白天就到了，不會再滑下來。'},
+    teacher:teacher?'說給老師聽：為什麼不能直接用「全長 ÷ 每天淨爬的公尺數」？':null,variant:()=>snailItem(false)}}
+async function snailWorld(ctx){return itemsWorld(ctx,[snailItem(true),snailItem(false),snailItem(false)])}
+
+/* 搶數字對決（收尾） */
+function grabGame(ctx,G,label){return new Promise(res=>{const S=ctx.stage;S.innerHTML='';let cur=0,over=false;
+  S.append(el('div',{class:'tag'},label),el('div',{class:'q'},'輪流從 1 開始往下報數，每次可以報 1～'+G.m+' 個數。誰說到「'+G.N+'」誰就贏！你先開始。'));
+  const track=el('div',{class:'track'});const chips=[];for(let i=1;i<=G.N;i++){const c=el('span',{},String(i));chips.push(c);track.append(c)}
+  const msg=el('div',{class:'small'},'輪到你了。');const btns=el('div',{class:'ctrl'});
+  const say=(n,who)=>{for(let i=0;i<n;i++){cur++;chips[cur-1].className=who}};
+  const end=win=>{over=true;btns.querySelectorAll('button').forEach(b=>b.disabled=true);sfx(win);msg.className=win?'fb ok':'fb bad';
+    msg.textContent=win?'你說到 '+G.N+'，你贏了！':'電腦說到 '+G.N+'，電腦贏了。想想看：要搶到哪些數字才會贏？倒著想想看！';setTimeout(()=>res(win),300)};
+  const comp=()=>{const left=G.N-cur;let n=left%(G.m+1);if(n===0)n=rnd(1,Math.min(G.m,left));say(n,'c');
+    msg.textContent='電腦報了 '+n+' 個數，說到 '+cur+'。輪到你。';if(cur>=G.N)return end(false);draw()};
+  const draw=()=>{btns.innerHTML='';for(let n=1;n<=G.m;n++)if(cur+n<=G.N)btns.append(el('button',{onclick:()=>{if(over)return;say(n,'k');
+    if(cur>=G.N)return end(true);msg.textContent='你說到 '+cur+'，電腦想一下…';btns.querySelectorAll('button').forEach(b=>b.disabled=true);setTimeout(comp,700)}},'報 '+n+' 個'))};
+  draw();S.append(track,btns,msg);
+})}
+async function grabWorld(ctx){const mk=()=>{const m=pick([2,3]);let N;do{N=rnd(14,24)}while(N%(m+1)===0);return{m,N}};
+  const G=mk();const t0=Date.now();let won=false,g=0;
+  while(g<3&&!won&&ctx.alive()){g++;won=await grabGame(ctx,G,'第 '+g+' 局（最多 3 局）');if(!won&&g<3&&ctx.alive()){const nx=el('div');ctx.stage.append(nx);await waitBtn(nx,'再來一局 →')}}
+  if(!ctx.alive())return 20;const gp=won?[10,7,4][g-1]:0;ctx.add(gp);ctx.prog(1,3);
+  const box=el('div');ctx.stage.append(box);
+  const keys=[];for(let x=G.N;x>0;x-=G.m+1)keys.unshift(x);const k1=keys.map(x=>x-1).filter(x=>x>0),k2=[];for(let x=G.m+1;x<=G.N;x+=G.m+1)k2.push(x);
+  const rOk=await askReason(box,{q:'要一定贏，你要搶到哪些數字？',opts:[keys.join('、'),k2.join('、'),k1.join('、')],why:'從 '+G.N+' 倒著想：每次一來一回剛好 '+(G.m+1)+' 個數，所以要搶 '+keys.join('、')+'。'});
+  if(rOk)ctx.add(5);ctx.prog(2,3);
+  const tOk=await teacherCheck(box,'說給老師聽：你的必勝法是什麼？為什麼要從 '+G.N+' 倒著想？');
+  const nx=el('div');box.append(nx);await waitBtn(nx,'換個數字，用必勝法再贏一次 →');
+  let vOk=false;if(ctx.alive()){vOk=await grabGame(ctx,mk(),'驗收局：一次定勝負');if(vOk)ctx.add(5)}
+  ctx.prog(3,3);logRec(ctx,{item:'搶 '+G.N+'（每次 1～'+G.m+' 個）',wrong:won?g-1:3,hints:0,ok:won,reason:rOk,variant:vOk,teacher:tOk,secs:Math.round((Date.now()-t0)/1000)});
+  if(ctx.alive()){const d=el('div');ctx.stage.append(d);await waitBtn(d,'完成 →')}
+  return 20}
+
+/* ============ 第 3 堂：倒著推 ============ */
+const OPS={'+':[(x,a)=>x+a,(y,a)=>y-a,'減'],'−':[(x,a)=>x-a,(y,a)=>y+a,'加'],'×':[(x,a)=>x*a,(y,a)=>y/a,'除以'],'÷':[(x,a)=>x/a,(y,a)=>y*a,'乘以']};
+function genChain(){for(;;){const x=rnd(2,12);const ops=[];let v=x,ok=true;const vals=[x];
+  for(let i=0;i<3;i++){const t=pick(['+','−','×','÷']);const a=t==='×'?pick([2,3]):t==='÷'?2:rnd(2,9);const nv=OPS[t][0](v,a);
+    if(nv<=0||nv!==Math.floor(nv)||nv>99){ok=false;break}ops.push([t,a]);v=nv;vals.push(v)}
+  if(ok&&new Set(ops.map(o=>o[0])).size>=2)return{x,ops,vals}}}
+function chainText(c){return c.ops.map(([t,a])=>({'+':'加 ','−':'減 ','×':'乘以 ','÷':'除以 '}[t])+a).join('，再')}
+async function chainItem(ctx,teacher){const c=genChain();const S=ctx.stage;S.innerHTML='';const t0=Date.now();
+  const box=el('div',{class:'solve'});S.append(box);
+  box.append(el('div',{class:'tag'},'倒推機器'),el('div',{class:'q'},'魔法機器把一個數字'+chainText(c)+'，最後變成 '+c.vals[3]+'。\n從右邊開始，一格一格倒推回去，找出原來的數字。'));
+  const row=el('div',{class:'chain'});const boxes=[];
+  c.vals.forEach((v,i)=>{const b=el('span',{class:'cell'},i===3?String(v):'');boxes.push(b);row.append(b);if(i<3)row.append(el('span',{class:'op'},'→ '+c.ops[i][0]+c.ops[i][1]+' →'))});
+  box.append(el('div',{style:'overflow-x:auto'},row));
+  const nb=numBox('填入這一格');const fb=el('div',{class:'small'},'先算黃色那一格。');const btn=el('button',{},'填入');
+  const hintBox=el('div',{class:'hints'});let hints=0;const H=['從最後的 '+c.vals[3]+' 開始，一步一步往回走。','每一步都做「相反」的計算：加↔減、乘↔除。'];
+  const hb=el('button',{class:'ghost',onclick:()=>{if(hints<H.length){hintBox.append(el('div',{class:'hint'},'提示 '+(hints+1)+'：'+H[hints]));hints++}if(hints>=H.length)hb.disabled=true}},'💡 提示（-1 分）');
+  box.append(nb.node,el('div',{class:'ctrl'},btn,hb),hintBox,fb);
+  const cells=[2,1,0].map(i=>{const[t,a]=c.ops[i];return{el:boxes[i],ans:c.vals[i],msg:'「'+t+a+'」倒回去要做相反的計算：'+OPS[t][2]+' '+a+'。'}});
+  const wrong=await fillCells(cells,nb,btn,fb);nb.lock();hb.disabled=true;if(!ctx.alive())return 0;
+  const pts=Math.max(1,6-2*wrong-hints);ctx.add(pts);fb.className='fb ok';fb.textContent='原來的數字是 '+c.x+'。順著算一次：'+c.vals.join(' → ')+'，對了！';
+  const item={short:'倒推機器（答案 '+c.x+'）',
+    reason:{opts:['從最後的結果開始，每一步做相反的計算，一步一步倒回去','從第一步開始照著題目算','把題目裡所有數字加起來再算'],why:'倒推要從最後開始，做相反的計算。'},
+    teacher:teacher?'說給老師聽：為什麼「乘以 2」倒回去要「除以 2」？順序為什麼要從最後一步開始？':null,
+    variant:()=>{const v=genChain();return{q:'一個數'+chainText(v)+'，結果是 '+v.vals[3]+'。原來的數是多少？',ans:v.x}}};
+  return afterSolve(ctx,box,item,{pts,tries:wrong,hints,solved:true,t0});
+}
+async function chainWorld(ctx){let max=0;for(let i=0;i<3;i++){if(!ctx.alive())return max;max+=10;await chainItem(ctx,i===1);ctx.prog(i+1,3);
+  if(ctx.alive()){const nx=el('div');ctx.stage.append(nx);await waitBtn(nx,i<2?'下一題 →':'完成 →')}}return max}
+
+/* 移來移去：倒推表格 */
+const MOVESETS=[{who:['第一棵樹','第二棵樹','第三棵樹'],thing:'鳥',u:'隻',verb:'飛到'},{who:['紅盒','藍盒','綠盒'],thing:'彈珠',u:'顆',verb:'放到'},{who:['小安','小布','小可'],thing:'貼紙',u:'張',verb:'送給'}];
+function genMoves(){for(;;){const e=rnd(6,14),n=pick([2,3]);const moves=[];for(let i=0;i<n;i++){const f=rnd(0,2);let t=rnd(0,2);if(t===f)t=(t+1)%3;moves.push([f,t,rnd(2,6)])}
+  const st=[[e,e,e]];for(let i=n-1;i>=0;i--){const s=st[0].slice();const[f,t,k]=moves[i];s[f]+=k;s[t]-=k;st.unshift(s)}
+  if(st.every(s=>s.every(v=>v>0)))return{e,moves,st}}}
+async function moveItem(ctx,teacher){const g=genMoves(),M=pick(MOVESETS);const S=ctx.stage;S.innerHTML='';const t0=Date.now();
+  const total=g.e*3;const mv=g.moves.map(([f,t,k],i)=>'('+(i+1)+') '+M.who[f]+'的 '+k+' '+M.u+M.thing+M.verb+M.who[t]);
+  const box=el('div',{class:'solve'});S.append(box);
+  box.append(el('div',{class:'tag'},'移來移去'),el('div',{class:'q'},M.who.join('、')+'一共有 '+total+' '+M.u+M.thing+'。依序發生了：\n'+mv.join('\n')+'\n結果三個一樣多。一開始各有幾'+M.u+'？\n從表格最下面開始，一列一列往上倒推。'));
+  const tb=el('table',{class:'ct back'});tb.append(el('tr',{},el('th',{},''),M.who.map(w=>el('th',{},w))));
+  const rows=g.st.map((s,i)=>{const lab=i===0?'一開始':i===g.st.length-1?'最後':'第 '+i+' 次之後';const tds=s.map(v=>el('td',{class:'cell'},i===g.st.length-1?String(v):''));tb.append(el('tr',{},el('th',{},lab),tds));return tds});
+  box.append(el('div',{style:'overflow-x:auto'},tb));
+  const nb=numBox('填入這一格',M.u);const fb=el('div',{class:'small'},'先填黃色那一格。');const btn=el('button',{},'填入');
+  const hintBox=el('div',{class:'hints'});let hints=0;const H=['最後三個一樣多，總共 '+total+'，每個是多少？','把最後一次移動「倒回去」：送出去的要拿回來，收到的要還回去。'];
+  const hb=el('button',{class:'ghost',onclick:()=>{if(hints<H.length){hintBox.append(el('div',{class:'hint'},'提示 '+(hints+1)+'：'+H[hints]));hints++}if(hints>=H.length)hb.disabled=true}},'💡 提示（-1 分）');
+  box.append(nb.node,el('div',{class:'ctrl'},btn,hb),hintBox,fb);
+  const cells=[];for(let i=g.st.length-2;i>=0;i--){const[f,t,k]=g.moves[i];for(let j=0;j<3;j++)cells.push({el:rows[i][j],ans:g.st[i][j],
+    msg:j===f?'第 '+(i+1)+' 次是'+M.who[f]+'送出 '+k+M.u+'，倒回去要加回 '+k+'。':j===t?'第 '+(i+1)+' 次是'+M.who[t]+'收到 '+k+M.u+'，倒回去要減掉 '+k+'。':'第 '+(i+1)+' 次'+M.who[j]+'沒有變，數量一樣。'})}
+  const wrong=await fillCells(cells,nb,btn,fb);nb.lock();hb.disabled=true;if(!ctx.alive())return 0;
+  const pts=Math.max(1,6-Math.min(5,wrong)-hints);ctx.add(pts);fb.className='fb ok';fb.textContent='一開始是 '+g.st[0].join('、')+'，加起來還是 '+total+'，對了！';
+  const item={short:'移來移去（'+M.thing+'）',
+    reason:{opts:['從最後一樣多的數量開始，把每一次移動倒回去','把總數平分，就是一開始的數量','照題目的順序，先移動再平分'],why:'從最後的結果開始，把每次移動倒回去。'},
+    teacher:teacher?'說給老師聽：為什麼要從最後一列開始填？送出去的'+M.thing+'倒回去要怎麼算？':null,
+    variant:()=>{const v=genMoves(),W=pick(MOVESETS);const q=pick([0,1,2]);return{q:W.who.join('、')+'一共有 '+v.e*3+' '+W.u+W.thing+'。'+v.moves.map(([f,t,k])=>W.who[f]+'的 '+k+' '+W.u+W.verb+W.who[t]).join('；接著')+'。結果三個一樣多。'+W.who[q]+'一開始有幾'+W.u+'？',ans:v.st[0][q],unit:W.u}}};
+  return afterSolve(ctx,box,item,{pts,tries:wrong,hints,solved:true,t0});
+}
+async function moveWorld(ctx){let max=0;for(let i=0;i<2;i++){if(!ctx.alive())return max;max+=10;await moveItem(ctx,i===0);ctx.prog(i+1,2);
+  if(ctx.alive()){const nx=el('div');ctx.stage.append(nx);await waitBtn(nx,i<1?'下一題 →':'完成 →')}}return max}
+
+/* 逛夜市：花掉一半再多幾元 */
+function spendItem(teacher){const r=pick([2,3]),inc=Math.random()<.5;const a0=rnd(1,3);const as=[...Array(r)].map((_,i)=>inc?i+1:a0);const f=rnd(1,6);
+  let x=f;for(let i=r-1;i>=0;i--)x=(x+as[i])*2;let t2=f;for(let i=r-1;i>=0;i--)t2=t2*2+as[i];
+  const traps={[f*2**r]:'別忘了每一攤還多花了幾元！倒回去時要先把多花的加回來，再乘 2。'};if(t2!==x)traps[t2]='順序反了：要先把多花的錢加回來，再乘 2。';
+  const rule=inc?'第 1 攤花掉身上錢的一半再多 1 元，第 2 攤花掉剩下的一半再多 2 元'+(r===3?'，第 3 攤花掉剩下的一半再多 3 元':''):'每到一攤，就花掉身上錢的一半再多 '+a0+' 元';
+  return{tag:'逛夜市',short:'逛夜市（'+r+'攤，剩'+f+'元）',q:'小可逛夜市，'+rule+'。逛完 '+r+' 攤後，身上剩 '+f+' 元。小可原本有多少元？',unit:'元',ans:x,traps,
+    hints:['最後剩 '+f+' 元。在最後一攤「多花 '+as[r-1]+' 元」之前，身上有多少？','那是花掉一半之後剩下的，所以花之前是它的 2 倍。再一攤一攤往回推。'],
+    explain:'倒推：'+(()=>{let y=f;const s=[f+' 元'];for(let i=r-1;i>=0;i--){y=(y+as[i])*2;s.push('（＋'+as[i]+'）×2＝'+y)}return s.join(' → ')})()+'。',
+    sim:box=>new Promise(res=>{const tb=el('table',{class:'ct'});tb.append(el('tr',{},['','花之前','花掉','剩下'].map(h=>el('th',{},h))));let y=x,i=0;
+      const b=el('button',{onclick:()=>{const sp=y/2+as[i];const left=y-sp;tb.append(el('tr',{class:i===r-1?'good':''},el('td',{},'第 '+(i+1)+' 攤'),el('td',{},y+' 元'),el('td',{},y/2+'＋'+as[i]+'＝'+sp+' 元'),el('td',{class:'t'},left+' 元')));y=left;i++;
+        if(i>=r){b.disabled=true;box.append(el('div',{class:'small'},'順著算回來，剛好剩 '+f+' 元！'));res()}}},'用答案順著算一攤 →');
+      box.append(el('div',{style:'overflow-x:auto'},tb),b)}),
+    reason:{opts:['從最後剩下的錢倒回去：先加回多花的錢，再乘 2','從一開始隨便猜，猜到對為止','把剩下的錢一直乘 2 就好'],why:'倒推要從最後開始：先加回多花的，再乘 2。'},
+    teacher:teacher?'說給老師聽：倒回去的時候，為什麼要「先加、再乘 2」，順序不能反過來？':null,variant:()=>spendItem(false)}}
+async function spendWorld(ctx){return itemsWorld(ctx,[spendItem(true),spendItem(false),spendItem(false)])}
+
+/* 拿硬幣：先填倒推表，再對戰（收尾） */
+function coinWin(n,S){const W=[false,false];for(let k=2;k<=n;k++)W[k]=S.some(s=>s<k&&!W[k-s]);return W}
+async function coinWorld(ctx){const S=pick([[1,2],[1,2,3],[1,2,4]]);const W=coinWin(20,S);const st=ctx.stage;const t0=Date.now();
+  const rule='桌上有一堆硬幣，兩人輪流拿，每次可以拿 '+S.join('、')+' 個。拿到最後一個硬幣的人「輸」。';
+  st.innerHTML='';const box=el('div',{class:'solve'});st.append(box);
+  box.append(el('div',{class:'tag'},'第一步：倒推表'),el('div',{class:'q'},rule+'\n輪到你的時候，桌上剩下幾個，你會贏還是輸？從 1 個開始，一格一格往上推。'));
+  const grid=el('div',{class:'wl'});const cells=[];const fb=el('div',{class:'small'},'剩 1 個的時候，你只能拿走它……');
+  for(let n=1;n<=8;n++){const res=el('b',{},'');const yes=el('button',{},'贏'),no=el('button',{class:'ghost'},'輸');const c=el('div',{class:'wlc'},el('div',{},'剩 '+n+' 個'),res,el('div',{class:'row'},yes,no));cells.push({c,res,yes,no,n});grid.append(c)}
+  box.append(grid,fb);
+  let wrong=0;
+  for(const c of cells){if(!ctx.alive())return 20;c.c.classList.add('active');
+    let cw=0;await new Promise(done=>{const h=g=>{if(g===W[c.n]){c.res.textContent=W[c.n]?'贏':'輸';c.c.classList.remove('active');c.c.classList.add(W[c.n]?'win':'lose');sfx(true);
+        const mv=S.filter(s=>s<c.n&&!W[c.n-s]);fb.className='small';fb.textContent=W[c.n]?'對！拿 '+mv[0]+' 個，讓對方剩 '+(c.n-mv[0])+' 個（輸的位置）。':'對！不管拿幾個，對方都會到「贏」的位置，或你拿到最後一個。';done()}
+      else{wrong++;cw++;sfx(false);fb.className='fb bad';
+        fb.textContent=W[c.n]?'再看看：你能不能拿幾個，讓對方剛好剩下「輸」的數量？':'再看看：你拿 '+S.filter(s=>s<=c.n).join('、')+' 個以後，對方剩下的都是「贏」的位置（或你拿到最後一個）。';
+        if(cw>=2){c.res.textContent=W[c.n]?'贏':'輸';c.c.classList.remove('active');c.c.classList.add('rev',W[c.n]?'win':'lose');done()}}};
+      c.yes.onclick=()=>h(true);c.no.onclick=()=>h(false)});c.yes.disabled=c.no.disabled=true}
+  const tp=Math.max(2,10-2*wrong);ctx.add(tp);ctx.prog(1,3);
+  const L=[];for(let n=1;n<=20;n++)if(!W[n])L.push(n);
+  fb.className='fb ok';fb.textContent='「輸」的數量是 '+L.slice(0,4).join('、')+'…，每隔 '+(L[1]-L[0])+' 個出現一次。對戰時，就要讓對方剛好剩這些數量！';
+  const nx=el('div');box.append(nx);await waitBtn(nx,'第二步：跟電腦對戰 →');
+  const play=(N,label)=>new Promise(res=>{st.innerHTML='';let left=N,over=false;const kidFirst=W[N];
+    st.append(el('div',{class:'tag'},label),el('div',{class:'q'},rule+'\n現在有 '+N+' 個硬幣，'+(kidFirst?'你先拿。':'電腦先拿。')));
+    const pile=el('div',{class:'coins'});const msg=el('div',{class:'small'});const btns=el('div',{class:'ctrl'});
+    const drawPile=()=>{pile.innerHTML='';for(let i=0;i<left;i++)pile.append(el('span',{}));msg.textContent=msg.textContent};
+    const end=win=>{over=true;btns.innerHTML='';sfx(win);msg.className=win?'fb ok':'fb bad';msg.textContent=win?'電腦拿到最後一個硬幣，你贏了！':'你拿到最後一個硬幣，輸了。看看倒推表，你要讓電腦剩下幾個？';setTimeout(()=>res(win),300)};
+    const comp=()=>{let mv=S.filter(s=>s<left&&!W[left-s]);let n=mv.length?mv[0]:Math.min(left,pick(S.filter(s=>s<left).length?S.filter(s=>s<left):[1]));
+      if(left===1)n=1;left-=n;drawPile();if(left===0)return end(true);msg.className='small';msg.textContent='電腦拿了 '+n+' 個，剩 '+left+' 個。輪到你。';drawBtns()};
+    const drawBtns=()=>{btns.innerHTML='';S.forEach(n=>{if(n<=left)btns.append(el('button',{onclick:()=>{if(over)return;left-=n;drawPile();if(left===0)return end(false);
+      msg.className='small';msg.textContent='你拿了 '+n+' 個，剩 '+left+' 個。電腦想一下…';btns.innerHTML='';setTimeout(comp,700)}},'拿 '+n+' 個'))})};
+    st.append(pile,btns,msg);drawPile();if(kidFirst){msg.textContent='輪到你。';drawBtns()}else{msg.textContent='電腦先拿…';setTimeout(comp,700)}});
+  const mkN=()=>rnd(11,17);let won=false,g=0;
+  while(g<3&&!won&&ctx.alive()){g++;won=await play(mkN(),'第 '+g+' 局（最多 3 局）');if(!won&&g<3&&ctx.alive()){const nx=el('div');st.append(nx);await waitBtn(nx,'再來一局 →')}}
+  if(!ctx.alive())return 20;if(won)ctx.add([10,7,4][g-1]);ctx.prog(2,3);
+  const b2=el('div');st.append(b2);const tOk=await teacherCheck(b2,'說給老師聽：你是怎麼用倒推表，決定每次要拿幾個的？');ctx.prog(3,3);
+  logRec(ctx,{item:'拿硬幣（每次 '+S.join('、')+' 個）',wrong,hints:0,ok:won,reason:null,variant:null,teacher:tOk,secs:Math.round((Date.now()-t0)/1000)});
+  const d=el('div');st.append(d);await waitBtn(d,'完成 →');
+  return 20}
+
+/* ============ 學習紀錄（給老師看） ============ */
+function report(){const p=player();app.innerHTML='';app.append(header());const L=LESSONS[CURL];
+  const recs=(p&&p.log||[]).filter(r=>r.L===L.id);
+  const panel=el('div',{class:'panel'},el('h2',{},'📋 '+(DB.current||'')+' 的學習紀錄・'+L.title+' '+L.theme));
+  if(!recs.length)panel.append(el('p',{},'這一堂還沒有紀錄。玩過第 2 堂以後的題目才會記錄。'));
+  else{const yn=v=>v===true?'✓':v===false?'✗':'—';
+    const weak=recs.filter(r=>!r.ok||r.wrong>=2||r.reason===false||r.variant===false);
+    panel.append(el('div',{class:'small'},'共 '+recs.length+' 題，用了 '+recs.reduce((a,r)=>a+(r.hints||0),0)+' 次提示。'+(weak.length?'需要再加強：'+[...new Set(weak.map(r=>r.item))].slice(0,5).join('、'):'都很穩！')));
+    const tb=el('table',{class:'ct rep'});tb.append(el('tr',{},['時間','世界','題目','錯','提示','理由','變式','老師','秒'].map(h=>el('th',{},h))));
+    recs.slice().reverse().forEach(r=>{const d=new Date(r.at);tb.append(el('tr',{},el('td',{},(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')),
+      el('td',{},L.worlds[r.w]?L.worlds[r.w].name:''),el('td',{},r.item),el('td',{class:r.wrong>=2?'f':''},String(r.wrong)),el('td',{},String(r.hints||0)),
+      el('td',{class:r.reason===false?'f':''},yn(r.reason)),el('td',{class:r.variant===false?'f':''},yn(r.variant)),el('td',{},yn(r.teacher)),el('td',{},String(r.secs||''))))});
+    panel.append(el('div',{style:'overflow-x:auto'},tb))}
+  panel.append(el('div',{class:'row'},el('button',{onclick:home},'← 回地圖')));app.append(panel);window.scrollTo(0,0)}
+
 /* ================= 堂次設定：新的一堂就在 LESSONS 加一筆 ================= */
 const WT={
  sudoku:{name:'數獨工坊',sub:'數獨三題，從暖身到挑戰，每排每區數字不重複',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M32 8V56" stroke="#1B2140" stroke-width="3"/><text x="16" y="21" font-size="12" text-anchor="middle" fill="#6A4BC4">3</text><text x="48" y="37" font-size="12" text-anchor="middle" fill="#6A4BC4">5</text><text x="32" y="53" font-size="12" text-anchor="middle" fill="#1B2140">?</text>',run:sudokuWorld},
@@ -614,10 +971,31 @@ const WT={
  grid:{name:'推理表格',sub:'讀線索、打 ✗ 和 ✓，找出每個人的正確配對',ico:'<rect x="8" y="8" width="48" height="48" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M8 24H56M8 40H56M24 8V56M40 8V56" stroke="#1B2140" stroke-width="1.5"/><path d="M11 16 l4 4 l7 -8" stroke="#2F9E5F" stroke-width="3" fill="none"/><path d="M28 28 l8 8 M36 28 l-8 8 M44 44 l8 8 M52 44 l-8 8" stroke="#D9443A" stroke-width="3"/>',run:gridWorld},
  ab:{name:'密碼破解 1A2B',sub:'猜出電腦藏的密碼，猜愈少次分數愈高',ico:'<rect x="6" y="16" width="52" height="32" rx="8" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="32" y="39" font-size="17" text-anchor="middle" fill="#6A4BC4" font-weight="700">1A2B</text>',run:abWorld}
 };
+const ICO2={
+ seq:'<rect x="6" y="18" width="52" height="28" rx="8" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="32" y="38" font-size="14" text-anchor="middle" fill="#6A4BC4" font-weight="700">2,4,8,?</text>',
+ bottle:'<path d="M26 8h12v8l6 8v30a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V24l6-8z" fill="#fff" stroke="#1B2140" stroke-width="3"/><rect x="22" y="30" width="20" height="12" fill="#5ED6A0"/>',
+ snail:'<rect x="14" y="6" width="36" height="52" rx="4" fill="#fff" stroke="#1B2140" stroke-width="3"/><path d="M24 40 a6 6 0 1 1 6 6 h-10" fill="#FF9F43" stroke="#1B2140" stroke-width="2"/><path d="M40 14 v18 M36 18 l4 -4 l4 4" stroke="#2DBE7E" stroke-width="3" fill="none"/>',
+ grab:'<circle cx="32" cy="32" r="24" fill="#fff" stroke="#1B2140" stroke-width="3"/><text x="32" y="40" font-size="20" text-anchor="middle" fill="#FF5E6C" font-weight="700">21</text>',
+ chain:'<rect x="4" y="22" width="16" height="20" rx="4" fill="#FFE9B0" stroke="#1B2140" stroke-width="2.5"/><rect x="44" y="22" width="16" height="20" rx="4" fill="#fff" stroke="#1B2140" stroke-width="2.5"/><path d="M40 32 H22 M28 26 l-6 6 l6 6" stroke="#FF5E6C" stroke-width="3" fill="none"/>',
+ move:'<path d="M14 50 V26 M32 50 V18 M50 50 V30" stroke="#8C6A4F" stroke-width="5"/><circle cx="14" cy="22" r="8" fill="#5ED6A0" stroke="#1B2140" stroke-width="2"/><circle cx="32" cy="14" r="8" fill="#5ED6A0" stroke="#1B2140" stroke-width="2"/><circle cx="50" cy="26" r="8" fill="#5ED6A0" stroke="#1B2140" stroke-width="2"/>',
+ spend:'<rect x="8" y="18" width="48" height="30" rx="6" fill="#fff" stroke="#1B2140" stroke-width="3"/><circle cx="32" cy="33" r="9" fill="#FFC93C" stroke="#1B2140" stroke-width="2"/><text x="32" y="37" font-size="10" text-anchor="middle" fill="#1B2140">$</text>',
+ coin:'<circle cx="20" cy="36" r="10" fill="#FFC93C" stroke="#1B2140" stroke-width="2.5"/><circle cx="36" cy="28" r="10" fill="#FFC93C" stroke="#1B2140" stroke-width="2.5"/><circle cx="46" cy="42" r="10" fill="#FFC93C" stroke="#1B2140" stroke-width="2.5"/>'};
+Object.assign(WT,{
+ seq:{name:'數列偵探',sub:'找出數字和花片的規律，說出你怎麼看出來的',ico:ICO2.seq,run:seqWorld},
+ bottle:{name:'空瓶換飲料',sub:'換來的喝完又是空瓶，到底能喝幾瓶？',ico:ICO2.bottle,run:bottleWorld},
+ snail:{name:'爬出去要幾天',sub:'白天爬、晚上滑，最後一天要小心',ico:ICO2.snail,run:snailWorld},
+ grab:{name:'搶數字對決',sub:'跟電腦搶數字，找出必勝的方法',ico:ICO2.grab,run:grabWorld},
+ chain:{name:'倒推機器',sub:'從結果一格一格倒回去，做相反的計算',ico:ICO2.chain,run:chainWorld},
+ move:{name:'移來移去',sub:'東西移來移去，從最後倒推回一開始',ico:ICO2.move,run:moveWorld},
+ spend:{name:'逛夜市',sub:'花掉一半再多幾元，原本有多少錢？',ico:ICO2.spend,run:spendWorld},
+ coin:{name:'拿硬幣大戰',sub:'先填倒推表，再用必勝法打敗電腦',ico:ICO2.coin,run:coinWorld}
+});
 const W=(type,cfg,sub)=>({name:WT[type].name,sub:sub||WT[type].sub,ico:WT[type].ico,color:'#fff',run:ctx=>WT[type].run(ctx,cfg||{})});
 const LESSONS=[
  {id:'L1',title:'第 1 堂',theme:'假設法入門',desc:'6×6 數獨、誠實島說謊題、4×4 推理表格、3 位數密碼',
-  worlds:[W('sudoku',{levels:[20,16,12]},'6×6 數獨三題，從暖身到挑戰，每排每區 1～6 不重複'),W('liar',{bank:LIARS,n:6}),W('grid',{puzzles:GRID_BANK}),W('ab',{digits:3,rounds:3},'猜出電腦藏的 3 位數密碼，猜愈少次分數愈高')]}
+  worlds:[W('sudoku',{levels:[20,16,12]},'6×6 數獨三題，從暖身到挑戰，每排每區 1～6 不重複'),W('liar',{bank:LIARS,n:6}),W('grid',{puzzles:GRID_BANK}),W('ab',{digits:3,rounds:3},'猜出電腦藏的 3 位數密碼，猜愈少次分數愈高')]},
+ {id:'L2',title:'第 2 堂',theme:'順著推',desc:'數列與花片規律、空瓶換飲料、爬井問題、搶數字對決',worlds:[W('seq'),W('bottle'),W('snail'),W('grab')]},
+ {id:'L3',title:'第 3 堂',theme:'倒著推',desc:'倒推機器、移來移去倒推表、逛夜市花錢、拿硬幣必勝法',worlds:[W('chain'),W('move'),W('spend'),W('coin')]}
 ];
 function useLesson(i){const nm=DB.current;CURL=i;KEY='logic_'+LESSONS[i].id+'_v1';DB=load();if(nm&&!DB.current){DB.current=nm;save()}WORLDS=LESSONS[i].worlds}
 function lessonStars(L){try{const d=JSON.parse(localStorage.getItem('logic_'+L.id+'_v1'))||{};const p=(d.players||{})[DB.current];return p?p.stars.reduce((a,b)=>a+b,0):0}catch(e){return 0}}
